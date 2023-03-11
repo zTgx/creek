@@ -1,1 +1,1 @@
-cargo test --test test_lit_set_user_shielding_key --release
+cargo test --test test_lit_set_user_shielding_key --release -- --nocapture

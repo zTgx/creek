@@ -1923,6 +1923,7 @@ name = "parachain-test-suit"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
+ "parity-scale-codec",
  "rstest",
  "sp-core 7.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
  "sp-keyring",

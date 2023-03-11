@@ -11,6 +11,7 @@ rstest = "0.16.0"
 substrate-api-client = { features = ["ws-client"], git = "https://github.com/scs/substrate-api-client.git", branch = "polkadot-v0.9.37-tag-v0.7.0" }
 sp-core = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.37" }
 sp-keyring = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "master" }
+codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false, features = ['derive'] }
 
 # sp-runtime = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.37" }
 # sp-std = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.37" }
