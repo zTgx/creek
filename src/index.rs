@@ -1,8 +1,9 @@
-
 use rstest::*;
 
 #[fixture]
-pub fn fixture() -> u32 { 42 }
+pub fn fixture() -> u32 {
+    42
+}
 
 #[rstest]
 fn should_success(fixture: u32) {
@@ -12,6 +13,6 @@ fn should_success(fixture: u32) {
 #[rstest]
 fn metadata() {
     use crate::print_metadata;
-    
+
     print_metadata();
 }
