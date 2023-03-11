@@ -1,4 +1,3 @@
-mod index;
 mod lit_vc;
 
 #[macro_use]
@@ -7,6 +6,7 @@ extern crate lazy_static;
 use codec::{Decode, Encode};
 use sp_core::{crypto::AccountId32 as AccountId, sr25519};
 // use sp_keyring::AccountKeyring;
+use scale_info::TypeInfo;
 use std::env;
 use substrate_api_client::ApiClientError;
 use substrate_api_client::{rpc::WsRpcClient, Api, AssetTipExtrinsicParams, Metadata};
@@ -40,19 +40,40 @@ pub fn get_total_issuance() {
     println!("[+] TotalIssuance is {}", result);
 }
 
-pub type PalletString = String;
-// Todo: move this improved enclave definition into a primitives crate in the pallet_teerex repo.
-#[derive(Encode, Decode, Clone, PartialEq, sp_core::RuntimeDebug)]
-pub struct EnclaveGen<AccountId> {
-    pub pubkey: AccountId,
-    // FIXME: this is redundant information
-    pub mr_enclave: [u8; 32],
-    pub timestamp: u64,
-    // unix epoch in milliseconds
-    pub url: PalletString, // utf8 encoded url
-}
-pub type Enclave = EnclaveGen<AccountId>;
 pub type ApiResult<T> = Result<T, ApiClientError>;
+pub type MrEnclave = [u8; 32];
+
+#[derive(Encode, Decode, Clone, TypeInfo, PartialEq, Eq, Default, sp_core::RuntimeDebug)]
+pub struct SgxEnclaveMetadata {
+    pub quote: Vec<u8>,
+    pub quote_sig: Vec<u8>,
+    pub quote_cert: Vec<u8>,
+}
+
+#[derive(Encode, Decode, Copy, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo)]
+pub enum SgxBuildMode {
+    Debug,
+    Production,
+}
+
+impl Default for SgxBuildMode {
+    fn default() -> Self {
+        SgxBuildMode::Production
+    }
+}
+
+#[derive(Encode, Decode, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo)]
+pub struct Enclave<PubKey, Url> {
+    pub pubkey: PubKey, // FIXME: this is redundant information
+    pub mr_enclave: MrEnclave,
+    // Todo: make timestamp: Moment
+    pub timestamp: u64,                 // unix epoch in milliseconds
+    pub url: Url,                       // utf8 encoded url
+    pub shielding_key: Option<Vec<u8>>, // JSON serialised enclave shielding key
+    pub vc_pubkey: Option<Vec<u8>>,
+    pub sgx_mode: SgxBuildMode,
+    // pub sgx_metadata: SgxEnclaveMetadata,
+}
 
 pub fn get_shard() -> u32 {
     let enclave_count: u64 = API
@@ -60,12 +81,10 @@ pub fn get_shard() -> u32 {
         .unwrap()
         .unwrap();
 
-    let enclave: ApiResult<Option<Enclave>> =
-        API.get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None);
-
-    // let enclave = API
-    // .get_storage_map("Teerex", "EnclaveRegistry", enclave_count)
-    // .unwrap();
+    let enclave: Enclave<AccountId, Vec<u8>> = API
+        .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
+        .unwrap()
+        .unwrap();
 
     println!("[+] enclave: {:?}", enclave);
 
