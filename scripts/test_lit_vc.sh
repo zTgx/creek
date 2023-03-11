@@ -1,0 +1,1 @@
+cargo test lit_vc --release -- --nocapture
