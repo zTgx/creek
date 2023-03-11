@@ -1452,15 +1452,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d4d2456c373231a208ad294c33dc5bff30051eafd954cd4caae83a712b12854d"
 
 [[package]]
-name = "lit-test-suits-rs"
-version = "0.1.0"
-dependencies = [
- "rstest",
- "sp-core",
- "substrate-api-client",
-]
-
-[[package]]
 name = "lock_api"
 version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1835,6 +1826,15 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "parachain-test-suit"
+version = "0.1.0"
+dependencies = [
+ "rstest",
+ "sp-core",
+ "substrate-api-client",
 ]
 
 [[package]]

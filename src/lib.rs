@@ -6,7 +6,7 @@ use sp_core::sr25519;
 
 const NODE_SERVER_URL: &str = "NODE_SERVER_URL";
 const NODE_PORT: &str = "NODE_PORT";
-const DEFAULT_NODE_SERVER_URL: &str = "ws://127.0.01";
+const DEFAULT_NODE_SERVER_URL: &str = "ws://127.0.0.1";
 const DEFAULT_NODE_PORT: &str = "9944";
 
 pub fn print_metadata() {
