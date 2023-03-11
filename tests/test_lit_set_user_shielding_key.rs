@@ -1,7 +1,7 @@
-use parachain_test_suit::{get_shard, print_metadata};
+use parachain_test_suit::{get_shard, get_tee_shielding_pubkey, set_user_shielding_key};
 
 #[test]
 fn set_user_shielding_key_works() {
-    let shard = get_shard();
-    assert_eq!(shard, 3u32);
+    set_user_shielding_key();
 }
+
