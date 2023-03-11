@@ -5,7 +5,3 @@ fn set_user_shielding_key_works() {
     let shard = get_shard();
     assert_eq!(shard, 3u32);
 }
-
-#[test]
-fn get_teerex_count_works() {
-}
