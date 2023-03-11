@@ -1,4 +1,4 @@
-use crate::print_metadata;
+
 use rstest::*;
 
 #[fixture]
@@ -11,5 +11,7 @@ fn should_success(fixture: u32) {
 
 #[rstest]
 fn metadata() {
+    use crate::print_metadata;
+    
     print_metadata();
 }
