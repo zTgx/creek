@@ -1,4 +1,5 @@
 mod index;
+mod lit_vc;
 
 use substrate_api_client::{rpc::WsRpcClient, Api, AssetTipExtrinsicParams, Metadata};
 use std::env;
