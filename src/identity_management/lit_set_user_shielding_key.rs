@@ -9,10 +9,14 @@ use crate::{get_shard, get_tee_shielding_pubkey, API};
 // Testcase 01: Correct workflow
 // Input: shard / encrypted_aes_key
 // Output: UserShieldingKeySet Event
-pub fn set_user_shielding_key_00() {
+pub fn tc00_set_user_shielding_key() {
     let aes_key = Aes256Gcm::generate_key(&mut OsRng);
+    println!("  [SetUserShieldingKey]-TC00 aes_key: {:?}", aes_key);
+
     let encrpted_shielding_key = encrypt_with_tee_shielding_pubkey(&aes_key);
+
     let shard = get_shard();
+    println!("  [SetUserShieldingKey]-TC00 shard: {:?}", shard);
 
     let xt: UncheckedExtrinsicV4<_, _> = compose_extrinsic!(
         API.clone(),
