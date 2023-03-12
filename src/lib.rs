@@ -15,7 +15,7 @@ use sp_core::Pair;
 use sp_core::H256;
 use sp_core::{crypto::AccountId32 as AccountId, sr25519};
 use std::env;
-use std::sync::mpsc::channel;
+
 use substrate_api_client::{compose_extrinsic, ApiClientError, UncheckedExtrinsicV4, XtStatus};
 use substrate_api_client::{rpc::WsRpcClient, Api, Metadata, PlainTipExtrinsicParams};
 
