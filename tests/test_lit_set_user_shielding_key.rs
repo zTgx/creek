@@ -1,4 +1,4 @@
-use litentry_test_suit::set_user_shielding_key;
+use litentry_test_suit::lit_set_user_shielding_key::set_user_shielding_key;
 
 #[test]
 fn set_user_shielding_key_works() {

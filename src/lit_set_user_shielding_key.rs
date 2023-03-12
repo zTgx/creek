@@ -1,1 +1,64 @@
+use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
+use rsa::{BigUint, PaddingScheme, PublicKey, RsaPublicKey};
+use sha2::Sha256;
+use sp_core::{crypto::AccountId32 as AccountId, H256};
+use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus};
 
+use crate::{
+    get_shard,
+    primitives::{Enclave, Rsa3072Pubkey},
+    API,
+};
+
+pub fn get_tee_shielding_pubkey() -> rsa::RsaPublicKey {
+    let enclave_count: u64 = API
+        .get_storage_value("Teerex", "EnclaveCount", None)
+        .unwrap()
+        .unwrap();
+
+    let enclave: Enclave<AccountId, Vec<u8>> = API
+        .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
+        .unwrap()
+        .unwrap();
+
+    let shielding_key = enclave.shielding_key.unwrap();
+
+    {
+        let key: Rsa3072Pubkey = serde_json::from_slice(&shielding_key).unwrap();
+        println!("Rsa3072Pubkey : {:?}", key);
+
+        let b = BigUint::from_radix_le(&key.n, 256).unwrap();
+        let a = BigUint::from_radix_le(&key.e, 256).unwrap();
+
+        RsaPublicKey::new(b, a).unwrap()
+    }
+}
+
+pub fn set_user_shielding_key() {
+    let aes_key = Aes256Gcm::generate_key(&mut OsRng);
+    let encrpted_shielding_key = encrypt_with_tee_shielding_pubkey(&aes_key);
+    let shard = get_shard();
+
+    let xt: UncheckedExtrinsicV4<_, _> = compose_extrinsic!(
+        API.clone(),
+        "IdentityManagement",
+        "set_user_shielding_key",
+        H256::from(shard),
+        encrpted_shielding_key.to_vec()
+    );
+
+    println!("[+] Composed Extrinsic:\n {:?}\n", xt);
+
+    let tx_hash = API
+        .send_extrinsic(xt.hex_encode(), XtStatus::InBlock)
+        .unwrap();
+    println!("[+] Transaction got included. Hash: {:?}", tx_hash);
+}
+
+pub fn encrypt_with_tee_shielding_pubkey(shielding_key: &[u8]) -> Vec<u8> {
+    let tee_shielding_pubkey: RsaPublicKey = get_tee_shielding_pubkey();
+    let mut rng = rand::thread_rng();
+    tee_shielding_pubkey
+        .encrypt(&mut rng, PaddingScheme::new_oaep::<Sha256>(), shielding_key)
+        .expect("failed to encrypt")
+}
