@@ -1,5 +1,5 @@
 [package]
-name = "parachain-test-suit"
+name = "litentry-test-suit"
 version = "0.1.0"
 edition = "2021"
 

@@ -1604,6 +1604,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f051f77a7c8e6957c0696eac88f26b0117e54f52d3fc682ab19397a8812846a4"
 
 [[package]]
+name = "litentry-test-suit"
+version = "0.1.0"
+dependencies = [
+ "aes-gcm",
+ "hex",
+ "lazy_static",
+ "num-bigint",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "rsa",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sha2 0.10.6",
+ "sp-core 7.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
+ "sp-keyring",
+ "substrate-api-client",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2016,26 +2036,6 @@ dependencies = [
  "sp-io 7.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
  "sp-runtime 7.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
  "sp-std 5.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
-]
-
-[[package]]
-name = "parachain-test-suit"
-version = "0.1.0"
-dependencies = [
- "aes-gcm",
- "hex",
- "lazy_static",
- "num-bigint",
- "parity-scale-codec",
- "rand 0.8.5",
- "rsa",
- "scale-info",
- "serde",
- "serde_json",
- "sha2 0.10.6",
- "sp-core 7.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.37)",
- "sp-keyring",
- "substrate-api-client",
 ]
 
 [[package]]
