@@ -1,4 +1,5 @@
 use codec::{Decode, Encode};
+use rsa::{BigUint, RsaPublicKey};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 
@@ -11,6 +12,24 @@ pub const NODE_PORT: &str = "9944";
 pub struct Rsa3072Pubkey {
     pub n: Vec<u8>,
     pub e: Vec<u8>,
+}
+
+pub trait RsaPublicKeyGenerator {
+    type Input;
+
+    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaPublicKey;
+}
+
+impl RsaPublicKeyGenerator for RsaPublicKey {
+    type Input = Vec<u8>;
+
+    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaPublicKey {
+        let key: Rsa3072Pubkey = serde_json::from_slice(&shielding_key).unwrap();
+        let b = BigUint::from_radix_le(&key.n, 256).unwrap();
+        let a = BigUint::from_radix_le(&key.e, 256).unwrap();
+
+        RsaPublicKey::new(b, a).unwrap()
+    }
 }
 
 #[derive(Encode, Decode, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo)]
