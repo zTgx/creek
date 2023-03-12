@@ -1,13 +1,11 @@
 # parachain-test-suit
 
-WIP
-
-### Run Testsuit
+### Run all testsuit
 ```shell
-./script/test_all.sh
+./scripts/test_all.sh
 ```
 
-### Run specific testsuit
+### Run vc testsuit
 ```shell
 ./scripts/test_lit_vc.sh
 ```
