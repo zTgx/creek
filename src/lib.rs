@@ -1,4 +1,5 @@
 mod lit_vc;
+mod lit_set_user_shielding_key;
 
 #[macro_use]
 extern crate lazy_static;
