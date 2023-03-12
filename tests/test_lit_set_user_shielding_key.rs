@@ -1,4 +1,4 @@
-use litentry_test_suit::{get_shard, get_tee_shielding_pubkey, set_user_shielding_key};
+use litentry_test_suit::set_user_shielding_key;
 
 #[test]
 fn set_user_shielding_key_works() {
