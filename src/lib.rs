@@ -1,7 +1,7 @@
 mod primitives;
 
-pub mod lit_set_user_shielding_key;
-pub mod lit_vc;
+pub mod identity_management;
+pub mod vc_management;
 
 #[macro_use]
 extern crate lazy_static;
