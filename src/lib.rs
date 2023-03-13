@@ -11,6 +11,7 @@ use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use sp_core::{crypto::AccountId32 as AccountId, sr25519, Pair};
 use substrate_api_client::{rpc::WsRpcClient, Api, Metadata, PlainTipExtrinsicParams};
+use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 
 use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
 
@@ -25,6 +26,14 @@ lazy_static! {
             .unwrap()
     };
 }
+
+lazy_static! {
+    pub static ref LIT_Aes256G_KEY: Vec<u8> = {
+        let aes_key = Aes256Gcm::generate_key(&mut OsRng);
+        aes_key.to_vec()
+    };
+}
+
 
 pub fn get_signer() -> AccountId {
     API.signer_account().unwrap()
