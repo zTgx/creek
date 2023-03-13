@@ -26,6 +26,10 @@ lazy_static! {
     };
 }
 
+pub fn get_signer() -> AccountId {
+    API.signer_account().unwrap()
+}
+
 pub fn get_tee_shielding_pubkey() -> RsaPublicKey {
     let enclave_count: u64 = API
         .get_storage_value("Teerex", "EnclaveCount", None)
