@@ -3,12 +3,8 @@ use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use sha2::Sha256;
 use sp_core::H256;
 use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus};
-
 use crate::{get_shard, get_tee_shielding_pubkey, API};
 
-// Testcase 01: Correct workflow
-// Input: shard / encrypted_aes_key
-// Output: UserShieldingKeySet Event
 pub fn tc00_set_user_shielding_key() {
     let aes_key = Aes256Gcm::generate_key(&mut OsRng);
     println!("  [SetUserShieldingKey]-TC00 aes_key: {:?}", aes_key);

@@ -37,14 +37,6 @@ pub fn get_tee_shielding_pubkey() -> RsaPublicKey {
         .unwrap();
 
     let shielding_key = enclave.shielding_key.unwrap();
-
-    // let key: Rsa3072Pubkey = serde_json::from_slice(&shielding_key).unwrap();
-
-    // let b = BigUint::from_radix_le(&key.n, 256).unwrap();
-    // let a = BigUint::from_radix_le(&key.e, 256).unwrap();
-
-    // RsaPublicKey::new(b, a).unwrap()
-
     RsaPublicKey::new_with_rsa3072_pubkey(shielding_key)
 }
 
