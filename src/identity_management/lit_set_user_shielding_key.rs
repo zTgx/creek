@@ -27,3 +27,26 @@ pub fn tc00_set_user_shielding_key() {
         .unwrap();
     println!("[+] Transaction got included. Hash: {:?}", tx_hash);
 }
+
+pub fn tc01_set_user_shielding_key() {
+    let aes_key = [0, 1];
+    println!("  [SetUserShieldingKey]-TC01 aes_key: {:?}", aes_key);
+    let encrpted_shielding_key = encrypt_with_tee_shielding_pubkey(&aes_key);
+
+    let shard = get_shard();
+    println!("  [SetUserShieldingKey]-TC01 shard: {:?}", shard);
+
+    let xt: UncheckedExtrinsicV4<_, _> = compose_extrinsic!(
+        API.clone(),
+        "IdentityManagement",
+        "set_user_shielding_key",
+        H256::from(shard),
+        encrpted_shielding_key.to_vec()
+    );
+    println!("[+] Composed Extrinsic:\n {:?}\n", xt);
+
+    let tx_hash = API
+        .send_extrinsic(xt.hex_encode(), XtStatus::InBlock)
+        .unwrap();
+    println!("[+] Transaction got included. Hash: {:?}", tx_hash);
+}

@@ -7,5 +7,5 @@ fn tc_00() {
 
 #[test]
 fn tc_01() {
-
+    tc01_set_user_shielding_key();
 }
