@@ -1,1 +1,0 @@
-cargo test --test test_identity_management tc_00 --release -- --nocapture
