@@ -1,4 +1,5 @@
 mod primitives;
+mod utils;
 
 pub mod identity_management;
 pub mod vc_management;
@@ -52,6 +53,10 @@ pub fn get_shard() -> MrEnclave {
         .unwrap();
 
     enclave.mr_enclave
+}
+
+pub fn get_shard_mock() -> MrEnclave {
+    [65_u8, 56, 208, 116, 135, 54, 101, 208, 13, 173, 159, 82, 115, 60, 181, 148, 205, 211, 71, 48, 174, 210, 172, 218, 70, 146, 182, 230, 5, 74, 110, 208]
 }
 
 pub fn print_metadata() {
