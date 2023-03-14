@@ -3,6 +3,6 @@ use litentry_test_suit::identity_management::lit_set_user_shielding_key::set_use
 
 #[test]
 fn tc_vm_00() {
-    // set_user_shielding_key();
+    set_user_shielding_key();
     tc_vm_00_request_vc();
 }
