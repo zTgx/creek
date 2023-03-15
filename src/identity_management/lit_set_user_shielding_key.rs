@@ -136,7 +136,6 @@ pub fn create_identity() {
     
     let msg = identity.encode();
     let shard = get_shard();
-    let signer = get_signer();
     let ciphertext = encrypt_with_tee_shielding_pubkey(&msg);
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
@@ -145,15 +144,43 @@ pub fn create_identity() {
         "IdentityManagement",
         "create_identity",
         H256::from(shard),
-        signer,
+        address,
         ciphertext,
         ciphertext_metadata
     );
 
     println!("[+] Composed Extrinsic:\n {:?}\n", xt);
 
+    #[derive(Decode, Debug)]
+    struct IdentityCreatedEventArgs {
+		pub who: AccountId,
+        pub identity: AesOutput,
+		pub code: AesOutput,
+		pub id_graph: AesOutput,
+    }
+
+    impl StaticEvent for IdentityCreatedEventArgs {
+        const PALLET: &'static str = "IdentityManagement";
+        const EVENT: &'static str = "IdentityCreated";
+    }
+	let api2 = API.clone();
+	let thread_output = thread::spawn(move || {
+		let (events_in, events_out) = channel();
+		api2.subscribe_events(events_in).unwrap();
+		let args: IdentityCreatedEventArgs =
+			api2.wait_for_event::<IdentityCreatedEventArgs>(&events_out).unwrap();
+		args
+	});
+
     let tx_hash = API
         .send_extrinsic(xt.hex_encode(), XtStatus::InBlock)
         .unwrap();
     println!("[+] Transaction got included. Hash: {:?}", tx_hash);
+
+	let identity = thread_output.join().unwrap();
+    println!("  [CreateIdentity] Identity: {:?}", identity);
+}
+
+pub fn verify_identity() {
+
 }

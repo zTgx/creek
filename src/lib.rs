@@ -1,6 +1,6 @@
 mod primitives;
 pub mod utils;
-
+pub mod ethereum_signature;
 pub mod identity_management;
 pub mod vc_management;
 

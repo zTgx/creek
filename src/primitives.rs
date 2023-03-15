@@ -3,6 +3,8 @@ use rsa::{BigUint, RsaPublicKey};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 use sp_runtime::{traits::ConstU32, BoundedVec};
+use sp_core::{ecdsa, ed25519, sr25519};
+use crate::ethereum_signature::EthereumSignature;
 
 pub const NODE_SERVER_URL: &str = "ws://127.0.0.1";
 pub const NODE_PORT: &str = "9944";
@@ -323,4 +325,64 @@ pub enum Identity {
 	Substrate { network: SubstrateNetwork, address: Address32 },
 	Evm { network: EvmNetwork, address: Address20 },
 	Web2 { network: Web2Network, address: IdentityString },
+}
+
+pub type ValidationString = BoundedVec<u8, MaxStringLength>;
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+pub enum IdentityMultiSignature {
+	/// An Ed25519 signature.
+	Ed25519(ed25519::Signature),
+	/// An Sr25519 signature.
+	Sr25519(sr25519::Signature),
+	/// An ECDSA/SECP256k1 signature.
+	Ecdsa(ecdsa::Signature),
+	/// An ECDSA/keccak256 signature. An Ethereum signature. hash message with keccak256
+	Ethereum(EthereumSignature),
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+pub struct TwitterValidationData {
+	pub tweet_id: ValidationString,
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+pub struct DiscordValidationData {
+	pub channel_id: ValidationString,
+	pub message_id: ValidationString,
+	pub guild_id: ValidationString,
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+pub struct Web3CommonValidationData {
+	pub message: ValidationString, // or String if under std
+	pub signature: IdentityMultiSignature,
+}
+
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+#[allow(non_camel_case_types)]
+pub enum Web2ValidationData {
+	Twitter(TwitterValidationData),
+	Discord(DiscordValidationData),
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+#[allow(non_camel_case_types)]
+pub enum Web3ValidationData {
+	Substrate(Web3CommonValidationData),
+	Evm(Web3CommonValidationData),
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+pub enum ValidationData {
+	Web2(Web2ValidationData),
+	Web3(Web3ValidationData),
 }
