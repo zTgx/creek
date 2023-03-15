@@ -1,5 +1,5 @@
 mod primitives;
-mod utils;
+pub mod utils;
 
 pub mod identity_management;
 pub mod vc_management;

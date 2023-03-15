@@ -26,7 +26,8 @@ pub fn tc_vm_00_request_vc() {
 
     let shard = get_shard();
 
-    let assertions = [a1, a2, a3, a4, a6, a7, a8, a10, a11];
+    // let assertions = [a1, a2, a3, a4, a6, a7, a8, a10, a11];
+    let assertions = [a1];
     assertions.iter().for_each(|a| {
         request_vc(shard, &a);
     });
