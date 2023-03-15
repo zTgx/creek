@@ -1,9 +1,8 @@
 use crate::{get_tee_shielding_pubkey, primitives::Credential, LIT_Aes256G_KEY};
-use codec::Decode;
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
-use aes_gcm::{Key, Aes256Gcm, KeyInit, aead::{Aead, generic_array::GenericArray}, AeadCore, aes::Aes256};
+use aes_gcm::{Key, Aes256Gcm, KeyInit, aead::{Aead, generic_array::GenericArray}};
 
 pub fn encrypt_with_tee_shielding_pubkey(msg: &[u8]) -> Vec<u8> {
     let tee_shielding_pubkey: RsaPublicKey = get_tee_shielding_pubkey();
