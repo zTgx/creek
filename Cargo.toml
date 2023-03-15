@@ -35,3 +35,4 @@ serde_json = "1.0"
 hex = { version = "0.4", default-features = false }
 sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.37", default-features = false }
 jsonschema = { version = "0.16.0", default-features = false, features = ["draft202012"] }
+kitchensink-runtime = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.37" }

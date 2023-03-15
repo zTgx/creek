@@ -1,9 +1,9 @@
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use sp_core::H256;
 use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus, StaticEvent};
-use crate::{get_shard, API, utils::encrypt_with_tee_shielding_pubkey, get_signer, LIT_Aes256G_KEY};
+use crate::{get_shard, primitives::{AesOutput, Address32, SubstrateNetwork}, API, utils::encrypt_with_tee_shielding_pubkey, get_signer, LIT_Aes256G_KEY};
 use sp_core::{crypto::AccountId32 as AccountId};
-use codec::Decode;
+use codec::{Decode, Encode};
 use std::{sync::mpsc::channel, thread};
 
 pub fn set_user_shielding_key() {
@@ -120,4 +120,40 @@ pub fn tc01_set_user_shielding_key() {
 
     assert_eq!(thread_output.join().is_ok(), true);
 
+}
+
+pub fn create_identity() {
+    use crate::primitives::Identity;
+
+    let add = hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
+    let mut y = [0u8; 32];
+    y[..32].clone_from_slice(&add);
+
+    let address = Address32::from(y);
+    let network = SubstrateNetwork::Litentry;
+
+    let identity = Identity::Substrate { network, address };
+    
+    let msg = identity.encode();
+    let shard = get_shard();
+    let signer = get_signer();
+    let ciphertext = encrypt_with_tee_shielding_pubkey(&msg);
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let xt: UncheckedExtrinsicV4<_, _> = compose_extrinsic!(
+        API.clone(),
+        "IdentityManagement",
+        "create_identity",
+        H256::from(shard),
+        signer,
+        ciphertext,
+        ciphertext_metadata
+    );
+
+    println!("[+] Composed Extrinsic:\n {:?}\n", xt);
+
+    let tx_hash = API
+        .send_extrinsic(xt.hex_encode(), XtStatus::InBlock)
+        .unwrap();
+    println!("[+] Transaction got included. Hash: {:?}", tx_hash);
 }

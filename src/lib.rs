@@ -7,13 +7,17 @@ pub mod vc_management;
 #[macro_use]
 extern crate lazy_static;
 
+use std::sync::mpsc::channel;
+
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use sp_core::{crypto::AccountId32 as AccountId, sr25519, Pair};
+use kitchensink_runtime::{Block, Header};
 use substrate_api_client::{rpc::WsRpcClient, Api, Metadata, PlainTipExtrinsicParams};
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
-
 use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
+use sp_runtime::generic::SignedBlock as SignedBlockG;
+type SignedBlock = SignedBlockG<Block>;
 
 lazy_static! {
     pub static ref API: Api::<sr25519::Pair, WsRpcClient, PlainTipExtrinsicParams> = {
@@ -83,4 +87,38 @@ pub fn get_total_issuance() {
         .unwrap()
         .unwrap();
     println!("[+] TotalIssuance is {}", result);
+}
+
+pub fn get_extrinsics() {
+	let head = API.get_finalized_head().unwrap().unwrap();
+
+	println!("Genesis block: \n {:?} \n", API.get_block_by_num::<Block>(Some(0)).unwrap());
+
+	println!("Finalized Head:\n {} \n", head);
+
+	let h: Header = API.get_header(Some(head)).unwrap().unwrap();
+	println!("Finalized header:\n {:?} \n", h);
+
+	let b: SignedBlock = API.get_signed_block(Some(head)).unwrap().unwrap();
+	println!("Finalized signed block:\n {:?} \n", b);
+
+	println!("Latest Header: \n {:?} \n", API.get_header::<Header>(None).unwrap());
+
+	println!("Latest block: \n {:?} \n", API.get_block::<Block>(None).unwrap());
+
+	println!("Subscribing to finalized heads");
+	let (sender, receiver) = channel();
+	API.subscribe_finalized_heads(sender).unwrap();
+
+	for _ in 0..5 {
+		let head: Header =
+			receiver.recv().map(|header| serde_json::from_str(&header).unwrap()).unwrap();
+        let number = head.number;
+		println!("Got new Block number {:?}", number);
+
+        let block = API.get_block_by_num::<Block>(Some(number)).unwrap().unwrap();
+        block.extrinsics.iter().for_each(|e| {
+            
+        });
+	}
 }
