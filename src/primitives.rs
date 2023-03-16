@@ -386,3 +386,6 @@ pub enum ValidationData {
 	Web2(Web2ValidationData),
 	Web3(Web3ValidationData),
 }
+
+pub const CHALLENGE_CODE_SIZE: usize = 16;
+pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];

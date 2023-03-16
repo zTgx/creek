@@ -73,3 +73,35 @@ fn request_vc(shard: MrEnclave, assertion: &Assertion) {
     let args = thread_output.join().unwrap();
     println!("  [RequestVC] event: {:?}", args);    
 }
+
+pub fn batch_request_vc() {
+    let mut assertion_calls = vec![];
+
+    let balance = 1_u128;
+    let a4 = Assertion::A4(balance);
+    let a7 = Assertion::A7(balance);
+    let a10 = Assertion::A10(balance);
+    let a11 = Assertion::A11(balance);
+
+    let assertions = [a4, a7, a10, a11];
+    let shard = get_shard();
+
+    assertions.iter().for_each(|assertion| {
+
+        let xt: UncheckedExtrinsicV4<_, _> = compose_extrinsic!(
+            API.clone(),
+            "VCManagement",
+            "request_vc",
+            H256::from(shard),
+            assertion
+        );
+    
+        assertion_calls.push(xt.function);
+    });
+
+    let batching = API.batch(assertion_calls);
+    let tx_hash = API.send_extrinsic(batching.hex_encode(), XtStatus::InBlock).unwrap();
+
+    println!("[+] Batch transaction got included. Hash: {:?}", tx_hash);
+
+}

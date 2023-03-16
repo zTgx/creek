@@ -1,4 +1,4 @@
-use crate::{get_tee_shielding_pubkey, primitives::Credential, LIT_Aes256G_KEY};
+use crate::{get_tee_shielding_pubkey, primitives::{Credential, ChallengeCode, AesOutput}, LIT_Aes256G_KEY};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
@@ -37,4 +37,16 @@ pub fn decryptWithAES() -> () {
             println!("  [Decrypt] Error decrypt : {:?}", e);
         }
     }
+}
+
+pub fn decrypt_challage_code_with_aes(code: AesOutput) -> Vec<u8> {
+    let aes_key = LIT_Aes256G_KEY.to_vec();
+    let key = Key::<Aes256Gcm>::from_slice(&aes_key);
+    let cipher = Aes256Gcm::new(&key);
+
+    let ciphertext = code.ciphertext;
+    let nonce = code.nonce;
+    let nonce = GenericArray::from_slice(&nonce);
+    let plaintext = cipher.decrypt(&nonce, ciphertext.as_ref()).unwrap();
+    plaintext
 }

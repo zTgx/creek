@@ -1,7 +1,7 @@
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use sp_core::H256;
 use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus, StaticEvent};
-use crate::{get_shard, primitives::{AesOutput, Address32, SubstrateNetwork}, API, utils::encrypt_with_tee_shielding_pubkey, get_signer, LIT_Aes256G_KEY};
+use crate::{get_shard, primitives::{AesOutput, Address32, SubstrateNetwork, MrEnclave}, API, utils::{encrypt_with_tee_shielding_pubkey, decryptWithAES, decrypt_challage_code_with_aes}, get_signer, LIT_Aes256G_KEY};
 use sp_core::{crypto::AccountId32 as AccountId};
 use codec::{Decode, Encode};
 use std::{sync::mpsc::channel, thread};
@@ -179,8 +179,10 @@ pub fn create_identity() {
 
 	let identity = thread_output.join().unwrap();
     println!("  [CreateIdentity] Identity: {:?}", identity);
+
+    let challage_code = decrypt_challage_code_with_aes(identity.code);
+    println!("  [CreateIdentity] ChallageCode: {:?}", challage_code);
+
+
 }
 
-pub fn verify_identity() {
-
-}
