@@ -1,2 +1,5 @@
-pub mod lit_request_vc;
-pub mod lit_vc_verification;
+pub mod events;
+pub mod api;
+pub mod verification;
+
+pub const PALLET_NAME: &'static str = "VCManagement";

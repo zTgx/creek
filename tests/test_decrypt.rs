@@ -1,6 +1,6 @@
-use litentry_test_suit::utils::decryptWithAES;
+use litentry_test_suit::utils::decrypt_with_aes_key;
 
 #[test]
 fn test_decrypt() {
-    decryptWithAES();
+    decrypt_with_aes_key();
 }

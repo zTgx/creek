@@ -1,4 +1,4 @@
-use litentry_test_suit::vc_management::lit_vc_verification::*;
+use litentry_test_suit::vc_management::verification::*;
 
 #[test]
 fn test_vc() {

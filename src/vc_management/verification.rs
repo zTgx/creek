@@ -1,6 +1,4 @@
-use std::fs::File;
-
-use jsonschema::{is_valid, JSONSchema, Draft};
+use jsonschema::{JSONSchema, Draft};
 use serde_json;
 
 // Credential { context: ["https://www.w3.org/2018/credentials/v1", "https://w3id.org/security/suites/ed25519-2020/v1"], id: "0xaaff9fe1c3fd0f71ba2d074f9496739b91e6230b5af1ad78c912943bf33098dd", types: [VerifiableCredential], credential_subject: CredentialSubject { id: "d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d", description: "Identity Linked And Verified", types: "IdentityLinkedVerified", tag: ["IDHub"], data_source: None, assertions: [], values: [false], endpoint: "https://litentry.com/parachain/extrinsic" }, issuer: Issuer { id: "156801084833ef5034598b9c07d4dc9b82a6457d9b51ce3cf018268cb2754c84", name: "Litentry TEE Worker", mrenclave: "Dy9VTEeQrCMQ4HQnu4Kv5UAFnHQ6BeS2to1FiFrWWr1m" }, issuance_block_number: 127, expiration_block_number: None, proof: Some(Proof { created_block_number: 127, proof_type: Ed25519Signature2020, proof_purpose: "assertionMethod", proof_value: "9b6d0a1c04a54831e828ce589a467f0a3cc51680e16cdac9b8df89312ecc94bee721e300a90a87d5ffaa355a42a27a71c912efa61f9668078d0e384cbb9d5704", verification_method: "156801084833ef5034598b9c07d4dc9b82a6457d9b51ce3cf018268cb2754c84" }), credential_schema: None }

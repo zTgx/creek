@@ -1,13 +1,13 @@
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use sp_core::H256;
 use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus, StaticEvent};
-use crate::{get_shard, primitives::{AesOutput, Address32, SubstrateNetwork, MrEnclave}, API, utils::{encrypt_with_tee_shielding_pubkey, decryptWithAES, decrypt_challage_code_with_aes}, get_signer, LIT_Aes256G_KEY};
+use crate::{get_shard, primitives::{AesOutput, Address32, SubstrateNetwork}, API, utils::{encrypt_with_tee_shielding_pubkey, decrypt_challage_code_with_aes}, get_signer, USER_AES256G_KEY};
 use sp_core::{crypto::AccountId32 as AccountId};
 use codec::{Decode, Encode};
 use std::{sync::mpsc::channel, thread};
 
 pub fn set_user_shielding_key() {
-    let aes_key = LIT_Aes256G_KEY.to_vec();
+    let aes_key = USER_AES256G_KEY.to_vec();
     println!("  [SetUserShieldingKey]-TC00 aes_key: {:?}", aes_key);
 
     let encrpted_shielding_key = encrypt_with_tee_shielding_pubkey(&aes_key);
@@ -152,7 +152,7 @@ pub fn create_identity() {
     println!("[+] Composed Extrinsic:\n {:?}\n", xt);
 
     #[derive(Decode, Debug)]
-    struct IdentityCreatedEventArgs {
+    pub struct IdentityCreatedEventArgs {
 		pub who: AccountId,
         pub identity: AesOutput,
 		pub code: AesOutput,
