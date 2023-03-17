@@ -1,8 +1,8 @@
 # litentry-test-suit ![](https://tokei.rs/b1/github/zTgx/litentry-test-suit)
 
-## WIP
+# Unofficial
 
-* Need to refactor
+---
 
 ### Run all test
 ```shell
