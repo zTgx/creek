@@ -1,4 +1,4 @@
-use litentry_test_suit::{identity_management::api::*, get_shard, USER_AES256G_KEY};
+use litentry_test_suit::{get_shard, identity_management::api::*, USER_AES256G_KEY};
 
 #[test]
 fn xx() {

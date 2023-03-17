@@ -1,19 +1,18 @@
-
-pub mod primitives;
-pub mod utils;
 pub mod ethereum_signature;
 pub mod identity_management;
+pub mod primitives;
+pub mod utils;
 pub mod vc_management;
 
 #[macro_use]
 extern crate lazy_static;
 
+use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
+use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
-use sp_core::{crypto::AccountId32 as AccountId, sr25519, Pair, hexdisplay::HexDisplay};
+use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, sr25519, Pair};
 use substrate_api_client::{rpc::WsRpcClient, Api, PlainTipExtrinsicParams, XtStatus};
-use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
-use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
 
 lazy_static! {
     pub static ref API: Api::<sr25519::Pair, WsRpcClient, PlainTipExtrinsicParams> = {
@@ -33,7 +32,6 @@ lazy_static! {
         aes_key.to_vec()
     };
 }
-
 
 pub fn get_signer() -> AccountId {
     API.signer_account().unwrap()
@@ -66,13 +64,18 @@ pub fn get_shard() -> MrEnclave {
         .unwrap();
 
     let shard = enclave.mr_enclave;
-    println!("\n ✅ Get shard : {}", format!("0x{}", HexDisplay::from(&shard)));
+    println!(
+        "\n ✅ Get shard : {}",
+        format!("0x{}", HexDisplay::from(&shard))
+    );
 
     shard
 }
 
 pub fn send_extrinsic(xthex_prefixed: String) {
-    let tx_hash = API.send_extrinsic(xthex_prefixed, XtStatus::InBlock).unwrap();
+    let tx_hash = API
+        .send_extrinsic(xthex_prefixed, XtStatus::InBlock)
+        .unwrap();
     println!(" ✅ Transaction got included. Hash: {:?}", tx_hash);
 }
 

@@ -1,4 +1,11 @@
-use litentry_test_suit::{get_shard, primitives::{Assertion, ParameterString, AssertionNetworks, Network}, vc_management::{api::request_vc, events::wait_vc_issued_event, build_request_vc_extrinsic}, identity_management::api::set_user_shielding_key, API, send_extrinsic, USER_AES256G_KEY};
+use litentry_test_suit::{
+    get_shard,
+    identity_management::api::set_user_shielding_key,
+    primitives::{Assertion, AssertionNetworks, Network, ParameterString},
+    send_extrinsic,
+    vc_management::{api::request_vc, build_request_vc_extrinsic, events::wait_vc_issued_event},
+    API, USER_AES256G_KEY,
+};
 
 /**
  * Request VC Workflow
@@ -9,7 +16,7 @@ fn tc_request_vc() {
     let shard = get_shard();
     let aes_key = USER_AES256G_KEY.to_vec();
     set_user_shielding_key(shard, aes_key);
-    
+
     // inputs
     let a1 = Assertion::A1;
 
@@ -59,7 +66,7 @@ pub fn tc_batch_all_request_vc() {
     let shard = get_shard();
     let aes_key = USER_AES256G_KEY.to_vec();
     set_user_shielding_key(shard, aes_key);
-    
+
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
     let a7 = Assertion::A7(balance);

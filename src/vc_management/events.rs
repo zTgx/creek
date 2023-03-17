@@ -1,9 +1,12 @@
-use std::sync::mpsc::channel;
+use super::PALLET_NAME;
+use crate::{
+    primitives::{AccountId, AesOutput},
+    API,
+};
 use codec::Decode;
 use sp_core::H256;
-use substrate_api_client::{StaticEvent, ApiResult};
-use crate::{primitives::{AesOutput, AccountId}, API};
-use super::PALLET_NAME;
+use std::sync::mpsc::channel;
+use substrate_api_client::{ApiResult, StaticEvent};
 
 /// VCIssuedEvent
 #[derive(Decode, Debug)]
@@ -20,7 +23,7 @@ impl StaticEvent for VCIssuedEvent {
 
 pub fn wait_vc_issued_event() -> VCIssuedEvent {
     let (events_in, events_out) = channel();
-	API.subscribe_events(events_in).unwrap();
-	let vc_issued_event: ApiResult<VCIssuedEvent> = API.wait_for_event(&events_out);
+    API.subscribe_events(events_in).unwrap();
+    let vc_issued_event: ApiResult<VCIssuedEvent> = API.wait_for_event(&events_out);
     vc_issued_event.unwrap()
 }

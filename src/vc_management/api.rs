@@ -1,6 +1,9 @@
-use crate::{API, primitives::{Assertion, MrEnclave, VCContext}, send_extrinsic};
-use sp_core::H256;
 use super::build_request_vc_extrinsic;
+use crate::{
+    primitives::{Assertion, MrEnclave, VCContext},
+    send_extrinsic, API,
+};
+use sp_core::H256;
 
 /// request_vc
 pub fn request_vc(shard: MrEnclave, assertion: Assertion) {
@@ -10,9 +13,9 @@ pub fn request_vc(shard: MrEnclave, assertion: Assertion) {
 
 pub fn query_vc_registry(vc_index: H256) -> VCContext {
     let vc_context: VCContext = API
-    .get_storage_map("VCManagement", "VCRegistry", vc_index, None)
-    .unwrap()
-    .unwrap();
+        .get_storage_map("VCManagement", "VCRegistry", vc_index, None)
+        .unwrap()
+        .unwrap();
 
     println!(" ✅ VCManagement VCContext : {:?}", vc_context);
 
