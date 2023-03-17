@@ -1,4 +1,4 @@
-use litentry_test_suit::{get_shard, primitives::{Assertion, ParameterString, AssertionNetworks, Network}, vc_management::{api::{request_vc, build_request_vc_extrinsic, send_extrinsic}, events::wait_vc_issued_event}, identity_management::lit_set_user_shielding_key::set_user_shielding_key, API};
+use litentry_test_suit::{get_shard, primitives::{Assertion, ParameterString, AssertionNetworks, Network}, vc_management::{api::request_vc, events::wait_vc_issued_event, build_request_vc_extrinsic}, identity_management::api::set_user_shielding_key, API, send_extrinsic, USER_AES256G_KEY};
 
 /**
  * Request VC Workflow
@@ -6,8 +6,9 @@ use litentry_test_suit::{get_shard, primitives::{Assertion, ParameterString, Ass
 #[test]
 fn tc_request_vc() {
     // pre-condition
-    set_user_shielding_key();
     let shard = get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    set_user_shielding_key(shard, aes_key);
     
     // inputs
     let a1 = Assertion::A1;
@@ -49,14 +50,15 @@ fn tc_request_vc() {
     });
 }
 
-
-#[test]
 /**
  * Batch_All Request VC
  */
+#[test]
 pub fn tc_batch_all_request_vc() {
-    set_user_shielding_key();
+    // Pre
     let shard = get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    set_user_shielding_key(shard, aes_key);
     
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -67,13 +69,7 @@ pub fn tc_batch_all_request_vc() {
     let assertions = [a4, a7, a10, a11];
     let mut assertion_calls = vec![];
     assertions.into_iter().for_each(|assertion| {
-        let xt = build_request_vc_extrinsic(shard, assertion);
-    
-        assertion_calls.push(xt.function);
+        assertion_calls.push(build_request_vc_extrinsic(shard, assertion).function);
     });
-
-    let batching = API.batch(assertion_calls);
-
-    let hex_encode_batching = batching.hex_encode();
-    send_extrinsic(hex_encode_batching);
+    send_extrinsic(API.batch(assertion_calls).hex_encode());
 }

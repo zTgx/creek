@@ -10,8 +10,8 @@ extern crate lazy_static;
 
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
-use sp_core::{crypto::AccountId32 as AccountId, sr25519, Pair};
-use substrate_api_client::{rpc::WsRpcClient, Api, PlainTipExtrinsicParams};
+use sp_core::{crypto::AccountId32 as AccountId, sr25519, Pair, hexdisplay::HexDisplay};
+use substrate_api_client::{rpc::WsRpcClient, Api, PlainTipExtrinsicParams, XtStatus};
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
 
@@ -65,7 +65,15 @@ pub fn get_shard() -> MrEnclave {
         .unwrap()
         .unwrap();
 
-    enclave.mr_enclave
+    let shard = enclave.mr_enclave;
+    println!("\n ✅ Get shard : {}", format!("0x{}", HexDisplay::from(&shard)));
+
+    shard
+}
+
+pub fn send_extrinsic(xthex_prefixed: String) {
+    let tx_hash = API.send_extrinsic(xthex_prefixed, XtStatus::InBlock).unwrap();
+    println!(" ✅ Transaction got included. Hash: {:?}", tx_hash);
 }
 
 // pub fn get_shard_mock() -> MrEnclave {
