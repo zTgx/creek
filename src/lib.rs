@@ -19,6 +19,7 @@ use crate::primitives::{Enclave, MrEnclave, NODE_PORT, NODE_SERVER_URL};
 use sp_runtime::generic::SignedBlock as SignedBlockG;
 type SignedBlock = SignedBlockG<Block>;
 
+
 lazy_static! {
     pub static ref API: Api::<sr25519::Pair, WsRpcClient, PlainTipExtrinsicParams> = {
         let url = format!("{}:{}", NODE_SERVER_URL, NODE_PORT);

@@ -1,4 +1,4 @@
-use crate::{API, get_shard, primitives::{AesOutput, Assertion, ParameterString, Network, AssertionNetworks, MrEnclave}};
+use crate::{API, get_shard, primitives::{AesOutput, Assertion, ParameterString, Network, AssertionNetworks, MrEnclave, VCContext}};
 use substrate_api_client::{compose_extrinsic, UncheckedExtrinsicV4, XtStatus, StaticEvent};
 use sp_core::H256;
 use sp_core::{crypto::AccountId32 as AccountId};
@@ -71,7 +71,9 @@ fn request_vc(shard: MrEnclave, assertion: &Assertion) {
     println!("[+] Transaction got included. Hash: {:?}", tx_hash);
 
     let args = thread_output.join().unwrap();
-    println!("  [RequestVC] event: {:?}", args);    
+    println!("  [RequestVC] event: {:?}", args);
+
+    query_vc_registry(args.vc_index);
 }
 
 pub fn batch_request_vc() {
@@ -100,8 +102,21 @@ pub fn batch_request_vc() {
     });
 
     let batching = API.batch(assertion_calls);
+
+    let hex_encode = batching.hex_encode();
+    println!("hex encode: {}", hex_encode);
+
     let tx_hash = API.send_extrinsic(batching.hex_encode(), XtStatus::InBlock).unwrap();
 
     println!("[+] Batch transaction got included. Hash: {:?}", tx_hash);
 
+}
+
+pub fn query_vc_registry(index: H256) {
+    let result : VCContext = API
+    .get_storage_map("VCManagement", "VCRegistry", index, None)
+    .unwrap()
+    .unwrap();
+
+    println!("[+] TotalIssuance is {:?}", result);
 }

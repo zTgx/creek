@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 use sp_runtime::{traits::ConstU32, BoundedVec};
 use sp_core::{ecdsa, ed25519, sr25519};
 use crate::ethereum_signature::EthereumSignature;
+use sp_core::H256;
+use kitchensink_runtime::{Block, Header, AccountId};
 
 pub const NODE_SERVER_URL: &str = "ws://127.0.0.1";
 pub const NODE_PORT: &str = "9944";
@@ -389,3 +391,26 @@ pub enum ValidationData {
 
 pub const CHALLENGE_CODE_SIZE: usize = 16;
 pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+pub enum Status {
+	Active,
+	Disabled,
+	// Revoked, // commented out for now, we can delete the VC entry when revoked
+}
+
+#[derive(Clone, Eq, PartialEq, Debug, Encode, Decode, TypeInfo, MaxEncodedLen)]
+#[scale_info(skip_type_params(T))]
+#[codec(mel_bound())]
+pub struct VCContext {
+	// To be discussed: shall we make it public?
+	// pros: easier for the user to disable/revoke VCs, we'll need the AccountId to verify
+	//       the owner of VC. An alternative is to store such information within TEE.
+	// cons: this information is then public, everyone knows e.g. ALICE owns VC ID 1234 + 4321
+	// It's not bad though as it helps to verify the ownership of VC
+	pub subject: AccountId,
+	// hash of the VC, computed via blake2_256
+	pub hash: H256,
+	// status of the VC
+	pub status: Status,
+}

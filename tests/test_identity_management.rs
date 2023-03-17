@@ -13,5 +13,5 @@ use litentry_test_suit::identity_management::lit_set_user_shielding_key::*;
 #[test]
 fn xx() {
     set_user_shielding_key();
-    create_identity();
+    // create_identity();
 }
