@@ -24,7 +24,7 @@ fn tc_set_user_shielding_key() {
     };
     assert_eq!(event, expect_event);
 
-    println!(" ✅ tc_set_user_shielding_key");
+    println!(" ✅ tc_set_user_shielding_key passed 🚩.");
 }
 
 #[test]
@@ -37,7 +37,7 @@ fn tc_set_user_shielding_key_faild() {
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;
     assert_eq!(event, expect_event);
 
-    println!(" ✅ tc_set_user_shielding_key_faild");
+    println!(" ✅ tc_set_user_shielding_key_faild passed 🚩.");
 }
 
 #[test]
@@ -62,5 +62,5 @@ fn tc_create_identity() {
     let event = wait_identity_created_event();
     assert_eq!(event.who, get_signer());
 
-    println!(" ✅ tc_create_identity");
+    println!(" ✅ tc_create_identity passed 🚩.");
 }

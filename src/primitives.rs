@@ -1,7 +1,7 @@
 use codec::{Decode, Encode, MaxEncodedLen};
 use rsa::{BigUint, RsaPublicKey};
 use scale_info::TypeInfo;
-use serde::{Deserialize, Serialize, Serializer, Deserializer, de};
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use sp_core::H256;
 use sp_core::{ecdsa, ed25519, sr25519};
 use sp_runtime::{traits::ConstU32, BoundedVec};
@@ -422,7 +422,6 @@ pub struct VCContext {
     pub status: Status,
 }
 
-
 #[derive(Encode, Decode, MaxEncodedLen, TypeInfo, PartialEq, Eq, Clone, Debug)]
 pub struct EthereumSignature(pub [u8; 65]);
 
@@ -454,7 +453,7 @@ impl<'de> Deserialize<'de> for EthereumSignature {
     where
         D: Deserializer<'de>,
     {
-        let signature_hex = hex::decode(&String::deserialize(deserializer)?)
+        let signature_hex = hex::decode(String::deserialize(deserializer)?)
             .map_err(|e| de::Error::custom(format!("{:?}", e)))?;
         EthereumSignature::try_from(signature_hex.as_ref())
             .map_err(|e| de::Error::custom(format!("{:?}", e)))

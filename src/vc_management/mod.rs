@@ -10,7 +10,6 @@ use crate::{
 
 pub mod api;
 pub mod events;
-pub mod verification;
 
 pub const VC_PALLET_NAME: &str = "VCManagement";
 
