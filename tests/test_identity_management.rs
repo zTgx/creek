@@ -57,7 +57,7 @@ fn tc_create_identity() {
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    create_identity(address, identity, ciphertext_metadata);
+    create_identity(shard, address, identity, ciphertext_metadata);
 
     let event = wait_identity_created_event();
     assert_eq!(event.who, get_signer());
