@@ -21,12 +21,13 @@ use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
 
 pub trait IdentityManagementXtBuilder {
-    fn build_set_user_shielding_key_extrinsic(
+    fn build_extrinsic_set_user_shielding_key(
         &self,
         shard: MrEnclave,
         encrpted_shielding_key: Vec<u8>,
     ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>>;
-    fn build_create_identity_extrinsic(
+
+    fn build_extrinsic_create_identity(
         &self,
         shard: MrEnclave,
         address: Address32,
@@ -41,7 +42,7 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn build_set_user_shielding_key_extrinsic(
+    fn build_extrinsic_set_user_shielding_key(
         &self,
         shard: MrEnclave,
         encrpted_shielding_key: Vec<u8>,
@@ -55,7 +56,7 @@ where
         )
     }
 
-    fn build_create_identity_extrinsic(
+    fn build_extrinsic_create_identity(
         &self,
         shard: MrEnclave,
         address: Address32,

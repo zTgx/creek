@@ -6,7 +6,6 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead},
     Aes256Gcm, Key, KeyInit,
 };
-use jsonschema::{Draft, JSONSchema};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
@@ -119,21 +118,6 @@ pub fn decrypt_challage_code_with_aes(code: AesOutput) -> Vec<u8> {
     let nonce = GenericArray::from_slice(&nonce);
     let plaintext = cipher.decrypt(nonce, ciphertext.as_ref()).unwrap();
     plaintext
-}
-
-pub fn verify_vc_schema(decrypt_vc: &[u8]) -> bool {
-    let vc: serde_json::Value = serde_json::from_slice(decrypt_vc).unwrap();
-    let schema = include_bytes!("../docs/templates/vc_schema.json");
-    let schema: serde_json::Value = serde_json::from_slice(schema).unwrap();
-    let compiled_schema = JSONSchema::options()
-        .with_draft(Draft::Draft202012)
-        .compile(&schema)
-        .unwrap();
-    let is_valid = compiled_schema.is_valid(&vc);
-
-    println!("\n ✅ VC json verifying...");
-
-    is_valid
 }
 
 pub fn print_passed() {

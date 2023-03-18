@@ -29,8 +29,6 @@ where
             .unwrap()
             .unwrap();
 
-        println!(" ✅ VCManagement VCContext : {:?}", vc_context);
-
         vc_context
     }
 }
