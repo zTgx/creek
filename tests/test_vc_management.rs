@@ -56,7 +56,7 @@ fn tc_request_vc() {
 }
 
 #[test]
-pub fn tc_batch_all_request_vc() {
+pub fn tc_batch_request_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
