@@ -1,7 +1,7 @@
-use super::VcManagementXtBuilder;
 use crate::{
     primitives::{Assertion, MrEnclave, VCContext},
     ApiClient,
+    vc_management::xtbuilder::VcManagementXtBuilder,
 };
 use sp_core::{Pair, H256};
 use sp_runtime::{MultiSignature, MultiSigner};

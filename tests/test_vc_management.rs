@@ -2,7 +2,7 @@ use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
     utils::print_passed,
-    vc_management::{api::*, events::VcManagementEventApi, VcManagementXtBuilder, verify::verify_vc_schema},
+    vc_management::{api::*, events::VcManagementEventApi, verify::verify_vc_schema, xtbuilder::VcManagementXtBuilder},
     ApiClient, USER_AES256G_KEY,
 };
 use sp_core::{sr25519, Pair};
