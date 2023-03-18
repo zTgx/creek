@@ -1,8 +1,7 @@
-use crate::ethereum_signature::EthereumSignature;
 use codec::{Decode, Encode, MaxEncodedLen};
 use rsa::{BigUint, RsaPublicKey};
 use scale_info::TypeInfo;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer, Deserializer, de};
 use sp_core::H256;
 use sp_core::{ecdsa, ed25519, sr25519};
 use sp_runtime::{traits::ConstU32, BoundedVec};
@@ -421,4 +420,55 @@ pub struct VCContext {
     pub hash: H256,
     // status of the VC
     pub status: Status,
+}
+
+
+#[derive(Encode, Decode, MaxEncodedLen, TypeInfo, PartialEq, Eq, Clone, Debug)]
+pub struct EthereumSignature(pub [u8; 65]);
+
+impl TryFrom<&[u8]> for EthereumSignature {
+    type Error = ();
+
+    fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
+        if data.len() == 65 {
+            let mut inner = [0u8; 65];
+            inner.copy_from_slice(data);
+            Ok(EthereumSignature(inner))
+        } else {
+            Err(())
+        }
+    }
+}
+
+impl Serialize for EthereumSignature {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&hex::encode(self))
+    }
+}
+
+impl<'de> Deserialize<'de> for EthereumSignature {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let signature_hex = hex::decode(&String::deserialize(deserializer)?)
+            .map_err(|e| de::Error::custom(format!("{:?}", e)))?;
+        EthereumSignature::try_from(signature_hex.as_ref())
+            .map_err(|e| de::Error::custom(format!("{:?}", e)))
+    }
+}
+
+impl AsRef<[u8; 65]> for EthereumSignature {
+    fn as_ref(&self) -> &[u8; 65] {
+        &self.0
+    }
+}
+
+impl AsRef<[u8]> for EthereumSignature {
+    fn as_ref(&self) -> &[u8] {
+        &self.0[..]
+    }
 }

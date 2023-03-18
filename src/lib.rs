@@ -1,4 +1,3 @@
-pub mod ethereum_signature;
 pub mod identity_management;
 pub mod primitives;
 pub mod utils;
