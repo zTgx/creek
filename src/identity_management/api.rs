@@ -2,12 +2,11 @@ use crate::{
     primitives::{Address32, Identity, MrEnclave},
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
+    identity_management::xtbuilder::IdentityManagementXtBuilder,
 };
 use codec::Encode;
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
-
-use super::IdentityManagementXtBuilder;
 
 pub trait IdentityManagementApi {
     fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>);
