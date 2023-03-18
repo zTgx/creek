@@ -64,10 +64,9 @@ pub fn get_shard() -> MrEnclave {
         .unwrap();
 
     let shard = enclave.mr_enclave;
-    println!(
-        "\n ✅ Get shard : {}",
-        format!("0x{}", HexDisplay::from(&shard))
-    );
+    let shard_in_hex = format!("0x{}", HexDisplay::from(&shard));
+
+    println!("\n ✅ Hex shard : {}", shard_in_hex);
 
     shard
 }

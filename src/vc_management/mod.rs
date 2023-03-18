@@ -12,7 +12,7 @@ pub mod api;
 pub mod events;
 pub mod verification;
 
-pub const PALLET_NAME: &'static str = "VCManagement";
+pub const VC_PALLET_NAME: &str = "VCManagement";
 
 pub type VCRequestFn = (CallIndex, H256, Assertion);
 pub type VCRequestXt<SignedExtra> = UncheckedExtrinsicV4<VCRequestFn, SignedExtra>;
@@ -23,7 +23,7 @@ pub fn build_request_vc_extrinsic(
 ) -> VCRequestXt<SubstrateDefaultSignedExtra<PlainTip>> {
     compose_extrinsic!(
         API.clone(),
-        PALLET_NAME,
+        VC_PALLET_NAME,
         "request_vc",
         H256::from(shard),
         assertion

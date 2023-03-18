@@ -19,7 +19,7 @@ pub fn encrypt_with_tee_shielding_pubkey(msg: &[u8]) -> Vec<u8> {
         .expect("failed to encrypt")
 }
 
-pub fn decrypt_with_aes_key() -> () {
+pub fn decrypt_with_aes_key() {
     // pub fn decryptWithAES(msg: &[u8]) -> () {
     let ciphertext = [
         51_u8, 182, 3, 28, 178, 61, 104, 214, 132, 255, 156, 249, 131, 25, 58, 63, 199, 46, 219,
@@ -92,10 +92,10 @@ pub fn decrypt_with_aes_key() -> () {
     println!("  [Decrypt] Decrypt aes_key : {:?}", aes_key);
 
     let key = Key::<Aes256Gcm>::from_slice(&aes_key);
-    let cipher = Aes256Gcm::new(&key);
+    let cipher = Aes256Gcm::new(key);
 
     let nonce = GenericArray::from_slice(&nonce);
-    match cipher.decrypt(&nonce, ciphertext.as_ref()) {
+    match cipher.decrypt(nonce, ciphertext.as_ref()) {
         Ok(plaintext) => {
             println!("  [Decrypt] After decrypt : {:?}", plaintext);
 
@@ -111,11 +111,11 @@ pub fn decrypt_with_aes_key() -> () {
 pub fn decrypt_challage_code_with_aes(code: AesOutput) -> Vec<u8> {
     let aes_key = USER_AES256G_KEY.to_vec();
     let key = Key::<Aes256Gcm>::from_slice(&aes_key);
-    let cipher = Aes256Gcm::new(&key);
+    let cipher = Aes256Gcm::new(key);
 
     let ciphertext = code.ciphertext;
     let nonce = code.nonce;
     let nonce = GenericArray::from_slice(&nonce);
-    let plaintext = cipher.decrypt(&nonce, ciphertext.as_ref()).unwrap();
+    let plaintext = cipher.decrypt(nonce, ciphertext.as_ref()).unwrap();
     plaintext
 }

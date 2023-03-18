@@ -1,4 +1,4 @@
-use super::PALLET_NAME;
+use super::VC_PALLET_NAME;
 use crate::{
     primitives::{AccountId, AesOutput},
     API,
@@ -17,7 +17,7 @@ pub struct VCIssuedEvent {
 }
 
 impl StaticEvent for VCIssuedEvent {
-    const PALLET: &'static str = PALLET_NAME;
+    const PALLET: &'static str = VC_PALLET_NAME;
     const EVENT: &'static str = "VCIssued";
 }
 

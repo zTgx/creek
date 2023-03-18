@@ -10,7 +10,7 @@ use substrate_api_client::{
     compose_extrinsic, CallIndex, PlainTip, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
 };
 
-pub const IDENTITY_PALLET_NAME: &'static str = "IdentityManagement";
+pub const IDENTITY_PALLET_NAME: &str = "IdentityManagement";
 
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);
 pub type SetUserShieldingKeyXt<SignedExtra> =
