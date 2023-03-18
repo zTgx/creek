@@ -3,7 +3,7 @@ pub mod events;
 
 use crate::{
     primitives::{Address32, MrEnclave},
-    API,
+    ApiClient,
 };
 use sp_core::H256;
 use substrate_api_client::{
@@ -17,33 +17,59 @@ pub type SetUserShieldingKeyXt<SignedExtra> =
     UncheckedExtrinsicV4<SetUserShieldingKeyFn, SignedExtra>;
 pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>>);
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
+use sp_core::Pair;
+use sp_runtime::{MultiSignature, MultiSigner};
 
-pub fn build_set_user_shielding_key_extrinsic(
-    shard: MrEnclave,
-    encrpted_shielding_key: Vec<u8>,
-) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>> {
-    compose_extrinsic!(
-        API.clone(),
-        IDENTITY_PALLET_NAME,
-        "set_user_shielding_key",
-        H256::from(shard),
-        encrpted_shielding_key
-    )
+pub trait IdentityManagementXtBuilder {
+    fn build_set_user_shielding_key_extrinsic(
+        &self,
+        shard: MrEnclave,
+        encrpted_shielding_key: Vec<u8>,
+    ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>>;
+    fn build_create_identity_extrinsic(
+        &self,
+        shard: MrEnclave,
+        address: Address32,
+        ciphertext: Vec<u8>,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
-pub fn build_create_identity_extrinsic(
-    shard: MrEnclave,
-    address: Address32,
-    ciphertext: Vec<u8>,
-    ciphertext_metadata: Option<Vec<u8>>,
-) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
-    compose_extrinsic!(
-        API.clone(),
-        IDENTITY_PALLET_NAME,
-        "create_identity",
-        H256::from(shard),
-        address,
-        ciphertext,
-        ciphertext_metadata
-    )
+impl<P> IdentityManagementXtBuilder for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn build_set_user_shielding_key_extrinsic(
+        &self,
+        shard: MrEnclave,
+        encrpted_shielding_key: Vec<u8>,
+    ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        compose_extrinsic!(
+            self.api.clone(),
+            IDENTITY_PALLET_NAME,
+            "set_user_shielding_key",
+            H256::from(shard),
+            encrpted_shielding_key
+        )
+    }
+
+    fn build_create_identity_extrinsic(
+        &self,
+        shard: MrEnclave,
+        address: Address32,
+        ciphertext: Vec<u8>,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        compose_extrinsic!(
+            self.api.clone(),
+            IDENTITY_PALLET_NAME,
+            "create_identity",
+            H256::from(shard),
+            address,
+            ciphertext,
+            ciphertext_metadata
+        )
+    }
 }

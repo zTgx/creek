@@ -1,27 +1,22 @@
 use litentry_test_suit::{
-    get_shard,
-    identity_management::api::set_user_shielding_key,
+    identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    send_extrinsic,
-    vc_management::{
-        api::{request_vc, verify_vc_schema},
-        build_request_vc_extrinsic,
-        events::wait_vc_issued_event,
-    },
-    API, USER_AES256G_KEY,
+    utils::verify_vc_schema,
+    vc_management::{api::*, events::VcManagementEventApi, VcManagementXtBuilder},
+    ApiClient, USER_AES256G_KEY,
 };
+use sp_core::{sr25519, Pair};
 
-/**
- * Request VC Workflow
- */
 #[test]
 fn tc_request_vc() {
-    // pre-condition
-    let shard = get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    set_user_shielding_key(shard, aes_key);
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
 
-    // inputs
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    // Inputs
     let a1 = Assertion::A1;
 
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
@@ -53,23 +48,22 @@ fn tc_request_vc() {
 
     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
     assertions.into_iter().for_each(|assertion| {
-        request_vc(shard, assertion);
+        api_client.request_vc(shard, assertion);
 
         // Wait event
-        let event = wait_vc_issued_event();
+        let event = api_client.wait_event_vc_issued();
         println!(" ✅ [VCRequest] VC Index : {:?}", event.vc_index);
     });
 }
 
-/**
- * Batch_All Request VC
- */
 #[test]
 pub fn tc_batch_all_request_vc() {
-    // Pre
-    let shard = get_shard();
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
     let aes_key = USER_AES256G_KEY.to_vec();
-    set_user_shielding_key(shard, aes_key);
+    api_client.set_user_shielding_key(shard, aes_key);
 
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -80,9 +74,13 @@ pub fn tc_batch_all_request_vc() {
     let assertions = [a4, a7, a10, a11];
     let mut assertion_calls = vec![];
     assertions.into_iter().for_each(|assertion| {
-        assertion_calls.push(build_request_vc_extrinsic(shard, assertion).function);
+        assertion_calls.push(
+            api_client
+                .build_extrinsic_request_vc(shard, assertion)
+                .function,
+        );
     });
-    send_extrinsic(API.batch(assertion_calls).hex_encode());
+    api_client.send_extrinsic(api_client.api.batch(assertion_calls).hex_encode());
 }
 
 #[test]

@@ -1,11 +1,54 @@
 use super::IDENTITY_PALLET_NAME;
 use crate::{
     primitives::{AccountId, AesOutput},
-    API,
+    ApiClient,
 };
 use codec::Decode;
+use sp_core::Pair;
+use sp_runtime::{MultiSignature, MultiSigner};
 use std::sync::mpsc::channel;
 use substrate_api_client::{ApiResult, StaticEvent};
+
+pub trait IdentityManagementEventApi {
+    fn wait_event_user_shielding_key_set(&self) -> SetUserShieldingKeyEvent;
+    fn wait_event_set_user_shielding_key_handle_failed(
+        &self,
+    ) -> SetUserShieldingKeyHandlingFailedEvent;
+    fn wait_event_identity_created(&self) -> IdentityCreatedEvent;
+}
+
+impl<P> IdentityManagementEventApi for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn wait_event_user_shielding_key_set(&self) -> SetUserShieldingKeyEvent {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let event: ApiResult<SetUserShieldingKeyEvent> = self.api.wait_for_event(&events_out);
+        event.unwrap()
+    }
+
+    fn wait_event_set_user_shielding_key_handle_failed(
+        &self,
+    ) -> SetUserShieldingKeyHandlingFailedEvent {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let event: ApiResult<SetUserShieldingKeyHandlingFailedEvent> =
+            self.api.wait_for_event(&events_out);
+        event.unwrap()
+    }
+
+    fn wait_event_identity_created(&self) -> IdentityCreatedEvent {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+        let event: ApiResult<IdentityCreatedEvent> = self.api.wait_for_event(&events_out);
+        event.unwrap()
+    }
+}
 
 /// UserShieldingKeySet
 #[derive(Decode, Debug, PartialEq, Eq)]
@@ -18,26 +61,12 @@ impl StaticEvent for SetUserShieldingKeyEvent {
     const EVENT: &'static str = "UserShieldingKeySet";
 }
 
-pub fn wait_user_shielding_key_set_event() -> SetUserShieldingKeyEvent {
-    let (events_in, events_out) = channel();
-    API.subscribe_events(events_in).unwrap();
-    let event: ApiResult<SetUserShieldingKeyEvent> = API.wait_for_event(&events_out);
-    event.unwrap()
-}
-
 /// SetUserShieldingKeyHandlingFailed
 #[derive(Decode, Debug, PartialEq, Eq)]
 pub struct SetUserShieldingKeyHandlingFailedEvent;
 impl StaticEvent for SetUserShieldingKeyHandlingFailedEvent {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "SetUserShieldingKeyHandlingFailed";
-}
-
-pub fn wait_set_user_shielding_key_handle_failed_event() -> SetUserShieldingKeyHandlingFailedEvent {
-    let (events_in, events_out) = channel();
-    API.subscribe_events(events_in).unwrap();
-    let event: ApiResult<SetUserShieldingKeyHandlingFailedEvent> = API.wait_for_event(&events_out);
-    event.unwrap()
 }
 
 /// IdentityCreated
@@ -51,11 +80,4 @@ pub struct IdentityCreatedEvent {
 impl StaticEvent for IdentityCreatedEvent {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "IdentityCreated";
-}
-
-pub fn wait_identity_created_event() -> IdentityCreatedEvent {
-    let (events_in, events_out) = channel();
-    API.subscribe_events(events_in).unwrap();
-    let event: ApiResult<IdentityCreatedEvent> = API.wait_for_event(&events_out);
-    event.unwrap()
 }

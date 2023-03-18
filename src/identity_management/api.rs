@@ -1,27 +1,54 @@
-use super::{build_create_identity_extrinsic, build_set_user_shielding_key_extrinsic};
 use crate::{
     primitives::{Address32, Identity, MrEnclave},
-    send_extrinsic,
     utils::encrypt_with_tee_shielding_pubkey,
+    ApiClient,
 };
 use codec::Encode;
+use sp_core::Pair;
+use sp_runtime::{MultiSignature, MultiSigner};
 
-pub fn set_user_shielding_key(shard: MrEnclave, aes_key: Vec<u8>) {
-    let encrpted_shielding_key = encrypt_with_tee_shielding_pubkey(&aes_key);
-    let xt = build_set_user_shielding_key_extrinsic(shard, encrpted_shielding_key);
-    send_extrinsic(xt.hex_encode());
+use super::IdentityManagementXtBuilder;
+
+pub trait IdentityManagementApi {
+    fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>);
+    fn create_identity(
+        &self,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    );
 }
 
-pub fn create_identity(
-    shard: MrEnclave,
-    address: Address32,
-    identity: Identity,
-    ciphertext_metadata: Option<Vec<u8>>,
-) {
-    let identity_encoded = identity.encode();
-    let ciphertext = encrypt_with_tee_shielding_pubkey(&identity_encoded);
-    // let ciphertext_metadata: Option<Vec<u8>> = None;
+impl<P> IdentityManagementApi for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>) {
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let encrpted_shielding_key =
+            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &aes_key);
+        let xt = self.build_set_user_shielding_key_extrinsic(shard, encrpted_shielding_key);
+        self.send_extrinsic(xt.hex_encode());
+    }
 
-    let xt = build_create_identity_extrinsic(shard, address, ciphertext, ciphertext_metadata);
-    send_extrinsic(xt.hex_encode());
+    fn create_identity(
+        &self,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) {
+        let identity_encoded = identity.encode();
+
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+        // let ciphertext_metadata: Option<Vec<u8>> = None;
+
+        let xt =
+            self.build_create_identity_extrinsic(shard, address, ciphertext, ciphertext_metadata);
+        self.send_extrinsic(xt.hex_encode());
+    }
 }

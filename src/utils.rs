@@ -1,5 +1,4 @@
 use crate::{
-    get_tee_shielding_pubkey,
     primitives::{AesOutput, Credential},
     USER_AES256G_KEY,
 };
@@ -7,12 +6,16 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead},
     Aes256Gcm, Key, KeyInit,
 };
+use jsonschema::{Draft, JSONSchema};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
 
-pub fn encrypt_with_tee_shielding_pubkey(msg: &[u8]) -> Vec<u8> {
-    let tee_shielding_pubkey: RsaPublicKey = get_tee_shielding_pubkey();
+pub fn encrypt_with_tee_shielding_pubkey(
+    tee_shielding_pubkey: RsaPublicKey,
+    msg: &[u8],
+) -> Vec<u8> {
+    // let tee_shielding_pubkey: RsaPublicKey = get_tee_shielding_pubkey();
     let mut rng = rand::thread_rng();
     tee_shielding_pubkey
         .encrypt(&mut rng, PaddingScheme::new_oaep::<Sha256>(), msg)
@@ -89,8 +92,6 @@ pub fn decrypt_with_aes_key() {
         108, 147, 20, 114, 131, 151, 174, 219, 250, 32, 33, 128, 30, 19, 203, 8, 3, 163, 236, 122,
         62, 92, 65, 224, 234, 83, 156, 112, 95, 183, 140, 120,
     ];
-    println!("  [Decrypt] Decrypt aes_key : {:?}", aes_key);
-
     let key = Key::<Aes256Gcm>::from_slice(&aes_key);
     let cipher = Aes256Gcm::new(key);
 
@@ -118,4 +119,19 @@ pub fn decrypt_challage_code_with_aes(code: AesOutput) -> Vec<u8> {
     let nonce = GenericArray::from_slice(&nonce);
     let plaintext = cipher.decrypt(nonce, ciphertext.as_ref()).unwrap();
     plaintext
+}
+
+pub fn verify_vc_schema(decrypt_vc: &[u8]) -> bool {
+    let vc: serde_json::Value = serde_json::from_slice(decrypt_vc).unwrap();
+    let schema = include_bytes!("../docs/templates/vc_schema.json");
+    let schema: serde_json::Value = serde_json::from_slice(schema).unwrap();
+    let compiled_schema = JSONSchema::options()
+        .with_draft(Draft::Draft202012)
+        .compile(&schema)
+        .unwrap();
+    let is_valid = compiled_schema.is_valid(&vc);
+
+    println!("\n ✅ VC json verifying...");
+
+    is_valid
 }
