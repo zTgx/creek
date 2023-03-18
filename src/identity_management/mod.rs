@@ -1,3 +1,6 @@
+pub mod api;
+pub mod events;
+
 use crate::{
     primitives::{Address32, MrEnclave},
     API,
@@ -7,9 +10,7 @@ use substrate_api_client::{
     compose_extrinsic, CallIndex, PlainTip, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
 };
 
-pub mod api;
-
-pub const PALLET_NAME: &'static str = "IdentityManagement";
+pub const IDENTITY_PALLET_NAME: &'static str = "IdentityManagement";
 
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);
 pub type SetUserShieldingKeyXt<SignedExtra> =
@@ -23,7 +24,7 @@ pub fn build_set_user_shielding_key_extrinsic(
 ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>> {
     compose_extrinsic!(
         API.clone(),
-        PALLET_NAME,
+        IDENTITY_PALLET_NAME,
         "set_user_shielding_key",
         H256::from(shard),
         encrpted_shielding_key
@@ -38,7 +39,7 @@ pub fn build_create_identity_extrinsic(
 ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
     compose_extrinsic!(
         API.clone(),
-        PALLET_NAME,
+        IDENTITY_PALLET_NAME,
         "create_identity",
         H256::from(shard),
         address,
