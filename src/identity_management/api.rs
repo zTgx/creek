@@ -1,8 +1,8 @@
 use crate::{
+    identity_management::xtbuilder::IdentityManagementXtBuilder,
     primitives::{Address32, Identity, MrEnclave},
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
-    identity_management::xtbuilder::IdentityManagementXtBuilder,
 };
 use codec::Encode;
 use sp_core::Pair;

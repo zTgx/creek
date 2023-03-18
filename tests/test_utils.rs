@@ -1,4 +1,7 @@
-use litentry_test_suit::{utils::{print_passed, decrypt_vc_with_user_shielding_key}, primitives::AesOutput};
+use litentry_test_suit::{
+    primitives::AesOutput,
+    utils::{decrypt_vc_with_user_shielding_key, print_passed},
+};
 
 #[test]
 fn tc_decrypt_vc_works() {
@@ -70,8 +73,8 @@ fn tc_decrypt_vc_works() {
         nonce,
     };
     let aes_key = [
-        108_u8, 147, 20, 114, 131, 151, 174, 219, 250, 32, 33, 128, 30, 19, 203, 8, 3, 163, 236, 122,
-        62, 92, 65, 224, 234, 83, 156, 112, 95, 183, 140, 120,
+        108_u8, 147, 20, 114, 131, 151, 174, 219, 250, 32, 33, 128, 30, 19, 203, 8, 3, 163, 236,
+        122, 62, 92, 65, 224, 234, 83, 156, 112, 95, 183, 140, 120,
     ];
 
     let vc = decrypt_vc_with_user_shielding_key(mock_output, &aes_key);

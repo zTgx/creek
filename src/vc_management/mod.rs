@@ -4,5 +4,3 @@ pub mod verify;
 pub mod xtbuilder;
 
 pub const VC_PALLET_NAME: &str = "VCManagement";
-
-

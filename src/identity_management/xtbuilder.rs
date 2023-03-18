@@ -1,12 +1,13 @@
+use crate::{
+    identity_management::IDENTITY_PALLET_NAME,
+    primitives::{Address32, MrEnclave},
+    ApiClient,
+};
 use sp_core::Pair;
-use sp_runtime::{MultiSignature, MultiSigner};
 use sp_core::H256;
+use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
     compose_extrinsic, CallIndex, PlainTip, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
-};
-use crate::{
-    primitives::{Address32, MrEnclave},
-    ApiClient, identity_management::IDENTITY_PALLET_NAME,
 };
 
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);

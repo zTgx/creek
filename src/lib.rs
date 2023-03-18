@@ -8,11 +8,15 @@ extern crate lazy_static;
 
 use crate::primitives::{Enclave, MrEnclave};
 use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
+use codec::Encode;
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::{rpc::WsRpcClient, Api, Metadata, PlainTipExtrinsicParams, XtStatus};
+use substrate_api_client::{
+    compose_extrinsic, extrinsic::common::Batch, rpc::WsRpcClient, Api, CallIndex, Metadata,
+    PlainTip, PlainTipExtrinsicParams, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
+};
 
 lazy_static! {
     pub static ref USER_AES256G_KEY: Vec<u8> = {
@@ -140,5 +144,34 @@ where
             65_u8, 56, 208, 116, 135, 54, 101, 208, 13, 173, 159, 82, 115, 60, 181, 148, 205, 211,
             71, 48, 174, 210, 172, 218, 70, 146, 182, 230, 5, 74, 110, 208,
         ]
+    }
+}
+
+pub trait ApiClientPatch {
+    fn batch_all<Call: Encode + Clone>(
+        &self,
+        calls: Vec<Call>,
+    ) -> UtilityBatchAllXt<Call, SubstrateDefaultSignedExtra<PlainTip>>;
+}
+
+const UTILITY_MODULE: &str = "Utility";
+const UTILITY_BATCH_ALL: &str = "batch";
+
+pub type UtilityBatchAllFn<Call> = (CallIndex, Batch<Call>);
+pub type UtilityBatchAllXt<Call, SignedExtra> =
+    UncheckedExtrinsicV4<UtilityBatchAllFn<Call>, SignedExtra>;
+
+impl<P> ApiClientPatch for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn batch_all<Call: Encode + Clone>(
+        &self,
+        calls: Vec<Call>,
+    ) -> UtilityBatchAllXt<Call, SubstrateDefaultSignedExtra<PlainTip>> {
+        let calls = Batch { calls };
+        compose_extrinsic!(self.api.clone(), UTILITY_MODULE, UTILITY_BATCH_ALL, calls)
     }
 }

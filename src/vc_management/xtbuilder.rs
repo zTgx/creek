@@ -1,12 +1,13 @@
+use crate::{
+    primitives::{Assertion, MrEnclave},
+    vc_management::VC_PALLET_NAME,
+    ApiClient,
+};
 use sp_core::Pair;
+use sp_core::H256;
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
     compose_extrinsic, CallIndex, PlainTip, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
-};
-use sp_core::H256;
-use crate::{
-    primitives::{Assertion, MrEnclave},
-    ApiClient, vc_management::VC_PALLET_NAME,
 };
 
 pub type VCRequestFn = (CallIndex, H256, Assertion);

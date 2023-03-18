@@ -1,4 +1,4 @@
-use litentry_test_suit::{vc_management::verify::verify_vc_schema, utils::print_passed};
+use litentry_test_suit::{utils::print_passed, vc_management::verify::verify_vc_schema};
 
 #[test]
 pub fn tc_verify_vc_schema() {
