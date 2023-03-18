@@ -8,9 +8,6 @@ use sp_runtime::{traits::ConstU32, BoundedVec};
 // use kitchensink_runtime::{Block, Header, AccountId};
 pub use sp_core::crypto::AccountId32 as AccountId;
 
-pub const NODE_SERVER_URL: &str = "ws://127.0.0.1";
-pub const NODE_PORT: &str = "9944";
-
 #[derive(
     Serialize, Deserialize, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo,
 )]

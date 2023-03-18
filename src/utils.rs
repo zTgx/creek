@@ -135,3 +135,11 @@ pub fn verify_vc_schema(decrypt_vc: &[u8]) -> bool {
 
     is_valid
 }
+
+pub fn print_passed() {
+    println!(" ✅ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 🎉");
+}
+
+pub fn print_failed() {
+    println!(" ❌ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 🚩");
+}

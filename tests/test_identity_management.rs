@@ -7,6 +7,7 @@ use litentry_test_suit::{
         },
     },
     primitives::{Address32, Identity, SubstrateNetwork},
+    utils::print_passed,
     ApiClient, USER_AES256G_KEY,
 };
 use sp_core::{sr25519, Pair};
@@ -26,7 +27,7 @@ fn tc_set_user_shielding_key() {
     };
     assert_eq!(event, expect_event);
 
-    println!(" ✅ tc_set_user_shielding_key passed 🚩.");
+    print_passed();
 }
 
 #[test]
@@ -42,7 +43,7 @@ fn tc_set_user_shielding_key_faild() {
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;
     assert_eq!(event, expect_event);
 
-    println!(" ✅ tc_set_user_shielding_key_faild passed 🚩.");
+    print_passed();
 }
 
 #[test]
@@ -70,5 +71,5 @@ fn tc_create_identity() {
     let event = api_client.wait_event_identity_created();
     assert_eq!(event.who, api_client.get_signer().unwrap());
 
-    println!(" ✅ tc_create_identity passed 🚩.");
+    print_passed();
 }

@@ -1,7 +1,7 @@
 use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    utils::verify_vc_schema,
+    utils::{print_passed, verify_vc_schema},
     vc_management::{api::*, events::VcManagementEventApi, VcManagementXtBuilder},
     ApiClient, USER_AES256G_KEY,
 };
@@ -146,5 +146,5 @@ pub fn tc_verify_vc_schema() {
     let is_valid = verify_vc_schema(&decrypt_vc);
     assert!(is_valid);
 
-    println!(" ✅ [VCManagement] tc_verify_vc_schema passed 🚩.");
+    print_passed();
 }
