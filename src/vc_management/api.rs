@@ -8,7 +8,9 @@ use sp_runtime::{MultiSignature, MultiSigner};
 
 pub trait VcManagementApi {
     fn request_vc(&self, shard: MrEnclave, assertion: Assertion);
-    fn query_vc_registry(&self, vc_index: H256) -> VCContext;
+    fn disable_vc(&self, vc_index: H256);
+
+    fn vc_registry(&self, vc_index: H256) -> VCContext;
 }
 
 impl<P> VcManagementApi for ApiClient<P>
@@ -22,7 +24,12 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn query_vc_registry(&self, vc_index: H256) -> VCContext {
+    fn disable_vc(&self, vc_index: H256) {
+        let xt = self.build_extrinsic_disable_vc(vc_index);
+        self.send_extrinsic(xt.hex_encode());
+    }
+
+    fn vc_registry(&self, vc_index: H256) -> VCContext {
         let vc_context: VCContext = self
             .api
             .get_storage_map("VCManagement", "VCRegistry", vc_index, None)

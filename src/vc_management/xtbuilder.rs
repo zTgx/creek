@@ -12,6 +12,8 @@ use substrate_api_client::{
 
 pub type VCRequestFn = (CallIndex, H256, Assertion);
 pub type VCRequestXt<SignedExtra> = UncheckedExtrinsicV4<VCRequestFn, SignedExtra>;
+pub type VCDisableFn = (CallIndex, H256);
+pub type VCDisableXt<SignedExtra> = UncheckedExtrinsicV4<VCDisableFn, SignedExtra>;
 
 pub trait VcManagementXtBuilder {
     fn build_extrinsic_request_vc(
@@ -19,6 +21,11 @@ pub trait VcManagementXtBuilder {
         shard: MrEnclave,
         assertion: Assertion,
     ) -> VCRequestXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_disable_vc(
+        &self,
+        vc_index: H256,
+    ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
 impl<P> VcManagementXtBuilder for ApiClient<P>
@@ -39,5 +46,12 @@ where
             H256::from(shard),
             assertion
         )
+    }
+
+    fn build_extrinsic_disable_vc(
+        &self,
+        vc_index: H256,
+    ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "disable_vc", vc_index)
     }
 }

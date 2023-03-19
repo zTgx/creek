@@ -1,7 +1,12 @@
 use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    vc_management::{api::*, events::VcManagementEventApi, xtbuilder::VcManagementXtBuilder},
+    utils::print_passed,
+    vc_management::{
+        api::*,
+        events::{VCDisabledEvent, VcManagementEventApi},
+        xtbuilder::VcManagementXtBuilder,
+    },
     ApiClient, ApiClientPatch, USER_AES256G_KEY,
 };
 use sp_core::{sr25519, Pair};
@@ -107,4 +112,32 @@ pub fn tc_batch_all_request_vc() {
         );
     });
     api_client.send_extrinsic(api_client.batch_all(assertion_calls).hex_encode());
+}
+
+#[test]
+pub fn tc_request_vc_then_disable_it_success() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    // Inputs
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    // Wait event
+    let event = api_client.wait_event_vc_issued();
+    let vc_index = event.vc_index;
+    println!(" ✅ VC Index : {:?}", vc_index);
+
+    api_client.disable_vc(vc_index);
+
+    let event = api_client.wait_event_vc_disabled();
+    let expect_event = VCDisabledEvent { vc_index };
+
+    assert_eq!(event, expect_event);
+
+    print_passed();
 }
