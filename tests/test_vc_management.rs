@@ -56,7 +56,9 @@ fn tc_request_vc() {
 
         // Wait event
         let event = api_client.wait_event_vc_issued();
-        println!(" ✅ [VCRequest] VC Index : {:?}", event.vc_index);
+
+        assert!(event.is_ok());
+        println!(" ✅ [VCRequest] VC Index : {:?}", event.unwrap().vc_index);
     });
 }
 
@@ -129,7 +131,9 @@ pub fn tc_request_vc_then_disable_it_success() {
 
     // Wait event
     let event = api_client.wait_event_vc_issued();
-    let vc_index = event.vc_index;
+    assert!(event.is_ok());
+
+    let vc_index = event.unwrap().vc_index;
     println!(" ✅ VC Index : {:?}", vc_index);
 
     api_client.disable_vc(vc_index);
@@ -137,7 +141,8 @@ pub fn tc_request_vc_then_disable_it_success() {
     let event = api_client.wait_event_vc_disabled();
     let expect_event = VCDisabledEvent { vc_index };
 
-    assert_eq!(event, expect_event);
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }
@@ -156,14 +161,18 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     api_client.request_vc(shard, a1);
 
     let event = api_client.wait_event_vc_issued();
-    let vc_index_a1 = event.vc_index;
+    assert!(event.is_ok());
+
+    let vc_index_a1 = event.unwrap().vc_index;
     println!(" ✅ A1 VC Index : {:?}", vc_index_a1);
 
     let a6 = Assertion::A6;
     api_client.request_vc(shard, a6);
 
     let event = api_client.wait_event_vc_issued();
-    let vc_index_a6 = event.vc_index;
+    assert!(event.is_ok());
+
+    let vc_index_a6 = event.unwrap().vc_index;
     println!(" ✅ A6 VC Index : {:?}", vc_index_a6);
 
     api_client.disable_vc(vc_index_a6);
@@ -172,7 +181,8 @@ pub fn tc_request_2_vc_then_disable_second_success() {
         vc_index: vc_index_a6,
     };
 
-    assert_eq!(event, expect_event);
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap(), expect_event);
 
     let a1_context = api_client.vc_registry(vc_index_a1);
     assert!(a1_context.is_some());
@@ -195,7 +205,9 @@ fn tc_request_vc_and_revoke_it_success() {
 
     // Wait event
     let event = api_client.wait_event_vc_issued();
-    let vc_index = event.vc_index;
+    assert!(event.is_ok());
+
+    let vc_index = event.unwrap().vc_index;
     println!(" ✅ A1 VC Index : {:?}", vc_index);
 
     api_client.revoke_vc(vc_index);

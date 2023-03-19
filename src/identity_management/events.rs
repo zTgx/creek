@@ -10,10 +10,10 @@ use std::sync::mpsc::channel;
 use substrate_api_client::{ApiResult, StaticEvent};
 
 pub trait IdentityManagementEventApi {
-    fn wait_event_user_shielding_key_set(&self) -> SetUserShieldingKeyEvent;
+    fn wait_event_user_shielding_key_set(&self) -> ApiResult<SetUserShieldingKeyEvent>;
     fn wait_event_set_user_shielding_key_handle_failed(
         &self,
-    ) -> SetUserShieldingKeyHandlingFailedEvent;
+    ) -> ApiResult<SetUserShieldingKeyHandlingFailedEvent>;
     fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent>;
 }
 
@@ -23,23 +23,23 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn wait_event_user_shielding_key_set(&self) -> SetUserShieldingKeyEvent {
+    fn wait_event_user_shielding_key_set(&self) -> ApiResult<SetUserShieldingKeyEvent> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
         let event: ApiResult<SetUserShieldingKeyEvent> = self.api.wait_for_event(&events_out);
-        event.unwrap()
+        event
     }
 
     fn wait_event_set_user_shielding_key_handle_failed(
         &self,
-    ) -> SetUserShieldingKeyHandlingFailedEvent {
+    ) -> ApiResult<SetUserShieldingKeyHandlingFailedEvent> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
         let event: ApiResult<SetUserShieldingKeyHandlingFailedEvent> =
             self.api.wait_for_event(&events_out);
-        event.unwrap()
+        event
     }
 
     fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent> {

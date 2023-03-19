@@ -25,7 +25,8 @@ fn tc_set_user_shielding_key() {
     let expect_event = SetUserShieldingKeyEvent {
         account: api_client.get_signer().unwrap(),
     };
-    assert_eq!(event, expect_event);
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }
@@ -41,7 +42,9 @@ fn tc_set_user_shielding_key_faild() {
 
     let event = api_client.wait_event_set_user_shielding_key_handle_failed();
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;
-    assert_eq!(event, expect_event);
+
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }

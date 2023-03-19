@@ -46,8 +46,8 @@ impl StaticEvent for VCRevokedEvent {
 }
 
 pub trait VcManagementEventApi {
-    fn wait_event_vc_issued(&self) -> VCIssuedEvent;
-    fn wait_event_vc_disabled(&self) -> VCDisabledEvent;
+    fn wait_event_vc_issued(&self) -> ApiResult<VCIssuedEvent>;
+    fn wait_event_vc_disabled(&self) -> ApiResult<VCDisabledEvent>;
     fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent>;
 }
 
@@ -57,20 +57,20 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn wait_event_vc_issued(&self) -> VCIssuedEvent {
+    fn wait_event_vc_issued(&self) -> ApiResult<VCIssuedEvent> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
         let vc_issued_event: ApiResult<VCIssuedEvent> = self.api.wait_for_event(&events_out);
-        vc_issued_event.unwrap()
+        vc_issued_event
     }
 
-    fn wait_event_vc_disabled(&self) -> VCDisabledEvent {
+    fn wait_event_vc_disabled(&self) -> ApiResult<VCDisabledEvent> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
         let vc_disabled_event: ApiResult<VCDisabledEvent> = self.api.wait_for_event(&events_out);
-        vc_disabled_event.unwrap()
+        vc_disabled_event
     }
 
     fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent> {
