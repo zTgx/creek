@@ -16,7 +16,7 @@ use sp_core::{sr25519, Pair};
 use sp_runtime::BoundedVec;
 
 /*
-CI ERROR：
+CI ERROR： lit_batch_test
 https://github.com/litentry/litentry-parachain/actions/runs/4447171033/jobs/7809442449?pr=1475
 
 [2023-03-17T12:56:54Z DEBUG ita_stf::trusted_call] create_identity_runtime, who: d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d, identity: Web2 { network: Twitter, address: BoundedVec([109, 111, 99, 107, 95, 117, 115, 101, 114, 50], 64) }, metadata: None

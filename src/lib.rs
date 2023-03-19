@@ -155,7 +155,7 @@ pub trait ApiClientPatch {
 }
 
 const UTILITY_MODULE: &str = "Utility";
-const UTILITY_BATCH_ALL: &str = "batch";
+const UTILITY_BATCH_ALL: &str = "batch_all";
 
 pub type UtilityBatchAllFn<Call> = (CallIndex, Batch<Call>);
 pub type UtilityBatchAllXt<Call, SignedExtra> =
