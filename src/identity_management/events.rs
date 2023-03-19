@@ -14,7 +14,7 @@ pub trait IdentityManagementEventApi {
     fn wait_event_set_user_shielding_key_handle_failed(
         &self,
     ) -> SetUserShieldingKeyHandlingFailedEvent;
-    fn wait_event_identity_created(&self) -> IdentityCreatedEvent;
+    fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent>;
 }
 
 impl<P> IdentityManagementEventApi for ApiClient<P>
@@ -42,11 +42,11 @@ where
         event.unwrap()
     }
 
-    fn wait_event_identity_created(&self) -> IdentityCreatedEvent {
+    fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
         let event: ApiResult<IdentityCreatedEvent> = self.api.wait_for_event(&events_out);
-        event.unwrap()
+        event
     }
 }
 

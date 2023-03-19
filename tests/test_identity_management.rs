@@ -69,7 +69,8 @@ fn tc_create_identity() {
     api_client.create_identity(shard, address, identity, ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
-    assert_eq!(event.who, api_client.get_signer().unwrap());
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
     print_passed();
 }

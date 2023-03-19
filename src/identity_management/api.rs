@@ -4,7 +4,6 @@ use crate::{
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
-use codec::Encode;
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
 
@@ -40,14 +39,8 @@ where
         identity: Identity,
         ciphertext_metadata: Option<Vec<u8>>,
     ) {
-        let identity_encoded = identity.encode();
-
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
-        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
-        // let ciphertext_metadata: Option<Vec<u8>> = None;
-
         let xt =
-            self.build_extrinsic_create_identity(shard, address, ciphertext, ciphertext_metadata);
+            self.build_extrinsic_create_identity(shard, address, identity, ciphertext_metadata);
         self.send_extrinsic(xt.hex_encode());
     }
 }

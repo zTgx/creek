@@ -1,8 +1,10 @@
 use crate::{
     identity_management::IDENTITY_PALLET_NAME,
-    primitives::{Address32, MrEnclave},
+    primitives::{Address32, Identity, MrEnclave},
+    utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
+use codec::Encode;
 use sp_core::Pair;
 use sp_core::H256;
 use sp_runtime::{MultiSignature, MultiSigner};
@@ -27,7 +29,7 @@ pub trait IdentityManagementXtBuilder {
         &self,
         shard: MrEnclave,
         address: Address32,
-        ciphertext: Vec<u8>,
+        identity: Identity,
         ciphertext_metadata: Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
@@ -56,9 +58,13 @@ where
         &self,
         shard: MrEnclave,
         address: Address32,
-        ciphertext: Vec<u8>,
+        identity: Identity,
         ciphertext_metadata: Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        let identity_encoded = identity.encode();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+
         compose_extrinsic!(
             self.api.clone(),
             IDENTITY_PALLET_NAME,

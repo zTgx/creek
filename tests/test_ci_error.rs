@@ -7,10 +7,13 @@
  *
  */
 use litentry_test_suit::{
-    identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
-    primitives::{Address32, Identity, Web2Network},
+    identity_management::{
+        api::IdentityManagementApi, events::IdentityManagementEventApi,
+        xtbuilder::IdentityManagementXtBuilder,
+    },
+    primitives::{Address32, Identity, MrEnclave, Web2Network},
     utils::print_passed,
-    ApiClient, USER_AES256G_KEY,
+    ApiClient, ApiClientPatch, USER_AES256G_KEY,
 };
 use sp_core::{sr25519, Pair};
 use sp_runtime::BoundedVec;
@@ -51,13 +54,6 @@ fn tc_ci_pr1475_7809442449() {
     let aes_key = USER_AES256G_KEY.to_vec();
     api_client.set_user_shielding_key(shard, aes_key);
 
-    let network = Web2Network::Twitter;
-    let address =
-        BoundedVec::try_from(vec![109, 111, 99, 107, 95, 117, 115, 101, 114, 50]).unwrap();
-
-    let identity = Identity::Web2 { network, address };
-    let ciphertext_metadata: Option<Vec<u8>> = None;
-
     // Alice
     let add =
         hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
@@ -65,10 +61,57 @@ fn tc_ci_pr1475_7809442449() {
     y[..32].clone_from_slice(&add);
     let who = Address32::from(y);
 
-    api_client.create_identity(shard, who, identity, ciphertext_metadata);
+    struct IdentityItem {
+        pub shard: MrEnclave,
+        pub who: Address32,
+        pub identity: Identity,
+        pub ciphertext_metadata: Option<Vec<u8>>,
+    }
+
+    let network = Web2Network::Twitter;
+    let address =
+        BoundedVec::try_from(vec![109, 111, 99, 107, 95, 117, 115, 101, 114, 50]).unwrap();
+    let identity = Identity::Web2 { network, address };
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let id1 = IdentityItem {
+        shard: shard.clone(),
+        who: who.clone(),
+        identity,
+        ciphertext_metadata,
+    };
+
+    let network = Web2Network::Twitter;
+    let address = BoundedVec::try_from(vec![109, 111, 99]).unwrap();
+    let identity = Identity::Web2 { network, address };
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let id2 = IdentityItem {
+        shard: shard.clone(),
+        who: who.clone(),
+        identity,
+        ciphertext_metadata,
+    };
+
+    let ids = [id1, id2];
+    let mut calls = vec![];
+    ids.into_iter().for_each(|item| {
+        calls.push(
+            api_client
+                .build_extrinsic_create_identity(
+                    item.shard,
+                    item.who,
+                    item.identity,
+                    item.ciphertext_metadata,
+                )
+                .function,
+        );
+    });
+    api_client.send_extrinsic(api_client.batch_all(calls).hex_encode());
 
     let event = api_client.wait_event_identity_created();
-    assert_eq!(event.who, api_client.get_signer().unwrap());
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
     print_passed();
 }
