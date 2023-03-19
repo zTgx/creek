@@ -7,7 +7,6 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 cargo test --test test_vc_management --release -- --nocapture --test-threads=1
 ```
 
-### Write a new testcase?
-First, add a new test case in [testcases](./docs/Testcases.md)  
-Secondly, impl it in [rust](./src/)   
-Last, impl [tests](./tests/)  
+### Process of adding test cases
+1. Design a testcase and add it to the form in [testcases](./docs/Testcases.md) format.  
+2. Go to [tests](./tests/) to find the test file of the corresponding module. According to the principle of non-interdependence, refer to other cases and start from the `set_user_shielding_key` method to implement this newly designed case from scratch. 
