@@ -141,3 +141,41 @@ pub fn tc_request_vc_then_disable_it_success() {
 
     print_passed();
 }
+
+#[test]
+pub fn tc_request_2_vc_then_disable_second_success() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    // Inputs
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    let event = api_client.wait_event_vc_issued();
+    let vc_index_a1 = event.vc_index;
+    println!(" ✅ A1 VC Index : {:?}", vc_index_a1);
+
+    let a6 = Assertion::A6;
+    api_client.request_vc(shard, a6);
+
+    let event = api_client.wait_event_vc_issued();
+    let vc_index_a6 = event.vc_index;
+    println!(" ✅ A6 VC Index : {:?}", vc_index_a6);
+
+    api_client.disable_vc(vc_index_a6);
+    let event = api_client.wait_event_vc_disabled();
+    let expect_event = VCDisabledEvent {
+        vc_index: vc_index_a6,
+    };
+
+    assert_eq!(event, expect_event);
+
+    let a1_context = api_client.vc_registry(vc_index_a1);
+    assert!(a1_context.is_some());
+
+    print_passed();
+}

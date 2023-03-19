@@ -10,7 +10,7 @@ pub trait VcManagementApi {
     fn request_vc(&self, shard: MrEnclave, assertion: Assertion);
     fn disable_vc(&self, vc_index: H256);
 
-    fn vc_registry(&self, vc_index: H256) -> VCContext;
+    fn vc_registry(&self, vc_index: H256) -> Option<VCContext>;
 }
 
 impl<P> VcManagementApi for ApiClient<P>
@@ -29,11 +29,10 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn vc_registry(&self, vc_index: H256) -> VCContext {
-        let vc_context: VCContext = self
+    fn vc_registry(&self, vc_index: H256) -> Option<VCContext> {
+        let vc_context: Option<VCContext> = self
             .api
             .get_storage_map("VCManagement", "VCRegistry", vc_index, None)
-            .unwrap()
             .unwrap();
 
         vc_context
