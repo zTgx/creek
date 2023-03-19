@@ -45,6 +45,7 @@ impl StaticEvent for VCRevokedEvent {
     const EVENT: &'static str = "VCRevoked";
 }
 
+// FIXME: WAIT MULTIPLE EVENTS WHEN USING BATCH ALL
 pub trait VcManagementEventApi {
     fn wait_event_vc_issued(&self) -> ApiResult<VCIssuedEvent>;
     fn wait_event_vc_disabled(&self) -> ApiResult<VCDisabledEvent>;
