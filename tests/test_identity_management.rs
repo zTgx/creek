@@ -79,6 +79,40 @@ fn tc_create_identity() {
 }
 
 #[test]
+fn tc_create_identity_then_remove_it() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    // Alice
+    let add =
+        hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
+    let mut y = [0u8; 32];
+    y[..32].clone_from_slice(&add);
+
+    let address = Address32::from(y);
+    let network = SubstrateNetwork::Litentry;
+    let identity = Identity::Substrate { network, address };
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    api_client.create_identity(shard, address, identity.clone(), ciphertext_metadata);
+
+    let event = api_client.wait_event_identity_created();
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
+
+    api_client.remove_identity(shard, identity);
+    let event = api_client.wait_event_identity_removed();
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
+
+    print_passed();
+}
+
+#[test]
 fn tc_create_identity_more_than_20_identities() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);

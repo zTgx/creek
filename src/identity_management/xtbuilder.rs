@@ -17,6 +17,8 @@ pub type SetUserShieldingKeyXt<SignedExtra> =
     UncheckedExtrinsicV4<SetUserShieldingKeyFn, SignedExtra>;
 pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>>);
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
+pub type RemoveIdentityFn = (CallIndex, H256, Vec<u8>);
+pub type RemoveIdentityXt<SignedExtra> = UncheckedExtrinsicV4<RemoveIdentityFn, SignedExtra>;
 
 pub trait IdentityManagementXtBuilder {
     fn build_extrinsic_set_user_shielding_key(
@@ -32,6 +34,12 @@ pub trait IdentityManagementXtBuilder {
         identity: Identity,
         ciphertext_metadata: Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_remove_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+    ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
 impl<P> IdentityManagementXtBuilder for ApiClient<P>
@@ -73,6 +81,24 @@ where
             address,
             ciphertext,
             ciphertext_metadata
+        )
+    }
+
+    fn build_extrinsic_remove_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+    ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        let identity_encoded = identity.encode();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+
+        compose_extrinsic!(
+            self.api.clone(),
+            IDENTITY_PALLET_NAME,
+            "remove_identity",
+            H256::from(shard),
+            ciphertext
         )
     }
 }
