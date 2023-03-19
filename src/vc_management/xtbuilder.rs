@@ -14,6 +14,8 @@ pub type VCRequestFn = (CallIndex, H256, Assertion);
 pub type VCRequestXt<SignedExtra> = UncheckedExtrinsicV4<VCRequestFn, SignedExtra>;
 pub type VCDisableFn = (CallIndex, H256);
 pub type VCDisableXt<SignedExtra> = UncheckedExtrinsicV4<VCDisableFn, SignedExtra>;
+pub type VCRevokeFn = (CallIndex, H256);
+pub type VCRevokeXt<SignedExtra> = UncheckedExtrinsicV4<VCRevokeFn, SignedExtra>;
 
 pub trait VcManagementXtBuilder {
     fn build_extrinsic_request_vc(
@@ -26,6 +28,11 @@ pub trait VcManagementXtBuilder {
         &self,
         vc_index: H256,
     ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_revoke_vc(
+        &self,
+        vc_index: H256,
+    ) -> VCRevokeXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
 impl<P> VcManagementXtBuilder for ApiClient<P>
@@ -53,5 +60,12 @@ where
         vc_index: H256,
     ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>> {
         compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "disable_vc", vc_index)
+    }
+
+    fn build_extrinsic_revoke_vc(
+        &self,
+        vc_index: H256,
+    ) -> VCRevokeXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "revoke_vc", vc_index)
     }
 }

@@ -4,7 +4,7 @@ use litentry_test_suit::{
     utils::print_passed,
     vc_management::{
         api::*,
-        events::{VCDisabledEvent, VcManagementEventApi},
+        events::{VCDisabledEvent, VCRevokedEvent, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
     },
     ApiClient, ApiClientPatch, USER_AES256G_KEY,
@@ -176,6 +176,35 @@ pub fn tc_request_2_vc_then_disable_second_success() {
 
     let a1_context = api_client.vc_registry(vc_index_a1);
     assert!(a1_context.is_some());
+
+    print_passed();
+}
+
+#[test]
+fn tc_request_vc_and_revoke_it_success() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    // Inputs
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    // Wait event
+    let event = api_client.wait_event_vc_issued();
+    let vc_index = event.vc_index;
+    println!(" ✅ A1 VC Index : {:?}", vc_index);
+
+    api_client.revoke_vc(vc_index);
+
+    let event = api_client.wait_event_vc_revoked();
+    assert!(event.is_ok());
+
+    let expect_event = VCRevokedEvent { vc_index };
+    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }

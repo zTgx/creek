@@ -9,6 +9,7 @@ use sp_runtime::{MultiSignature, MultiSigner};
 pub trait VcManagementApi {
     fn request_vc(&self, shard: MrEnclave, assertion: Assertion);
     fn disable_vc(&self, vc_index: H256);
+    fn revoke_vc(&self, vc_index: H256);
 
     fn vc_registry(&self, vc_index: H256) -> Option<VCContext>;
 }
@@ -26,6 +27,11 @@ where
 
     fn disable_vc(&self, vc_index: H256) {
         let xt = self.build_extrinsic_disable_vc(vc_index);
+        self.send_extrinsic(xt.hex_encode());
+    }
+
+    fn revoke_vc(&self, vc_index: H256) {
+        let xt = self.build_extrinsic_revoke_vc(vc_index);
         self.send_extrinsic(xt.hex_encode());
     }
 

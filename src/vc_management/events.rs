@@ -34,9 +34,21 @@ impl StaticEvent for VCDisabledEvent {
     const EVENT: &'static str = "VCDisabled";
 }
 
+/// VCDisabled
+#[derive(Decode, Debug, PartialEq, Eq)]
+pub struct VCRevokedEvent {
+    pub vc_index: H256,
+}
+
+impl StaticEvent for VCRevokedEvent {
+    const PALLET: &'static str = VC_PALLET_NAME;
+    const EVENT: &'static str = "VCRevoked";
+}
+
 pub trait VcManagementEventApi {
     fn wait_event_vc_issued(&self) -> VCIssuedEvent;
     fn wait_event_vc_disabled(&self) -> VCDisabledEvent;
+    fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent>;
 }
 
 impl<P> VcManagementEventApi for ApiClient<P>
@@ -59,5 +71,13 @@ where
 
         let vc_disabled_event: ApiResult<VCDisabledEvent> = self.api.wait_for_event(&events_out);
         vc_disabled_event.unwrap()
+    }
+
+    fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let vc_disabled_event: ApiResult<VCRevokedEvent> = self.api.wait_for_event(&events_out);
+        vc_disabled_event
     }
 }
