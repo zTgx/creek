@@ -51,9 +51,9 @@ pub fn decrypt_challage_code_with_user_shielding_key(
 }
 
 pub fn print_passed() {
-    println!(" ✅ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 🎉");
+    println!(" 🎉 All testcases passed!");
 }
 
-pub fn print_failed() {
-    println!(" ❌ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 🚩");
+pub fn print_failed(reason: String) {
+    println!(" ❌ Testcase failed, reason: {}", reason);
 }
