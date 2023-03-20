@@ -179,8 +179,6 @@ fn tc_create_identity_more_than_20_identities() {
                 network: network.clone(),
                 address: address.clone(),
             };
-            println!("Will create identity: {:?}", identity);
-
             api_client.create_identity(
                 shard,
                 address.clone(),
@@ -189,10 +187,8 @@ fn tc_create_identity_more_than_20_identities() {
             );
 
             let event = api_client.wait_event_identity_created();
-            println!("Will create identity event: {:?}", event);
-
-            // assert!(event.is_ok());
-            // assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
+            assert!(event.is_ok());
+            assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
         })
     });
 
