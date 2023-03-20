@@ -17,4 +17,19 @@ cargo test --test test_vc_management --release -- --nocapture --test-threads=1
     - [x] `fn delegatee`
 - [ ] decrypt id_graph
 - [ ] cover identity-related event & error
+  - [ ] events
+    - [x] UnexpectedMessage
+    - [x] UserShieldingKeySet
+    - [x] SetUserShieldingKeyHandlingFailed
+    - [x] IdentityCreated
+    - [x] IdentityRemoved
+    - [x] IdentityVerified
+    - [x] DelegateeAdded
+  - [ ] errors
+    - [x] UnauthorisedUser
+    - [ ] DelegateeNotExist 
 - [ ] cover vc-related event & error
+  - [ ] events
+    - [x] VCIssuedEvent
+    - [x] VCDisabled
+    - [x] VCRevoked

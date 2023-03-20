@@ -114,7 +114,7 @@ impl StaticEvent for IdentityCreatedEvent {
     const EVENT: &'static str = "IdentityCreated";
 }
 
-/// IdentityCreated
+/// IdentityRemoved
 #[derive(Decode, Debug)]
 pub struct IdentityRemovedEvent {
     pub who: AccountId,
