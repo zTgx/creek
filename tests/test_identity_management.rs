@@ -67,7 +67,7 @@ fn tc_add_delegatee() {
 
     let bob_pair = sr25519::Pair::from_string("//Bob", None).unwrap();
     let bob: Address32 = bob_pair.public().0.into();
-    api_client.add_delegatee(shard, bob);
+    api_client.add_delegatee(bob);
 
     let event = api_client.wait_event_delegatee_added();
     assert!(event.is_ok());

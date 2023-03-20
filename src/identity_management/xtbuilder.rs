@@ -15,7 +15,7 @@ use substrate_api_client::{
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);
 pub type SetUserShieldingKeyXt<SignedExtra> =
     UncheckedExtrinsicV4<SetUserShieldingKeyFn, SignedExtra>;
-pub type AddDelegateFn = (CallIndex, H256, Address32);
+pub type AddDelegateFn = (CallIndex, Address32);
 pub type AddDelegateXt<SignedExtra> = UncheckedExtrinsicV4<AddDelegateFn, SignedExtra>;
 pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>>);
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
@@ -33,7 +33,6 @@ pub trait IdentityManagementXtBuilder {
 
     fn build_extrinsic_add_delegatee(
         &self,
-        shard: MrEnclave,
         account: Address32,
     ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
@@ -81,14 +80,12 @@ where
 
     fn build_extrinsic_add_delegatee(
         &self,
-        shard: MrEnclave,
         account: Address32,
     ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>> {
         compose_extrinsic!(
             self.api.clone(),
             IDENTITY_PALLET_NAME,
             "add_delegatee",
-            H256::from(shard),
             account
         )
     }

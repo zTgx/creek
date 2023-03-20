@@ -12,7 +12,7 @@ use super::IDENTITY_PALLET_NAME;
 
 pub trait IdentityManagementApi {
     fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>);
-    fn add_delegatee(&self, shard: MrEnclave, account: Address32);
+    fn add_delegatee(&self, account: Address32);
     fn create_identity(
         &self,
         shard: MrEnclave,
@@ -47,8 +47,8 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn add_delegatee(&self, shard: MrEnclave, account: Address32) {
-        let xt = self.build_extrinsic_add_delegatee(shard, account);
+    fn add_delegatee(&self, account: Address32) {
+        let xt = self.build_extrinsic_add_delegatee(account);
         self.send_extrinsic(xt.hex_encode());
     }
 
