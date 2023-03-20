@@ -6,7 +6,7 @@ use litentry_test_suit::{
             SetUserShieldingKeyHandlingFailedEvent,
         },
     },
-    primitives::{AccountId, Address32, Identity, SubstrateNetwork},
+    primitives::{Address32, Identity, SubstrateNetwork},
     utils::print_passed,
     ApiClient, USER_AES256G_KEY,
 };
@@ -50,7 +50,7 @@ fn tc_set_user_shielding_key_faild() {
 }
 
 #[test]
-fn tc_add_delegatee() {
+fn tc_add_delegatee_error() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -70,8 +70,7 @@ fn tc_add_delegatee() {
     api_client.add_delegatee(bob);
 
     let event = api_client.wait_event_delegatee_added();
-    assert!(event.is_ok());
-    assert_eq!(event.unwrap().account, AccountId::from(bob_pair.public().0));
+    assert!(event.is_err());
 }
 
 #[test]
