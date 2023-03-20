@@ -12,8 +12,8 @@ use litentry_test_suit::{
         xtbuilder::IdentityManagementXtBuilder,
     },
     primitives::{Address32, Identity, MrEnclave, Web2Network},
-    utils::print_passed,
-    ApiClient, ApiClientPatch, USER_AES256G_KEY,
+    utils::{generate_user_shielding_key, print_passed},
+    ApiClient, ApiClientPatch,
 };
 use sp_core::{sr25519, Pair};
 use sp_runtime::BoundedVec;
@@ -51,8 +51,8 @@ fn tc_ci_pr1475_7809442449() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Alice
     let add =

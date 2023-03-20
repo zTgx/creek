@@ -3,11 +3,7 @@ pub mod primitives;
 pub mod utils;
 pub mod vc_management;
 
-#[macro_use]
-extern crate lazy_static;
-
 use crate::primitives::{Enclave, MrEnclave};
-use aes_gcm::{aead::OsRng, Aes256Gcm, KeyInit};
 use codec::Encode;
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
@@ -17,13 +13,6 @@ use substrate_api_client::{
     compose_extrinsic, extrinsic::common::Batch, rpc::WsRpcClient, Api, CallIndex, Metadata,
     PlainTip, PlainTipExtrinsicParams, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
-
-lazy_static! {
-    pub static ref USER_AES256G_KEY: Vec<u8> = {
-        let aes_key = Aes256Gcm::generate_key(&mut OsRng);
-        aes_key.to_vec()
-    };
-}
 
 const NODE_URL: &str = "ws://127.0.0.1:9944";
 pub type ApiType<P> = Api<P, WsRpcClient, PlainTipExtrinsicParams>;

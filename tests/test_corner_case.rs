@@ -1,8 +1,9 @@
 use litentry_test_suit::{
     identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
     primitives::{Address32, Assertion, Identity, SubstrateNetwork},
+    utils::generate_user_shielding_key,
     vc_management::{api::VcManagementApi, events::VcManagementEventApi},
-    ApiClient, USER_AES256G_KEY,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 
@@ -27,8 +28,8 @@ fn tc_request_vc_with_20s_identities_or_more() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Alice
     let add =

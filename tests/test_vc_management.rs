@@ -1,13 +1,13 @@
 use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    utils::print_passed,
+    utils::{generate_user_shielding_key, print_passed},
     vc_management::{
         api::*,
         events::{VCDisabledEvent, VCRevokedEvent, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
     },
-    ApiClient, ApiClientPatch, USER_AES256G_KEY,
+    ApiClient, ApiClientPatch,
 };
 use sp_core::{sr25519, Pair};
 
@@ -17,8 +17,8 @@ fn tc_request_vc() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -68,8 +68,8 @@ pub fn tc_batch_request_vc() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -95,8 +95,8 @@ pub fn tc_batch_all_request_vc() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -122,8 +122,8 @@ pub fn tc_request_vc_then_disable_it_success() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -153,8 +153,8 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -196,8 +196,8 @@ fn tc_request_vc_and_revoke_it_success() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;

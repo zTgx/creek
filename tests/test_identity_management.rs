@@ -10,8 +10,8 @@ use litentry_test_suit::{
         Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
         ValidationData, Web3CommonValidationData, Web3ValidationData,
     },
-    utils::{hex_account_to_address32, print_passed},
-    ApiClient, USER_AES256G_KEY,
+    utils::{generate_user_shielding_key, hex_account_to_address32, print_passed},
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 
@@ -21,8 +21,8 @@ fn tc_set_user_shielding_key() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
     let expect_event = SetUserShieldingKeyEvent {
@@ -58,8 +58,8 @@ fn tc_add_delegatee_error() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
     let expect_event = SetUserShieldingKeyEvent {
@@ -82,8 +82,8 @@ fn tc_create_identity() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Alice
     let add =
@@ -111,8 +111,8 @@ fn tc_create_identity_then_remove_it() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();
@@ -140,8 +140,8 @@ fn tc_create_identity_with_all_substrate_network() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Alice
     let add =
@@ -189,8 +189,8 @@ fn tc_verify_identity_with_unexpected_message_event() {
     let api_client = ApiClient::new_with_signer(alice_pair.clone());
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     // Alice
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
@@ -230,8 +230,8 @@ fn tc_create_identity_error_unauthorised_user() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = USER_AES256G_KEY.to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
@@ -242,8 +242,6 @@ fn tc_create_identity_error_unauthorised_user() {
         network: SubstrateNetwork::Polkadot,
         address: bob.clone(),
     };
-    println!("Will create identity: {:?}", identity);
-
     api_client.create_identity(shard, bob.clone(), identity, ciphertext_metadata.clone());
 
     let event = api_client.wait_event_identity_created();

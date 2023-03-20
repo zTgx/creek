@@ -2,12 +2,17 @@ use crate::primitives::{
     Address20, Address32, AesOutput, Credential, USER_SHIELDING_KEY_NONCE_LEN,
 };
 use aes_gcm::{
-    aead::{generic_array::GenericArray, Aead},
+    aead::{generic_array::GenericArray, Aead, OsRng},
     Aes256Gcm, Key, KeyInit,
 };
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
+
+pub fn generate_user_shielding_key() -> Vec<u8> {
+    let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
+    user_shieldng_key.to_vec()
+}
 
 pub fn encrypt_with_tee_shielding_pubkey(
     tee_shielding_pubkey: &RsaPublicKey,
