@@ -1,4 +1,6 @@
-use crate::primitives::{AesOutput, Credential, USER_SHIELDING_KEY_NONCE_LEN};
+use crate::primitives::{
+    Address20, Address32, AesOutput, Credential, USER_SHIELDING_KEY_NONCE_LEN,
+};
 use aes_gcm::{
     aead::{generic_array::GenericArray, Aead},
     Aes256Gcm, Key, KeyInit,
@@ -48,6 +50,30 @@ pub fn decrypt_challage_code_with_user_shielding_key(
     cipher
         .decrypt(nonce, ciphertext.as_ref())
         .map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e))
+}
+
+pub fn hex_account_to_address32(hex_account: &str) -> Result<Address32, &'static str> {
+    if !hex_account.starts_with("0x") && hex_account.len() != 62 {
+        return Err("Incorrect hex account format!");
+    }
+
+    let decoded_account = hex::decode(&hex_account[2..]).unwrap();
+    let mut bytes = [0u8; 32];
+    bytes[..32].clone_from_slice(&decoded_account);
+
+    Ok(Address32::from(bytes))
+}
+
+pub fn hex_account_to_address20(hex_account: &str) -> Result<Address20, &'static str> {
+    if !hex_account.starts_with("0x") && hex_account.len() != 42 {
+        return Err("Incorrect hex account format!");
+    }
+
+    let decoded_account = hex::decode(&hex_account[2..]).unwrap();
+    let mut bytes = [0u8; 20];
+    bytes[..20].clone_from_slice(&decoded_account);
+
+    Ok(Address20::from(bytes))
 }
 
 pub fn print_passed() {
