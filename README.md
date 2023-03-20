@@ -7,15 +7,16 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 cargo test --test test_vc_management --release -- --nocapture --test-threads=1
 ```
 
-### Process of adding test cases
-1. Design a testcase and add it to the form in [testcases](./docs/Testcases.md) format.  
-2. Go to [tests](./tests/) to find the test file of the corresponding module. According to the principle of non-interdependence, refer to other cases and start from the `set_user_shielding_key` method to implement this newly designed case from scratch. 
-
 ### TODOs
-- [ ] query-related api
-  - [ ] identity-related query api
-    - [x] `fn delegatee`
 - [ ] decrypt id_graph
+- [ ] query-related api
+  - [x] identity-related query api
+    - [x] `fn delegatee`
+  - [ ] vc-related query api
+    - [x] `vc_registry`
+    - [ ] `schema_admin`
+    - [ ] `schema_index`
+    - [ ] `schema_registry`
 - [ ] cover identity-related event & error
   - [ ] events
     - [x] UnexpectedMessage
@@ -33,3 +34,12 @@ cargo test --test test_vc_management --release -- --nocapture --test-threads=1
     - [x] VCIssuedEvent
     - [x] VCDisabled
     - [x] VCRevoked
+- [ ] subscribe system events
+  - [ ] ExtrinsicSuccess
+  - [ ] ExtrinsicFailed
+
+---
+
+### Process of adding test cases
+1. Design a testcase and add it to the form in [testcases](./docs/Testcases.md) format.  
+2. Go to [tests](./tests/) to find the test file of the corresponding module. According to the principle of non-interdependence, refer to other cases and start from the `set_user_shielding_key` method to implement this newly designed case from scratch. 
