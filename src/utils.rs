@@ -10,7 +10,7 @@ use serde_json;
 use sha2::Sha256;
 
 pub fn encrypt_with_tee_shielding_pubkey(
-    tee_shielding_pubkey: RsaPublicKey,
+    tee_shielding_pubkey: &RsaPublicKey,
     msg: &[u8],
 ) -> Vec<u8> {
     let mut rng = rand::thread_rng();

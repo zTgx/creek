@@ -1,6 +1,6 @@
 use crate::{
     identity_management::xtbuilder::IdentityManagementXtBuilder,
-    primitives::{Address32, Identity, MrEnclave},
+    primitives::{Address32, Identity, MrEnclave, ValidationData},
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
@@ -25,7 +25,7 @@ pub trait IdentityManagementApi {
         &self,
         shard: MrEnclave,
         identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        ciphertext_metadata: ValidationData,
     );
 }
 
@@ -42,7 +42,7 @@ where
     fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>) {
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
         let encrpted_shielding_key =
-            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &aes_key);
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &aes_key);
         let xt = self.build_extrinsic_set_user_shielding_key(shard, encrpted_shielding_key);
         self.send_extrinsic(xt.hex_encode());
     }
@@ -73,9 +73,9 @@ where
         &self,
         shard: MrEnclave,
         identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        validation_data: ValidationData,
     ) {
-        let xt = self.build_extrinsic_verify_identity(shard, identity, ciphertext_metadata);
+        let xt = self.build_extrinsic_verify_identity(shard, identity, validation_data);
         self.send_extrinsic(xt.hex_encode());
     }
 }

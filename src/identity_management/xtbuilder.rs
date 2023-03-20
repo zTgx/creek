@@ -1,6 +1,6 @@
 use crate::{
     identity_management::IDENTITY_PALLET_NAME,
-    primitives::{Address32, Identity, MrEnclave},
+    primitives::{Address32, Identity, MrEnclave, ValidationData},
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
@@ -21,7 +21,7 @@ pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
 pub type RemoveIdentityFn = (CallIndex, H256, Vec<u8>);
 pub type RemoveIdentityXt<SignedExtra> = UncheckedExtrinsicV4<RemoveIdentityFn, SignedExtra>;
-pub type VerifyIdentityFn = (CallIndex, H256, Vec<u8>, Option<Vec<u8>>);
+pub type VerifyIdentityFn = (CallIndex, H256, Vec<u8>, Vec<u8>);
 pub type VerifyIdentityXt<SignedExtra> = UncheckedExtrinsicV4<VerifyIdentityFn, SignedExtra>;
 
 pub trait IdentityManagementXtBuilder {
@@ -54,7 +54,7 @@ pub trait IdentityManagementXtBuilder {
         &self,
         shard: MrEnclave,
         identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        validation_data: ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
@@ -100,7 +100,7 @@ where
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
         let encrypted_identity =
-            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
 
         compose_extrinsic!(
             self.api.clone(),
@@ -121,7 +121,7 @@ where
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
         let encrypted_identity =
-            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
 
         compose_extrinsic!(
             self.api.clone(),
@@ -136,12 +136,15 @@ where
         &self,
         shard: MrEnclave,
         identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        validation_data: ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
         let encrypted_identity =
-            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
+        let validation_data_encoded = validation_data.encode();
+        let encrypted_validation_data =
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &validation_data_encoded);
 
         compose_extrinsic!(
             self.api.clone(),
@@ -149,7 +152,7 @@ where
             "verify_identity",
             H256::from(shard),
             encrypted_identity,
-            ciphertext_metadata
+            encrypted_validation_data
         )
     }
 }

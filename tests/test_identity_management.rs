@@ -6,7 +6,10 @@ use litentry_test_suit::{
             SetUserShieldingKeyHandlingFailedEvent,
         },
     },
-    primitives::{Address32, Identity, SubstrateNetwork},
+    primitives::{
+        Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
+        ValidationData, Web3CommonValidationData, Web3ValidationData,
+    },
     utils::{hex_account_to_address32, print_passed},
     ApiClient, USER_AES256G_KEY,
 };
@@ -181,21 +184,17 @@ fn tc_create_identity_with_all_substrate_network() {
 }
 
 #[test]
-fn tc_verify_identity() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+fn tc_verify_identity_with_unexpected_message_event() {
+    let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice_pair.clone());
 
     let shard = api_client.get_shard();
     let aes_key = USER_AES256G_KEY.to_vec();
     api_client.set_user_shielding_key(shard, aes_key);
 
     // Alice
-    let add =
-        hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
-    let mut y = [0u8; 32];
-    y[..32].clone_from_slice(&add);
-
-    let address = Address32::from(y);
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let address = hex_account_to_address32(alice).unwrap();
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
@@ -211,10 +210,16 @@ fn tc_verify_identity() {
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
-    api_client.verify_identity(shard, identity, ciphertext_metadata);
-    let event = api_client.wait_event_identity_verified();
+    let message = ParameterString::try_from("message".as_bytes().to_vec()).unwrap();
+    let sr25519_sig = alice_pair.sign(&message);
+    let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
+    let web3_common_validation_data = Web3CommonValidationData { message, signature };
+
+    let validation_data =
+        ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
+    api_client.verify_identity(shard, identity, validation_data);
+    let event = api_client.wait_event_unexpected_message();
     assert!(event.is_ok());
-    assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
 
     print_passed()
 }

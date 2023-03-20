@@ -18,6 +18,7 @@ pub trait IdentityManagementEventApi {
     fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent>;
     fn wait_event_identity_removed(&self) -> ApiResult<IdentityRemovedEvent>;
     fn wait_event_identity_verified(&self) -> ApiResult<IdentityVerifiedEvent>;
+    fn wait_event_unexpected_message(&self) -> ApiResult<UnexpectedMessageEvent>;
 }
 
 impl<P> IdentityManagementEventApi for ApiClient<P>
@@ -70,6 +71,13 @@ where
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
         let event: ApiResult<IdentityVerifiedEvent> = self.api.wait_for_event(&events_out);
+        event
+    }
+
+    fn wait_event_unexpected_message(&self) -> ApiResult<UnexpectedMessageEvent> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+        let event: ApiResult<UnexpectedMessageEvent> = self.api.wait_for_event(&events_out);
         event
     }
 }
@@ -140,4 +148,12 @@ pub struct DelegateeAddedEvent {
 impl StaticEvent for DelegateeAddedEvent {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "DelegateeAdded";
+}
+
+/// UnexpectedMessage
+#[derive(Decode, Debug)]
+pub struct UnexpectedMessageEvent;
+impl StaticEvent for UnexpectedMessageEvent {
+    const PALLET: &'static str = IDENTITY_PALLET_NAME;
+    const EVENT: &'static str = "UnexpectedMessage";
 }
