@@ -15,6 +15,8 @@ use substrate_api_client::{
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);
 pub type SetUserShieldingKeyXt<SignedExtra> =
     UncheckedExtrinsicV4<SetUserShieldingKeyFn, SignedExtra>;
+pub type AddDelegateFn = (CallIndex, H256, Address32);
+pub type AddDelegateXt<SignedExtra> = UncheckedExtrinsicV4<AddDelegateFn, SignedExtra>;
 pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>>);
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
 pub type RemoveIdentityFn = (CallIndex, H256, Vec<u8>);
@@ -28,6 +30,12 @@ pub trait IdentityManagementXtBuilder {
         shard: MrEnclave,
         encrpted_shielding_key: Vec<u8>,
     ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_add_delegatee(
+        &self,
+        shard: MrEnclave,
+        account: Address32,
+    ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_create_identity(
         &self,
@@ -68,6 +76,20 @@ where
             "set_user_shielding_key",
             H256::from(shard),
             encrpted_shielding_key
+        )
+    }
+
+    fn build_extrinsic_add_delegatee(
+        &self,
+        shard: MrEnclave,
+        account: Address32,
+    ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        compose_extrinsic!(
+            self.api.clone(),
+            IDENTITY_PALLET_NAME,
+            "add_delegatee",
+            H256::from(shard),
+            account
         )
     }
 

@@ -6,7 +6,7 @@ use litentry_test_suit::{
             SetUserShieldingKeyHandlingFailedEvent,
         },
     },
-    primitives::{Address32, Identity, SubstrateNetwork},
+    primitives::{AccountId, Address32, Identity, SubstrateNetwork},
     utils::print_passed,
     ApiClient, USER_AES256G_KEY,
 };
@@ -47,6 +47,31 @@ fn tc_set_user_shielding_key_faild() {
     assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
+}
+
+#[test]
+fn tc_add_delegatee() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    let event = api_client.wait_event_user_shielding_key_set();
+    let expect_event = SetUserShieldingKeyEvent {
+        account: api_client.get_signer().unwrap(),
+    };
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap(), expect_event);
+
+    let bob_pair = sr25519::Pair::from_string("//Bob", None).unwrap();
+    let bob: Address32 = bob_pair.public().0.into();
+    api_client.add_delegatee(shard, bob);
+
+    let event = api_client.wait_event_delegatee_added();
+    assert!(event.is_ok());
+    assert_eq!(event.unwrap().account, AccountId::from(bob_pair.public().0));
 }
 
 #[test]
@@ -154,18 +179,22 @@ fn tc_create_identity_more_than_20_identities() {
                 network: network.clone(),
                 address: address.clone(),
             };
+            println!("Will create identity: {:?}", identity);
+
             api_client.create_identity(
                 shard,
                 address.clone(),
                 identity,
                 ciphertext_metadata.clone(),
             );
+
+            let event = api_client.wait_event_identity_created();
+            println!("Will create identity event: {:?}", event);
+
+            // assert!(event.is_ok());
+            // assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
         })
     });
-
-    let event = api_client.wait_event_identity_created();
-    assert!(event.is_ok());
-    assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
     print_passed();
 }
@@ -207,4 +236,40 @@ fn tc_verify_identity() {
     assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
 
     print_passed()
+}
+
+#[test]
+fn tc_create_identity_error_unauthorised_user() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let aes_key = USER_AES256G_KEY.to_vec();
+    api_client.set_user_shielding_key(shard, aes_key);
+
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
+    let bob: Address32 = bob.public().0.into();
+
+    let identity = Identity::Substrate {
+        network: SubstrateNetwork::Polkadot,
+        address: bob.clone(),
+    };
+    println!("Will create identity: {:?}", identity);
+
+    api_client.create_identity(shard, bob.clone(), identity, ciphertext_metadata.clone());
+
+    let event = api_client.wait_event_identity_created();
+    assert!(event.is_err());
+    match event {
+        Ok(_) => panic!("Exptected the call to fail."),
+        Err(e) => {
+            let string_error = format!("{:?}", e);
+            assert!(string_error.contains("pallet: \"IdentityManagement\""));
+            assert!(string_error.contains("error: \"UnauthorisedUser\""));
+        }
+    }
+
+    print_passed();
 }

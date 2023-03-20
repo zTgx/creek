@@ -1,4 +1,9 @@
-use litentry_test_suit::{ApiClient, USER_AES256G_KEY, identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi}, primitives::{Address32, SubstrateNetwork, Identity, Assertion}, vc_management::{events::VcManagementEventApi, api::VcManagementApi}};
+use litentry_test_suit::{
+    identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
+    primitives::{Address32, Assertion, Identity, SubstrateNetwork},
+    vc_management::{api::VcManagementApi, events::VcManagementEventApi},
+    ApiClient, USER_AES256G_KEY,
+};
 use sp_core::{sr25519, Pair};
 
 /**
@@ -69,7 +74,7 @@ fn tc_request_vc_with_20s_identities_or_more() {
             let event = api_client.wait_event_identity_created();
             println!("<<< event: {:?}", event);
             assert!(event.is_ok());
-            assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());        
+            assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
         })
     });
 

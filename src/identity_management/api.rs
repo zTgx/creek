@@ -6,9 +6,13 @@ use crate::{
 };
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
+use substrate_api_client::ApiResult;
+
+use super::IDENTITY_PALLET_NAME;
 
 pub trait IdentityManagementApi {
     fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>);
+    fn add_delegatee(&self, shard: MrEnclave, account: Address32);
     fn create_identity(
         &self,
         shard: MrEnclave,
@@ -25,6 +29,10 @@ pub trait IdentityManagementApi {
     );
 }
 
+pub trait IdentityManagementQueryApi {
+    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>>;
+}
+
 impl<P> IdentityManagementApi for ApiClient<P>
 where
     P: Pair,
@@ -36,6 +44,11 @@ where
         let encrpted_shielding_key =
             encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &aes_key);
         let xt = self.build_extrinsic_set_user_shielding_key(shard, encrpted_shielding_key);
+        self.send_extrinsic(xt.hex_encode());
+    }
+
+    fn add_delegatee(&self, shard: MrEnclave, account: Address32) {
+        let xt = self.build_extrinsic_add_delegatee(shard, account);
         self.send_extrinsic(xt.hex_encode());
     }
 
@@ -64,5 +77,20 @@ where
     ) {
         let xt = self.build_extrinsic_verify_identity(shard, identity, ciphertext_metadata);
         self.send_extrinsic(xt.hex_encode());
+    }
+}
+
+impl<P> IdentityManagementQueryApi for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>> {
+        let ret: ApiResult<Option<()>> =
+            self.api
+                .get_storage_map(IDENTITY_PALLET_NAME, "Delegatee", account, None);
+
+        ret
     }
 }
