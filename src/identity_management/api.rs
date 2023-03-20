@@ -17,6 +17,12 @@ pub trait IdentityManagementApi {
         ciphertext_metadata: Option<Vec<u8>>,
     );
     fn remove_identity(&self, shard: MrEnclave, identity: Identity);
+    fn verify_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    );
 }
 
 impl<P> IdentityManagementApi for ApiClient<P>
@@ -47,6 +53,16 @@ where
 
     fn remove_identity(&self, shard: MrEnclave, identity: Identity) {
         let xt = self.build_extrinsic_remove_identity(shard, identity);
+        self.send_extrinsic(xt.hex_encode());
+    }
+
+    fn verify_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) {
+        let xt = self.build_extrinsic_verify_identity(shard, identity, ciphertext_metadata);
         self.send_extrinsic(xt.hex_encode());
     }
 }

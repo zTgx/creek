@@ -19,6 +19,8 @@ pub type CreateIdentityFn = (CallIndex, H256, Address32, Vec<u8>, Option<Vec<u8>
 pub type CreateIdentityXt<SignedExtra> = UncheckedExtrinsicV4<CreateIdentityFn, SignedExtra>;
 pub type RemoveIdentityFn = (CallIndex, H256, Vec<u8>);
 pub type RemoveIdentityXt<SignedExtra> = UncheckedExtrinsicV4<RemoveIdentityFn, SignedExtra>;
+pub type VerifyIdentityFn = (CallIndex, H256, Vec<u8>, Option<Vec<u8>>);
+pub type VerifyIdentityXt<SignedExtra> = UncheckedExtrinsicV4<VerifyIdentityFn, SignedExtra>;
 
 pub trait IdentityManagementXtBuilder {
     fn build_extrinsic_set_user_shielding_key(
@@ -40,6 +42,13 @@ pub trait IdentityManagementXtBuilder {
         shard: MrEnclave,
         identity: Identity,
     ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_verify_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
 impl<P> IdentityManagementXtBuilder for ApiClient<P>
@@ -71,7 +80,8 @@ where
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
-        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+        let encrypted_identity =
+            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
 
         compose_extrinsic!(
             self.api.clone(),
@@ -79,7 +89,7 @@ where
             "create_identity",
             H256::from(shard),
             address,
-            ciphertext,
+            encrypted_identity,
             ciphertext_metadata
         )
     }
@@ -91,14 +101,36 @@ where
     ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
-        let ciphertext = encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+        let encrypted_identity =
+            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
 
         compose_extrinsic!(
             self.api.clone(),
             IDENTITY_PALLET_NAME,
             "remove_identity",
             H256::from(shard),
-            ciphertext
+            encrypted_identity
+        )
+    }
+
+    fn build_extrinsic_verify_identity(
+        &self,
+        shard: MrEnclave,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        let identity_encoded = identity.encode();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let encrypted_identity =
+            encrypt_with_tee_shielding_pubkey(tee_shielding_pubkey, &identity_encoded);
+
+        compose_extrinsic!(
+            self.api.clone(),
+            IDENTITY_PALLET_NAME,
+            "verify_identity",
+            H256::from(shard),
+            encrypted_identity,
+            ciphertext_metadata
         )
     }
 }

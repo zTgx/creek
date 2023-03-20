@@ -16,6 +16,7 @@ pub trait IdentityManagementEventApi {
     ) -> ApiResult<SetUserShieldingKeyHandlingFailedEvent>;
     fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent>;
     fn wait_event_identity_removed(&self) -> ApiResult<IdentityRemovedEvent>;
+    fn wait_event_identity_verified(&self) -> ApiResult<IdentityVerifiedEvent>;
 }
 
 impl<P> IdentityManagementEventApi for ApiClient<P>
@@ -54,6 +55,13 @@ where
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
         let event: ApiResult<IdentityRemovedEvent> = self.api.wait_for_event(&events_out);
+        event
+    }
+
+    fn wait_event_identity_verified(&self) -> ApiResult<IdentityVerifiedEvent> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+        let event: ApiResult<IdentityVerifiedEvent> = self.api.wait_for_event(&events_out);
         event
     }
 }
@@ -100,4 +108,17 @@ pub struct IdentityRemovedEvent {
 impl StaticEvent for IdentityRemovedEvent {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "IdentityRemoved";
+}
+
+/// IdentityVerified
+#[derive(Decode, Debug)]
+pub struct IdentityVerifiedEvent {
+    pub account: AccountId,
+    pub identity: AesOutput,
+    pub id_graph: AesOutput,
+}
+
+impl StaticEvent for IdentityVerifiedEvent {
+    const PALLET: &'static str = IDENTITY_PALLET_NAME;
+    const EVENT: &'static str = "IdentityVerified";
 }
