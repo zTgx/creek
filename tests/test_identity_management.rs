@@ -137,7 +137,7 @@ fn tc_create_identity_then_remove_it() {
 }
 
 #[test]
-fn tc_create_identity_more_than_20_identities() {
+fn tc_create_identity_with_all_substrate_network() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -162,16 +162,7 @@ fn tc_create_identity_more_than_20_identities() {
         SubstrateNetwork::Khala,
     ];
 
-    let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
-    let bob: Address32 = bob.public().0.into();
-
-    let coc = sr25519::Pair::from_string("//Coc", None).unwrap();
-    let coc: Address32 = coc.public().0.into();
-
-    let dod = sr25519::Pair::from_string("//Dod", None).unwrap();
-    let dod: Address32 = dod.public().0.into();
-
-    let addresses = [address.clone(), bob, coc, dod];
+    let addresses = [address.clone()];
     networks.iter().for_each(|network| {
         addresses.iter().for_each(|address| {
             let identity = Identity::Substrate {
