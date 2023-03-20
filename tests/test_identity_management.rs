@@ -10,7 +10,7 @@ use litentry_test_suit::{
         Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
         ValidationData, Web3CommonValidationData, Web3ValidationData,
     },
-    utils::{generate_user_shielding_key, hex_account_to_address32, print_passed},
+    utils::{generate_user_shielding_key, hex_account_to_address32, print_passed, generate_incorrect_user_shielding_key},
     ApiClient,
 };
 use sp_core::{sr25519, Pair};
@@ -40,8 +40,8 @@ fn tc_set_user_shielding_key_faild() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let aes_key = [0, 1].to_vec();
-    api_client.set_user_shielding_key(shard, aes_key);
+    let user_shielding_key = generate_incorrect_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let event = api_client.wait_event_set_user_shielding_key_handle_failed();
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;

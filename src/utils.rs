@@ -14,6 +14,10 @@ pub fn generate_user_shielding_key() -> Vec<u8> {
     user_shieldng_key.to_vec()
 }
 
+pub fn generate_incorrect_user_shielding_key() -> Vec<u8> {
+    [0, 1].to_vec()
+}
+
 pub fn encrypt_with_tee_shielding_pubkey(
     tee_shielding_pubkey: &RsaPublicKey,
     msg: &[u8],
