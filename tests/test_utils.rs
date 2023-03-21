@@ -1,6 +1,6 @@
 use litentry_test_suit::{
     primitives::AesOutput,
-    utils::{decrypt_vc_with_user_shielding_key, print_passed},
+    utils::{create_n_random_sr25519_address, decrypt_vc_with_user_shielding_key, print_passed},
 };
 
 #[test]
@@ -81,4 +81,12 @@ fn tc_decrypt_vc_works() {
     assert!(vc.is_ok());
 
     print_passed();
+}
+
+#[test]
+fn tc_test_create_n_random_sr25519_pair() {
+    let address = create_n_random_sr25519_address(3);
+    address.iter().for_each(|item| {
+        println!("item: {:?}", item);
+    })
 }

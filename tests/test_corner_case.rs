@@ -32,7 +32,7 @@ fn tc_request_vc_with_20s_identities_or_more() {
     api_client.set_user_shielding_key(shard, user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let alice = hex_account_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
@@ -52,19 +52,14 @@ fn tc_request_vc_with_20s_identities_or_more() {
     let dod = sr25519::Pair::from_string("//Dod", None).unwrap();
     let dod: Address32 = dod.public().0.into();
 
-    let addresses = [address.clone(), bob, coc, dod];
+    let addresses = [bob, coc, dod];
     networks.iter().for_each(|network| {
         addresses.iter().for_each(|address| {
             let identity = Identity::Substrate {
                 network: network.clone(),
                 address: address.clone(),
             };
-            api_client.create_identity(
-                shard,
-                address.clone(),
-                identity.clone(),
-                ciphertext_metadata.clone(),
-            );
+            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
 
             println!(">>> Identity: {:?}", identity.clone());
             let event = api_client.wait_event_identity_created();

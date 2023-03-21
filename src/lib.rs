@@ -14,6 +14,8 @@ use substrate_api_client::{
     PlainTip, PlainTipExtrinsicParams, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
 
+const ACCOUNT_SEED_CHARSET: &[u8] =
+    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const NODE_URL: &str = "ws://127.0.0.1:9944";
 pub type ApiType<P> = Api<P, WsRpcClient, PlainTipExtrinsicParams>;
 
