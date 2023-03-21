@@ -8,7 +8,11 @@ cargo test --test test_vc_management --release -- --nocapture --test-threads=1
 ```
 
 ### TODOs
+- [x] identity verify
+- [ ] decrypt identity
+- [x] decrypt challenge_code
 - [ ] decrypt id_graph
+- [ ] query sidechain storage
 - [ ] query-related api
   - [x] identity-related query api
     - [x] `fn delegatee`
@@ -26,12 +30,13 @@ cargo test --test test_vc_management --release -- --nocapture --test-threads=1
     - [x] IdentityRemoved
     - [x] IdentityVerified
     - [x] DelegateeAdded
+    - [x] IdentityVerified
   - [ ] errors
     - [x] UnauthorisedUser
     - [ ] DelegateeNotExist 
 - [ ] cover vc-related event & error
   - [ ] events
-    - [x] VCIssuedEvent
+    - [x] VCIssued
     - [x] VCDisabled
     - [x] VCRevoked
 - [ ] subscribe system events

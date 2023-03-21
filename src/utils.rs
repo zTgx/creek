@@ -145,16 +145,16 @@ pub fn get_random_account_seed(len: usize) -> String {
     account_str
 }
 
-pub fn create_n_random_sr25519_address(num: u32) -> Vec<Address32> {
+pub fn create_n_random_sr25519_address(num: u32) -> Vec<sr25519::Pair> {
     let mut addresses = vec![];
     let mut index = 0;
     while index < num {
         let mut account_seed = get_random_account_seed(3);
         account_seed.insert_str(0, "//");
         let account_pair = sr25519::Pair::from_string(&account_seed, None).unwrap();
-        let address: Address32 = account_pair.public().0.into();
+        // let address: Address32 = account_pair.public().0.into();
 
-        addresses.push(address);
+        addresses.push(account_pair);
 
         index += 1;
     }

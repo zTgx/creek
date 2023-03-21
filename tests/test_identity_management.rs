@@ -11,9 +11,9 @@ use litentry_test_suit::{
         ValidationData, ValidationString, Web3CommonValidationData, Web3ValidationData,
     },
     utils::{
-        decrypt_challage_code_with_user_shielding_key, generate_incorrect_user_shielding_key,
-        generate_user_shielding_key, get_expected_raw_message, hex_account_to_address32,
-        print_passed,
+        create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
+        generate_incorrect_user_shielding_key, generate_user_shielding_key,
+        get_expected_raw_message, hex_account_to_address32, print_passed,
     },
     ApiClient,
 };
@@ -138,7 +138,7 @@ fn tc_create_identity_then_remove_it() {
 }
 
 #[test]
-fn tc_verify_identity_then_verify_it() {
+fn tc_create_identity_then_verify_it() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone());
 
@@ -172,6 +172,57 @@ fn tc_verify_identity_then_verify_it() {
     .unwrap();
     let message = get_expected_raw_message(&address, &identity, &challenge_code);
     let sr25519_sig = alice_pair.sign(&message);
+    let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
+
+    let message = ValidationString::try_from(message).unwrap();
+    let web3_common_validation_data = Web3CommonValidationData { message, signature };
+
+    let validation_data =
+        ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
+    api_client.verify_identity(shard, identity, validation_data);
+    let event = api_client.wait_event_identity_verified();
+    assert!(event.is_ok());
+
+    print_passed()
+}
+
+#[test]
+fn tc_create_a_random_identity_then_verify_it() {
+    let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice_pair.clone());
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let alice = hex_account_to_address32(alice).unwrap();
+
+    let network = SubstrateNetwork::Litentry;
+    let pair = create_n_random_sr25519_address(1)[0].clone();
+    let pubkey: Address32 = pair.public().0.into();
+
+    let identity = Identity::Substrate {
+        network,
+        address: pubkey,
+    };
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+
+    let event = api_client.wait_event_identity_created();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.who, api_client.get_signer().unwrap());
+
+    let encrypted_challenge_code = event.code;
+    let challenge_code = decrypt_challage_code_with_user_shielding_key(
+        encrypted_challenge_code,
+        &user_shielding_key,
+    )
+    .unwrap();
+    let message = get_expected_raw_message(&alice, &identity, &challenge_code);
+    let sr25519_sig = pair.sign(&message);
     let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
 
     let message = ValidationString::try_from(message).unwrap();

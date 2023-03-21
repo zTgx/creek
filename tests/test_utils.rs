@@ -1,7 +1,8 @@
 use litentry_test_suit::{
-    primitives::AesOutput,
+    primitives::{Address32, AesOutput},
     utils::{create_n_random_sr25519_address, decrypt_vc_with_user_shielding_key, print_passed},
 };
+use sp_core::Pair;
 
 #[test]
 fn tc_decrypt_vc_works() {
@@ -86,7 +87,8 @@ fn tc_decrypt_vc_works() {
 #[test]
 fn tc_test_create_n_random_sr25519_pair() {
     let address = create_n_random_sr25519_address(3);
-    address.iter().for_each(|item| {
-        println!("item: {:?}", item);
+    address.iter().for_each(|pair| {
+        let address: Address32 = pair.public().0.into();
+        println!("address: {:?}", address);
     })
 }
