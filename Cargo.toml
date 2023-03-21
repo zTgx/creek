@@ -36,3 +36,6 @@ sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkad
 jsonschema = { version = "0.16.0", default-features = false, features = [
   "draft202012",
 ] }
+
+[dev-dependencies]
+threadpool = "1.8.1"

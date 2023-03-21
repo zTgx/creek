@@ -9,7 +9,8 @@ use sp_core::Pair;
 use sp_core::H256;
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
-    compose_extrinsic, CallIndex, PlainTip, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
+    compose_call, compose_extrinsic, compose_extrinsic_offline, CallIndex, PlainTip,
+    SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
 };
 
 pub type SetUserShieldingKeyFn = (CallIndex, H256, Vec<u8>);
@@ -38,6 +39,15 @@ pub trait IdentityManagementXtBuilder {
 
     fn build_extrinsic_create_identity(
         &self,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn build_extrinsic_offline_create_identity(
+        &self,
+        nonce: u32,
         shard: MrEnclave,
         address: Address32,
         identity: Identity,
@@ -110,6 +120,37 @@ where
             address,
             encrypted_identity,
             ciphertext_metadata
+        )
+    }
+
+    fn build_extrinsic_offline_create_identity(
+        &self,
+        nonce: u32,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
+        let identity_encoded = identity.encode();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let encrypted_identity =
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
+
+        let meta = self.api.clone().metadata;
+        let call = compose_call!(
+            meta,
+            IDENTITY_PALLET_NAME,
+            "create_identity",
+            H256::from(shard),
+            address,
+            encrypted_identity,
+            ciphertext_metadata
+        );
+
+        compose_extrinsic_offline!(
+            self.api.clone().signer.unwrap(),
+            call,
+            self.api.clone().extrinsic_params(nonce)
         )
     }
 

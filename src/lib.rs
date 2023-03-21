@@ -11,7 +11,8 @@ use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
     compose_extrinsic, extrinsic::common::Batch, rpc::WsRpcClient, Api, CallIndex, Metadata,
-    PlainTip, PlainTipExtrinsicParams, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
+    PlainTip, PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, SubstrateDefaultSignedExtra,
+    UncheckedExtrinsicV4, XtStatus,
 };
 
 const ACCOUNT_SEED_CHARSET: &[u8] =
@@ -44,6 +45,11 @@ where
 
     pub fn get_signer(&self) -> Option<AccountId> {
         self.api.signer_account()
+    }
+
+    pub fn update_api(&mut self, tx_params: PlainTipExtrinsicParamsBuilder) {
+        let updated_api = self.api.clone().set_extrinsic_params_builder(tx_params);
+        self.api = updated_api;
     }
 
     pub fn send_extrinsic(&self, xthex_prefixed: String) {

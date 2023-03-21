@@ -20,6 +20,14 @@ pub trait IdentityManagementApi {
         identity: Identity,
         ciphertext_metadata: Option<Vec<u8>>,
     );
+    fn create_identity_offline(
+        &self,
+        nonce: u32,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    );
     fn remove_identity(&self, shard: MrEnclave, identity: Identity);
     fn verify_identity(
         &self,
@@ -61,6 +69,24 @@ where
     ) {
         let xt =
             self.build_extrinsic_create_identity(shard, address, identity, ciphertext_metadata);
+        self.send_extrinsic(xt.hex_encode());
+    }
+
+    fn create_identity_offline(
+        &self,
+        nonce: u32,
+        shard: MrEnclave,
+        address: Address32,
+        identity: Identity,
+        ciphertext_metadata: Option<Vec<u8>>,
+    ) {
+        let xt = self.build_extrinsic_offline_create_identity(
+            nonce,
+            shard,
+            address,
+            identity,
+            ciphertext_metadata,
+        );
         self.send_extrinsic(xt.hex_encode());
     }
 
