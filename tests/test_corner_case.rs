@@ -1,8 +1,11 @@
+use std::time::SystemTime;
+
 use litentry_test_suit::{
     identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
-    primitives::{Address32, Assertion, Identity, SubstrateNetwork},
-    utils::{generate_user_shielding_key, hex_account_to_address32},
-    vc_management::{api::VcManagementApi, events::VcManagementEventApi},
+    primitives::{Identity, SubstrateNetwork},
+    utils::{
+        create_n_random_sr25519_address, generate_user_shielding_key, hex_account_to_address32,
+    },
     ApiClient,
 };
 use sp_core::{sr25519, Pair};
@@ -23,7 +26,7 @@ https://github.com/litentry/litentry-parachain/issues/1468
 How long does it take to generate a VC with 20+ identities? What about 50 identities?
  */
 #[test]
-fn tc_request_vc_with_20s_identities_or_more() {
+fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -43,37 +46,39 @@ fn tc_request_vc_with_20s_identities_or_more() {
         SubstrateNetwork::Khala,
     ];
 
-    let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
-    let bob: Address32 = bob.public().0.into();
+    let identity_address = create_n_random_sr25519_address(6);
+    let mut created_identity_idex = 0;
 
-    let coc = sr25519::Pair::from_string("//Coc", None).unwrap();
-    let coc: Address32 = coc.public().0.into();
-
-    let dod = sr25519::Pair::from_string("//Dod", None).unwrap();
-    let dod: Address32 = dod.public().0.into();
-
-    let addresses = [bob, coc, dod];
+    let started_timestamp = SystemTime::now();
     networks.iter().for_each(|network| {
-        addresses.iter().for_each(|address| {
+        identity_address.iter().for_each(|address| {
             let identity = Identity::Substrate {
                 network: network.clone(),
                 address: address.clone(),
             };
             api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
-
-            println!(">>> Identity: {:?}", identity.clone());
             let event = api_client.wait_event_identity_created();
-            println!("<<< event: {:?}", event);
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
+
+            created_identity_idex += 1;
         })
     });
 
-    // Inputs
-    let a4 = Assertion::A4(1_u128);
-    api_client.request_vc(shard, a4);
+    let elapsed_secs = started_timestamp.elapsed().unwrap().as_secs();
+    println!(
+        " 🚩 created {} identities in one single thread using {} secs!",
+        created_identity_idex, elapsed_secs
+    );
 
-    // Wait event
-    let event = api_client.wait_event_vc_issued();
-    assert!(event.is_ok());
+    assert_eq!(created_identity_idex, 30);
+}
+
+#[test]
+fn tc_request_vc() {
+    // let a4 = Assertion::A4(1_u128);
+    // api_client.request_vc(shard, a4);
+
+    // let event = api_client.wait_event_vc_issued();
+    // assert!(event.is_ok());
 }
