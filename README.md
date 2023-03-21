@@ -3,11 +3,7 @@
 # Unofficial
 Although this is not an official repo, but the libraries(mainly refers to [substrate-api-client](https://github.com/scs/substrate-api-client)) that used in this repo will strictly consistent with [litentry-parachain](https://github.com/litentry/litentry-parachain).
 
-```shell
-cargo test --test test_vc_management --release -- --nocapture --test-threads=1
-```
-
-### TODOs
+### TODO
 - [x] identity verify
 - [ ] decrypt identity
 - [x] decrypt challenge_code

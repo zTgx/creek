@@ -3,13 +3,12 @@ use std::{sync::mpsc::channel, time::SystemTime};
 use litentry_test_suit::{
     identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
     primitives::{
-        Address32, Assertion, AssertionNetworks, Identity, IdentityMultiSignature, ParameterString,
-        SubstrateNetwork, ValidationData, ValidationString, Web3CommonValidationData,
-        Web3ValidationData,
+        Address32, Assertion, AssertionNetworks, Identity, ParameterString, SubstrateNetwork,
+        ValidationData,
     },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
-        generate_user_shielding_key, get_expected_raw_message, hex_account_to_address32,
+        generate_user_shielding_key, hex_account_to_address32, ValidationDataBuilder,
     },
     vc_management::{api::VcManagementApi, events::VcManagementEventApi},
     ApiClient,
@@ -211,17 +210,14 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                     &user_shielding_key,
                 )
                 .unwrap();
-                let message = get_expected_raw_message(&alice, &identity, &challenge_code);
-                let sr25519_sig = pair.sign(&message);
-                let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
-                let message = ValidationString::try_from(message).unwrap();
 
-                let web3_common_validation_data = Web3CommonValidationData { message, signature };
-                let validation_data = ValidationData::Web3(Web3ValidationData::Substrate(
-                    web3_common_validation_data,
-                ));
-
-                api_client.verify_identity(shard, identity, validation_data);
+                let vdata = ValidationData::build_vdata_substrate(
+                    &pair,
+                    &alice,
+                    &identity,
+                    &challenge_code,
+                );
+                api_client.verify_identity(shard, identity, vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());

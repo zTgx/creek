@@ -1,7 +1,8 @@
 use crate::{
     primitives::{
-        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity, CHALLENGE_CODE_SIZE,
-        USER_SHIELDING_KEY_NONCE_LEN,
+        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity,
+        IdentityMultiSignature, ValidationData, ValidationString, Web3CommonValidationData,
+        Web3ValidationData, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_NONCE_LEN,
     },
     ACCOUNT_SEED_CHARSET,
 };
@@ -14,7 +15,8 @@ use rand::{Rng, RngCore};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
-use sp_core::{blake2_256, sr25519, Pair};
+use sp_core::sr25519::Pair as SubstratePair;
+use sp_core::{blake2_256, sr25519, Pair}; // TODO: maybe use more generic struct
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
     let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
@@ -162,15 +164,37 @@ pub fn create_n_random_sr25519_address(num: u32) -> Vec<sr25519::Pair> {
     addresses
 }
 
-pub fn get_expected_raw_message(
-    who: &Address32,
-    identity: &Identity,
-    code: &ChallengeCode,
-) -> Vec<u8> {
+fn get_expected_raw_message(who: &Address32, identity: &Identity, code: &ChallengeCode) -> Vec<u8> {
     let mut payload = code.encode();
     payload.append(&mut who.encode());
     payload.append(&mut identity.encode());
     blake2_256(payload.as_slice()).to_vec()
+}
+
+pub trait ValidationDataBuilder {
+    fn build_vdata_substrate(
+        pair: &SubstratePair,
+        who: &Address32,
+        identity: &Identity,
+        code: &ChallengeCode,
+    ) -> ValidationData;
+}
+
+impl ValidationDataBuilder for ValidationData {
+    fn build_vdata_substrate(
+        pair: &SubstratePair,
+        who: &Address32,
+        identity: &Identity,
+        challenge_code: &ChallengeCode,
+    ) -> ValidationData {
+        let message = get_expected_raw_message(who, identity, challenge_code);
+        let sr25519_sig = pair.sign(&message);
+        let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
+        let message = ValidationString::try_from(message).unwrap();
+
+        let web3_common_validation_data = Web3CommonValidationData { message, signature };
+        ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data))
+    }
 }
 
 pub fn print_passed() {
