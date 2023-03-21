@@ -178,14 +178,14 @@ fn tc_request_vc_based_on_more_than_30_identities() {
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
-        // SubstrateNetwork::Polkadot,
-        // SubstrateNetwork::Kusama,
+        SubstrateNetwork::Polkadot,
+        SubstrateNetwork::Kusama,
         SubstrateNetwork::Litentry,
-        // SubstrateNetwork::Litmus,
-        // SubstrateNetwork::Khala,
+        SubstrateNetwork::Litmus,
+        SubstrateNetwork::Khala,
     ];
 
-    let identity_address = create_n_random_sr25519_address(1);
+    let identity_address = create_n_random_sr25519_address(6);
     let mut created_identity_idx = 0;
 
     let started_timestamp = SystemTime::now();
@@ -212,7 +212,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                 )
                 .unwrap();
                 let message = get_expected_raw_message(&alice, &identity, &challenge_code);
-                let sr25519_sig = alice_pair.sign(&message);
+                let sr25519_sig = pair.sign(&message);
                 let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
                 let message = ValidationString::try_from(message).unwrap();
 
