@@ -20,7 +20,6 @@ fn tc_request_vc() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(shard, user_shielding_key);
 
-    // Inputs
     let a1 = Assertion::A1;
 
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
@@ -54,11 +53,12 @@ fn tc_request_vc() {
     assertions.into_iter().for_each(|assertion| {
         api_client.request_vc(shard, assertion);
 
-        // Wait event
         let event = api_client.wait_event_vc_issued();
-
         assert!(event.is_ok());
-        println!(" ✅ [VCRequest] VC Index : {:?}", event.unwrap().vc_index);
+        let event = event.unwrap();
+        assert_eq!(event.account, api_client.get_signer().unwrap());
+
+        println!(" ✅ [VCRequest] VC Index : {:?}", event.vc_index);
     });
 }
 
@@ -217,6 +217,28 @@ fn tc_request_vc_and_revoke_it_success() {
 
     let expect_event = VCRevokedEvent { vc_index };
     assert_eq!(event.unwrap(), expect_event);
+
+    print_passed();
+}
+
+#[test]
+fn tc_request_vc_a4() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
+
+    let balance = 10_u128;
+    let a4 = Assertion::A4(balance);
+
+    api_client.request_vc(shard, a4);
+
+    let event = api_client.wait_event_vc_issued();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
 
     print_passed();
 }
