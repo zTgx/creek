@@ -10,7 +10,7 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, OsRng},
     Aes256Gcm, Key, KeyInit,
 };
-use codec::Encode;
+use codec::{Decode, Encode};
 use rand::{Rng, RngCore};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
@@ -73,6 +73,23 @@ pub fn decrypt_challage_code_with_user_shielding_key(
     challenge_code[..CHALLENGE_CODE_SIZE].clone_from_slice(&code.unwrap());
 
     Ok(challenge_code)
+}
+
+pub fn decrypt_identity_with_user_shielding_key(
+    encrypted_identity: AesOutput,
+    user_shielding_key: &[u8],
+) -> Result<Identity, String> {
+    let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
+    let cipher = Aes256Gcm::new(key);
+
+    let ciphertext = encrypted_identity.ciphertext;
+    let nonce = encrypted_identity.nonce;
+    let nonce = GenericArray::from_slice(&nonce);
+    match cipher.decrypt(nonce, ciphertext.as_ref()) {
+        Ok(plaintext) => Identity::decode(&mut plaintext.as_slice())
+            .map_err(|e| format!("Decode identity error: {}", e)),
+        Err(e) => Err(format!("Decode identity error: {}", e)),
+    }
 }
 
 pub fn hex_account_to_address32(hex_account: &str) -> Result<Address32, &'static str> {

@@ -5,10 +5,11 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 
 ### TODO
 - [x] identity verify
-- [ ] decrypt identity
+- [x] decrypt identity
 - [x] decrypt challenge_code
 - [ ] decrypt id_graph
 - [ ] query sidechain storage
+- [x] build_vdata_substrate
 - [ ] query-related api
   - [x] identity-related query api
     - [x] `fn delegatee`
