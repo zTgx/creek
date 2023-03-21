@@ -10,7 +10,10 @@ use litentry_test_suit::{
         Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
         ValidationData, Web3CommonValidationData, Web3ValidationData,
     },
-    utils::{generate_user_shielding_key, hex_account_to_address32, print_passed, generate_incorrect_user_shielding_key},
+    utils::{
+        generate_incorrect_user_shielding_key, generate_user_shielding_key,
+        hex_account_to_address32, print_passed,
+    },
     ApiClient,
 };
 use sp_core::{sr25519, Pair};
@@ -85,15 +88,14 @@ fn tc_create_identity() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(shard, user_shielding_key);
 
-    // Alice
-    let add =
-        hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
-    let mut y = [0u8; 32];
-    y[..32].clone_from_slice(&add);
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let address = hex_account_to_address32(alice).unwrap();
 
-    let address = Address32::from(y);
     let network = SubstrateNetwork::Litentry;
-    let identity = Identity::Substrate { network, address };
+    let identity = Identity::Substrate {
+        network,
+        address: address.clone(),
+    };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     api_client.create_identity(shard, address, identity, ciphertext_metadata);
@@ -143,13 +145,8 @@ fn tc_create_identity_with_all_substrate_network() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(shard, user_shielding_key);
 
-    // Alice
-    let add =
-        hex::decode("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").unwrap();
-    let mut y = [0u8; 32];
-    y[..32].clone_from_slice(&add);
-
-    let address = Address32::from(y);
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let address = hex_account_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
