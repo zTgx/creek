@@ -1,16 +1,20 @@
 use crate::{
-    primitives::{Address20, Address32, AesOutput, Credential, USER_SHIELDING_KEY_NONCE_LEN},
+    primitives::{
+        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity, CHALLENGE_CODE_SIZE,
+        USER_SHIELDING_KEY_NONCE_LEN,
+    },
     ACCOUNT_SEED_CHARSET,
 };
 use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, OsRng},
     Aes256Gcm, Key, KeyInit,
 };
+use codec::Encode;
 use rand::{Rng, RngCore};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
-use sp_core::{sr25519, Pair};
+use sp_core::{blake2_256, sr25519, Pair};
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
     let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
@@ -52,16 +56,21 @@ pub fn decrypt_vc_with_user_shielding_key(
 pub fn decrypt_challage_code_with_user_shielding_key(
     encrypted_challenge_code: AesOutput,
     user_shielding_key: &[u8],
-) -> Result<Vec<u8>, String> {
+) -> Result<ChallengeCode, String> {
     let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
     let cipher = Aes256Gcm::new(key);
 
     let ciphertext = encrypted_challenge_code.ciphertext;
     let nonce = encrypted_challenge_code.nonce;
     let nonce = GenericArray::from_slice(&nonce);
-    cipher
+    let code = cipher
         .decrypt(nonce, ciphertext.as_ref())
-        .map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e))
+        .map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e));
+
+    let mut challenge_code: ChallengeCode = [0u8; CHALLENGE_CODE_SIZE];
+    challenge_code[..CHALLENGE_CODE_SIZE].clone_from_slice(&code.unwrap());
+
+    Ok(challenge_code)
 }
 
 pub fn hex_account_to_address32(hex_account: &str) -> Result<Address32, &'static str> {
@@ -151,6 +160,17 @@ pub fn create_n_random_sr25519_address(num: u32) -> Vec<Address32> {
     }
 
     addresses
+}
+
+pub fn get_expected_raw_message(
+    who: &Address32,
+    identity: &Identity,
+    code: &ChallengeCode,
+) -> Vec<u8> {
+    let mut payload = code.encode();
+    payload.append(&mut who.encode());
+    payload.append(&mut identity.encode());
+    blake2_256(payload.as_slice()).to_vec()
 }
 
 pub fn print_passed() {

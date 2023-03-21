@@ -179,8 +179,9 @@ where
         identity: Identity,
         validation_data: ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
-        let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+
+        let identity_encoded = identity.encode();
         let encrypted_identity =
             encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
         let validation_data_encoded = validation_data.encode();
