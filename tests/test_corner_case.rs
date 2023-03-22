@@ -2,7 +2,10 @@ use std::{sync::mpsc::channel, time::SystemTime};
 
 use litentry_test_suit::{
     identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
-    primitives::{Address32, Assertion, Identity, SubstrateNetwork, ValidationData},
+    primitives::{
+        Address32, Assertion, AssertionNetworks, Identity, ParameterString, SubstrateNetwork,
+        ValidationData,
+    },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
         generate_user_shielding_key, hex_account_to_address32, ValidationDataBuilder,
@@ -231,6 +234,56 @@ fn tc_request_vc_based_on_more_than_30_identities() {
     );
 
     assert_eq!(created_identity_idx, 30);
+
+    {
+        println!("  [+] Start testing and apply for all assertions based on 30 dentities. ");
+
+        let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+        let api_client = ApiClient::new_with_signer(alice);
+
+        let shard = api_client.get_shard();
+        let user_shielding_key = generate_user_shielding_key();
+        api_client.set_user_shielding_key(shard, user_shielding_key);
+
+        println!("  [+] Start testing and apply for all assertions based on 30 dentities. ");
+
+        let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
+        let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
+        let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
+        let balance = 10_u128;
+        let networks = AssertionNetworks::with_bounded_capacity(1);
+
+        let a1 = Assertion::A1;
+        let a2 = Assertion::A2(guild_id.clone());
+        let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
+        let a4 = Assertion::A4(balance);
+        let a6 = Assertion::A6;
+        let a7 = Assertion::A7(balance);
+        let a8 = Assertion::A8(networks);
+        let a10 = Assertion::A10(balance);
+        let a11 = Assertion::A11(balance);
+
+        let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
+        let assertion_names = vec!["A1", "A2", "A3", "A4", "A6", "A7", "A8", "A10", "A11"];
+
+        assertions.into_iter().enumerate().for_each(|(idx, assertion)| {
+            let assertion_name = assertion_names[idx];
+            println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion {}. <<<<<<<<<<<<<<<<<<<<<<<< ", assertion_name);
+
+            let now = SystemTime::now();
+
+            api_client.request_vc(shard, assertion);
+            let event = api_client.wait_event_vc_issued();
+            assert!(event.is_ok());
+            assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
+
+            let elapsed_secs = now.elapsed().unwrap().as_secs();
+            println!(
+                " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue {} took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
+                assertion_name, elapsed_secs
+            );
+        });
+    }
 }
 
 #[test]

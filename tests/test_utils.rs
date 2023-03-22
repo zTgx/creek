@@ -84,11 +84,25 @@ fn tc_decrypt_vc_works() {
     print_passed();
 }
 
+/*
+Random Address in Hex:
+
+"0x443b7f4d965fc060b9ecae120d662bac3fad02b170d93f644297e53f44370751", "0xd2c9039be3da6809b1e885067afda4b88d93fc9a8ba13eeb407eb8dacce7b360", "0xbe82fa0c9ef8e48ab04616b472b8b9972a240ba9205668e833a607b1d1907c24", "0x96abc84cdfed1e40e049ca6e5b4593a7491980550ce28c0e63c17e7cb8b02008", "0xa2f8d097f8494a9dacc76ee38aeb177b0d0abb65d0df21b79e6e731409eb6419", "0xdc6b27ab83d735513053221eeebb9a6f2b01eb5c472db70923c9a044865c191d", "0x34d5c848c0a0082f51fafbd2008717f5fef5d2f37e21ce613fd2730a3e0ba300", "0x06d47769f43b09ba305f4bc3f566bef6d008bb7e8849f46701951b9e5848b811", "0x785360ec3dd882fdf0455089dd52d25509aecbe60f48b346d5f03ffda2660235", "0x16c681c7b1a00edb8fb4c9a6d163e3eadfb83742dfc56f41fe27e46c9639fd7b",
+ */
 #[test]
 fn tc_test_create_n_random_sr25519_pair() {
-    let address = create_n_random_sr25519_address(3);
+    let address = create_n_random_sr25519_address(10);
+
+    let mut ret = String::new();
     address.iter().for_each(|pair| {
         let address: Address32 = pair.public().0.into();
-        println!("address: {:?}", address);
-    })
+
+        let mut hex_addr = hex::encode(address.as_ref().to_vec());
+        hex_addr.insert_str(0, "\"0x");
+        hex_addr.push_str("\", ");
+
+        ret.push_str(&hex_addr)
+    });
+
+    println!("all addresses: {}", ret);
 }
