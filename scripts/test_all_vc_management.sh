@@ -1,1 +1,0 @@
-cargo test --test test_vc_management --release -- --nocapture
