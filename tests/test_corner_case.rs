@@ -2,10 +2,7 @@ use std::{sync::mpsc::channel, time::SystemTime};
 
 use litentry_test_suit::{
     identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
-    primitives::{
-        Address32, Assertion, AssertionNetworks, Identity, ParameterString, SubstrateNetwork,
-        ValidationData,
-    },
+    primitives::{Address32, Assertion, Identity, SubstrateNetwork, ValidationData},
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
         generate_user_shielding_key, hex_account_to_address32, ValidationDataBuilder,
@@ -234,48 +231,6 @@ fn tc_request_vc_based_on_more_than_30_identities() {
     );
 
     assert_eq!(created_identity_idx, 30);
-
-    {
-        println!("  [+] Start testing and apply for all assertions based on 30 dentities. ");
-
-        let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
-        let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
-        let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
-        let balance = 10_u128;
-        let networks = AssertionNetworks::with_bounded_capacity(1);
-
-        let a1 = Assertion::A1;
-        let a2 = Assertion::A2(guild_id.clone());
-        let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
-        let a4 = Assertion::A4(balance);
-        let a6 = Assertion::A6;
-        let a7 = Assertion::A7(balance);
-        let a8 = Assertion::A8(networks);
-        let a10 = Assertion::A10(balance);
-        let a11 = Assertion::A11(balance);
-
-        let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
-        let assertion_names = vec!["A1", "A2", "A3", "A4", "A6", "A7", "A8", "A10", "A11"];
-
-        assertions.into_iter().enumerate().for_each(|(idx, assertion)| {
-            let assertion_name = assertion_names[idx];
-            println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion {}. <<<<<<<<<<<<<<<<<<<<<<<< ", assertion_name);
-
-            let now = SystemTime::now();
-
-            api_client.request_vc(shard, assertion);
-
-            let event = api_client.wait_event_vc_issued();
-            assert!(event.is_ok());
-            assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
-
-            let elapsed_secs = now.elapsed().unwrap().as_secs();
-            println!(
-                " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue {} took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
-                assertion_name, elapsed_secs
-            );
-        });
-    }
 }
 
 #[test]
@@ -356,4 +311,74 @@ fn tc_create_all_substrate_network_then_request_vc() {
             );
         });
     }
+}
+
+#[test]
+fn tc_create_10s_verified_identities() {
+    let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice_pair.clone());
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let alice = hex_account_to_address32(alice).unwrap();
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
+
+    let address_len = 5;
+    let identites_len = networks.len() * address_len;
+
+    let identity_address = create_n_random_sr25519_address(address_len as u32);
+    let mut created_identity_idx = 0;
+
+    let started_timestamp = SystemTime::now();
+    networks.iter().for_each(|network| {
+        identity_address.iter().for_each(|pair| {
+            let address: Address32 = pair.public().0.into();
+            let identity = Identity::Substrate {
+                network: network.clone(),
+                address,
+            };
+            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+
+            let event = api_client.wait_event_identity_created();
+            assert!(event.is_ok());
+            let event = event.unwrap();
+            assert_eq!(event.who, api_client.get_signer().unwrap());
+
+            // Verify identity
+            {
+                let encrypted_challenge_code = event.code;
+                let challenge_code = decrypt_challage_code_with_user_shielding_key(
+                    encrypted_challenge_code,
+                    &user_shielding_key,
+                )
+                .unwrap();
+
+                let vdata = ValidationData::build_vdata_substrate(
+                    &pair,
+                    &alice,
+                    &identity,
+                    &challenge_code,
+                );
+                api_client.verify_identity(shard, identity, vdata);
+
+                let event = api_client.wait_event_identity_verified();
+                assert!(event.is_ok());
+            }
+
+            created_identity_idx += 1;
+        })
+    });
+
+    let elapsed_secs = started_timestamp.elapsed().unwrap().as_secs();
+    println!(
+        " 🚩 created {} identities in one single thread using {} secs!",
+        created_identity_idx, elapsed_secs
+    );
+
+    assert_eq!(created_identity_idx, identites_len);
 }

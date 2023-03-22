@@ -10,6 +10,8 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 - [ ] decrypt id_graph
 - [ ] query sidechain storage
 - [x] build_vdata_substrate
+- [x] [corner-case](./tests/test_corner_case.rs)
+- [x] [CI-error](./tests/test_ci_error.rs)
 - [ ] query-related api
   - [x] identity-related query api
     - [x] `fn delegatee`
