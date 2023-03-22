@@ -1,4 +1,5 @@
-# litentry-test-suit ![](https://tokei.rs/b1/github/zTgx/litentry-test-suit)
+# litentry-test-suit
+![](https://img.shields.io/github/commit-activity/y/zTgx/litentry-test-suit?style=for-the-badge)  ![](https://img.shields.io/github/languages/code-size/zTgx/litentry-test-suit?style=for-the-badge) ![](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=for-the-badge)
 
 # Unofficial
 Although this is not an official repo, but the libraries(mainly refers to [substrate-api-client](https://github.com/scs/substrate-api-client)) that used in this repo will strictly consistent with [litentry-parachain](https://github.com/litentry/litentry-parachain).
