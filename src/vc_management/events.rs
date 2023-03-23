@@ -15,7 +15,10 @@ pub trait VcManagementEventApi {
     fn wait_event_vc_issued(&self) -> ApiResult<VCIssuedEvent>;
     fn wait_event_vc_disabled(&self) -> ApiResult<VCDisabledEvent>;
     fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent>;
-    fn wait_error(&self) -> ApiResult<VCDisabledEvent>;
+}
+
+pub trait VcManagementErrorApi {
+    fn wait_error(&self) -> ApiResult<VCManagementError>;
 }
 
 impl<P> VcManagementEventApi for ApiClient<P>
@@ -47,12 +50,19 @@ where
         let vc_disabled_event: ApiResult<VCRevokedEvent> = self.api.wait_for_event(&events_out);
         vc_disabled_event
     }
+}
 
-    fn wait_error(&self) -> ApiResult<VCDisabledEvent> {
+impl<P> VcManagementErrorApi for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn wait_error(&self) -> ApiResult<VCManagementError> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
-        let vc_disabled_event: ApiResult<VCDisabledEvent> = self.api.wait_for_event(&events_out);
+        let vc_disabled_event: ApiResult<VCManagementError> = self.api.wait_for_event(&events_out);
         vc_disabled_event
     }
 }
@@ -90,4 +100,12 @@ pub struct VCRevokedEvent {
 impl StaticEvent for VCRevokedEvent {
     const PALLET: &'static str = VC_PALLET_NAME;
     const EVENT: &'static str = "VCRevoked";
+}
+
+/// Error
+#[derive(Decode, Debug, PartialEq, Eq)]
+pub struct VCManagementError;
+impl StaticEvent for VCManagementError {
+    const PALLET: &'static str = VC_PALLET_NAME;
+    const EVENT: &'static str = "()";
 }

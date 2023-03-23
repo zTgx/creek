@@ -1,17 +1,19 @@
-use std::time::SystemTime;
-
 use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString, VCContext},
-    utils::{generate_user_shielding_key, get_random_vc_index, print_passed, decrypt_vc_with_user_shielding_key},
+    utils::{
+        decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index,
+        print_passed,
+    },
     vc_management::{
         api::*,
-        events::{VCDisabledEvent, VCRevokedEvent, VcManagementEventApi},
+        events::{VCDisabledEvent, VCRevokedEvent, VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
     },
     ApiClient, ApiClientPatch,
 };
 use sp_core::{sr25519, Pair};
+use std::time::SystemTime;
 
 #[test]
 fn tc_request_vc() {
@@ -454,9 +456,11 @@ fn tc_double_revoke_vc() {
     print_passed();
 }
 
-#[test]
+/// Maybe sidecar is not a suitable solution right now, keep it here for future use.
+#[allow(dead_code)]
+// #[test]
 fn tc_query_storage_vc_registry_by_endpoint() {
-       let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
@@ -476,6 +480,9 @@ fn tc_query_storage_vc_registry_by_endpoint() {
     let endpoint = vc.credential_subject.endpoint;
     let vc_index = event.vc_index;
     let index = vc_index.to_string();
-    let vc_cotext = reqwest::blocking::get(endpoint + &index).unwrap().json::<VCContext>().unwrap();
+    let vc_cotext = reqwest::blocking::get(endpoint + &index)
+        .unwrap()
+        .json::<VCContext>()
+        .unwrap();
     assert_eq!(vc_cotext.hash, vc_index);
 }

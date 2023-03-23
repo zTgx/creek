@@ -21,6 +21,10 @@ pub trait IdentityManagementEventApi {
     fn wait_event_unexpected_message(&self) -> ApiResult<UnexpectedMessageEvent>;
 }
 
+pub trait IdentityManagementErrorApi {
+    fn wait_error(&self) -> ApiResult<IdentityManagementError>;
+}
+
 impl<P> IdentityManagementEventApi for ApiClient<P>
 where
     P: Pair,
@@ -79,6 +83,22 @@ where
         self.api.subscribe_events(events_in).unwrap();
         let event: ApiResult<UnexpectedMessageEvent> = self.api.wait_for_event(&events_out);
         event
+    }
+}
+
+impl<P> IdentityManagementErrorApi for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn wait_error(&self) -> ApiResult<IdentityManagementError> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let vc_disabled_event: ApiResult<IdentityManagementError> =
+            self.api.wait_for_event(&events_out);
+        vc_disabled_event
     }
 }
 
@@ -156,4 +176,12 @@ pub struct UnexpectedMessageEvent;
 impl StaticEvent for UnexpectedMessageEvent {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "UnexpectedMessage";
+}
+
+/// Error
+#[derive(Decode, Debug, PartialEq, Eq)]
+pub struct IdentityManagementError;
+impl StaticEvent for IdentityManagementError {
+    const PALLET: &'static str = IDENTITY_PALLET_NAME;
+    const EVENT: &'static str = "()";
 }
