@@ -5,15 +5,13 @@
 Although this is not an official repo, but the libraries(mainly refers to [substrate-api-client](https://github.com/scs/substrate-api-client)) that used in this repo will strictly consistent with [litentry-parachain](https://github.com/litentry/litentry-parachain).
 
 ### Features
-- [x] logically, just run `cargo test --release`
 - [x] rust only
-- [x] flexiable, construct any parameters you want
-- [x] easy to use, You only need to design the test cases and directly call the api to implement
+- [x] api is flexiable and easy to use
 - [x] based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
-- [x] `IdentityManagement` pallet api supported
-- [x] `VCManagement` pallet api supported
-- [ ] `sidechain` api supported
-- [x] `utils` methods supported
+- [x] `IdentityManagement` pallet api is supported
+- [x] `VCManagement` pallet api is supported
+- [ ] `sidechain` api is supported
+- [x] `utils` methods is supported
 - [x] covered [identity-management](./tests/test_identity_management.rs)
 - [x] covered [vc-management](./tests/test_vc_management.rs)
 - [x] covered [vc-verify](./tests/test_vc_verify.rs)
