@@ -15,8 +15,8 @@ use rand::{Rng, RngCore};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
-use sp_core::sr25519::Pair as SubstratePair;
-use sp_core::{blake2_256, sr25519, Pair}; // TODO: maybe use more generic struct
+use sp_core::{blake2_256, sr25519, Pair};
+use sp_core::{sr25519::Pair as SubstratePair, H256}; // TODO: maybe use more generic struct
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
     let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
@@ -119,6 +119,11 @@ pub fn hex_account_to_address20(hex_account: &str) -> Result<Address20, &'static
 pub fn get_a_random_u32() -> u32 {
     let mut os_rng = OsRng;
     os_rng.next_u32()
+}
+
+pub fn get_random_vc_index() -> H256 {
+    let index: [u8; 32] = rand::random();
+    H256::from(index)
 }
 
 /// Interprets the string `s` in order to generate a key Pair. Returns both the pair and an

@@ -3,7 +3,7 @@ use std::time::SystemTime;
 use litentry_test_suit::{
     identity_management::api::*,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    utils::{generate_user_shielding_key, print_passed},
+    utils::{generate_user_shielding_key, get_random_vc_index, print_passed},
     vc_management::{
         api::*,
         events::{VCDisabledEvent, VCRevokedEvent, VcManagementEventApi},
@@ -330,4 +330,126 @@ fn tc_request_vc_all_with_timestamp() {
             assertion_name, elapsed_secs
         );
     });
+}
+
+#[test]
+fn tc_disable_non_exists_vc_index() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
+
+    let vc_index = get_random_vc_index();
+    api_client.disable_vc(vc_index);
+
+    let event = api_client.wait_error();
+    assert!(event.is_err());
+    match event {
+        Ok(_) => panic!("Exptected the call to fail."),
+        Err(e) => {
+            let string_error = format!("{:?}", e);
+            assert!(string_error.contains("pallet: \"VCManagement\""));
+            assert!(string_error.contains("error: \"VCNotExist\""));
+        }
+    }
+
+    print_passed();
+}
+
+#[test]
+fn tc_revoke_non_exists_vc_index() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
+
+    let vc_index = get_random_vc_index();
+    api_client.disable_vc(vc_index);
+
+    let event = api_client.wait_error();
+    assert!(event.is_err());
+    match event {
+        Ok(_) => panic!("Exptected the call to fail."),
+        Err(e) => {
+            let string_error = format!("{:?}", e);
+            assert!(string_error.contains("pallet: \"VCManagement\""));
+            assert!(string_error.contains("error: \"VCNotExist\""));
+        }
+    }
+
+    print_passed();
+}
+
+#[test]
+fn tc_double_disabled_vc() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
+
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    let event = api_client.wait_event_vc_issued();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    let vc_index = event.vc_index;
+    api_client.disable_vc(vc_index);
+    api_client.disable_vc(vc_index);
+
+    let event = api_client.wait_error();
+    assert!(event.is_err());
+    match event {
+        Ok(_) => panic!("Exptected the call to fail."),
+        Err(e) => {
+            let string_error = format!("{:?}", e);
+            assert!(string_error.contains("pallet: \"VCManagement\""));
+            assert!(string_error.contains("error: \"VCAlreadyDisabled\""));
+        }
+    }
+
+    print_passed();
+}
+
+#[test]
+fn tc_double_revoke_vc() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key);
+
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    let event = api_client.wait_event_vc_issued();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    let vc_index = event.vc_index;
+    api_client.revoke_vc(vc_index);
+    api_client.revoke_vc(vc_index);
+
+    let event = api_client.wait_error();
+    assert!(event.is_err());
+    match event {
+        Ok(_) => panic!("Exptected the call to fail."),
+        Err(e) => {
+            let string_error = format!("{:?}", e);
+            assert!(string_error.contains("pallet: \"VCManagement\""));
+            assert!(string_error.contains("error: \"VCNotExist\""));
+        }
+    }
+
+    print_passed();
 }

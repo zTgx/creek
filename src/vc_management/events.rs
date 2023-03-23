@@ -15,6 +15,7 @@ pub trait VcManagementEventApi {
     fn wait_event_vc_issued(&self) -> ApiResult<VCIssuedEvent>;
     fn wait_event_vc_disabled(&self) -> ApiResult<VCDisabledEvent>;
     fn wait_event_vc_revoked(&self) -> ApiResult<VCRevokedEvent>;
+    fn wait_error(&self) -> ApiResult<VCDisabledEvent>;
 }
 
 impl<P> VcManagementEventApi for ApiClient<P>
@@ -44,6 +45,14 @@ where
         self.api.subscribe_events(events_in).unwrap();
 
         let vc_disabled_event: ApiResult<VCRevokedEvent> = self.api.wait_for_event(&events_out);
+        vc_disabled_event
+    }
+
+    fn wait_error(&self) -> ApiResult<VCDisabledEvent> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let vc_disabled_event: ApiResult<VCDisabledEvent> = self.api.wait_for_event(&events_out);
         vc_disabled_event
     }
 }
