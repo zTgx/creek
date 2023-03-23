@@ -29,7 +29,7 @@ pub trait IdentityManagementApi {
         ciphertext_metadata: Option<Vec<u8>>,
     );
     fn remove_identity(&self, shard: MrEnclave, identity: Identity);
-    fn verify_identity(&self, shard: MrEnclave, identity: Identity, vdata: ValidationData);
+    fn verify_identity(&self, shard: MrEnclave, identity: &Identity, vdata: ValidationData);
 }
 
 pub trait IdentityManagementQueryApi {
@@ -90,7 +90,7 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn verify_identity(&self, shard: MrEnclave, identity: Identity, vdata: ValidationData) {
+    fn verify_identity(&self, shard: MrEnclave, identity: &Identity, vdata: ValidationData) {
         let xt = self.build_extrinsic_verify_identity(shard, identity, vdata);
         self.send_extrinsic(xt.hex_encode());
     }

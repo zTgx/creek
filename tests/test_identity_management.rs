@@ -12,8 +12,9 @@ use litentry_test_suit::{
     },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
-        decrypt_identity_with_user_shielding_key, generate_incorrect_user_shielding_key,
-        generate_user_shielding_key, hex_account_to_address32, print_passed, ValidationDataBuilder,
+        decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
+        generate_incorrect_user_shielding_key, generate_user_shielding_key,
+        hex_account_to_address32, print_passed, ValidationDataBuilder,
     },
     ApiClient,
 };
@@ -174,9 +175,17 @@ fn tc_create_identity_then_verify_it() {
 
     let vdata =
         ValidationData::build_vdata_substrate(&alice_pair, &address, &identity, &challenge_code);
-    api_client.verify_identity(shard, identity, vdata);
+    api_client.verify_identity(shard, &identity, vdata);
     let event = api_client.wait_event_identity_verified();
     assert!(event.is_ok());
+    let event = event.unwrap();
+    let id_graph = decrypt_id_graph_with_user_shielding_key(event.id_graph, &user_shielding_key);
+
+    assert!(id_graph.is_ok());
+    let id_graph = id_graph.unwrap();
+    id_graph.iter().for_each(|(_, identity_context)| {
+        assert_eq!(identity_context.is_verified, true);
+    });
 
     print_passed()
 }
@@ -218,7 +227,7 @@ fn tc_create_a_random_identity_then_verify_it() {
     .unwrap();
 
     let vdata = ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code);
-    api_client.verify_identity(shard, identity, vdata);
+    api_client.verify_identity(shard, &identity, vdata);
     let event = api_client.wait_event_identity_verified();
     assert!(event.is_ok());
 
@@ -303,7 +312,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
 
     let validation_data =
         ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
-    api_client.verify_identity(shard, identity, validation_data);
+    api_client.verify_identity(shard, &identity, validation_data);
     let event = api_client.wait_event_unexpected_message();
     assert!(event.is_ok());
 

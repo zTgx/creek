@@ -217,7 +217,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, identity, vdata);
+                api_client.verify_identity(shard, &identity, vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());
@@ -417,7 +417,7 @@ fn tc_create_10s_verified_identities() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, identity, vdata);
+                api_client.verify_identity(shard, &identity, vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());
@@ -497,7 +497,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, identity, vdata);
+                api_client.verify_identity(shard, &identity, vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());

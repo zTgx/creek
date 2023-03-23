@@ -296,8 +296,9 @@ pub enum SubstrateNetwork {
     Kusama,
     Litentry,
     Litmus,
+    LitentryRococo,
     Khala,
-    TestNet,
+    TestNet, // when we launch it with standalone (integritee-)node
 }
 
 impl SubstrateNetwork {
@@ -308,6 +309,7 @@ impl SubstrateNetwork {
             Self::Kusama => 2,
             Self::Litentry => 31,
             Self::Litmus => 131,
+            Self::LitentryRococo => 42,
             Self::Khala => 30,
             Self::TestNet => 13,
         }
@@ -319,6 +321,7 @@ impl SubstrateNetwork {
             2 => Self::Kusama,
             31 => Self::Litentry,
             131 => Self::Litmus,
+            42 => Self::LitentryRococo,
             30 => Self::Khala,
             _ => Self::TestNet,
         }
@@ -444,6 +447,39 @@ pub struct VCContext {
     pub hash: H256,
     // status of the VC
     pub status: Status,
+}
+
+type MaxMetadataLength = ConstU32<128>;
+pub type MetadataOf = BoundedVec<u8, MaxMetadataLength>;
+
+// The context associated with the (litentry-account, did) pair
+// TODO: maybe we have better naming
+#[derive(Clone, Eq, PartialEq, Debug, Encode, Decode, TypeInfo, MaxEncodedLen, Default)]
+#[scale_info(skip_type_params(T))]
+#[codec(mel_bound())]
+pub struct IdentityContext {
+    // the metadata
+    pub metadata: Option<MetadataOf>,
+    // the block number (of parent chain) where the creation was intially requested
+    pub creation_request_block: Option<ParentchainBlockNumber>,
+    // the block number (of parent chain) where the verification was intially requested
+    pub verification_request_block: Option<ParentchainBlockNumber>,
+    // if this did is verified
+    pub is_verified: bool,
+}
+
+impl IdentityContext {
+    pub fn new(
+        creation_request_block: ParentchainBlockNumber,
+        verification_request_block: ParentchainBlockNumber,
+    ) -> Self {
+        Self {
+            metadata: None,
+            creation_request_block: Some(creation_request_block),
+            verification_request_block: Some(verification_request_block),
+            is_verified: false,
+        }
+    }
 }
 
 #[derive(Encode, Decode, MaxEncodedLen, TypeInfo, PartialEq, Eq, Clone, Debug)]

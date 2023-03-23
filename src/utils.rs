@@ -1,6 +1,6 @@
 use crate::{
     primitives::{
-        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity,
+        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity, IdentityContext,
         IdentityMultiSignature, ValidationData, ValidationString, Web3CommonValidationData,
         Web3ValidationData, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_NONCE_LEN,
     },
@@ -87,6 +87,23 @@ pub fn decrypt_identity_with_user_shielding_key(
     let nonce = GenericArray::from_slice(&nonce);
     match cipher.decrypt(nonce, ciphertext.as_ref()) {
         Ok(plaintext) => Identity::decode(&mut plaintext.as_slice())
+            .map_err(|e| format!("Decode identity error: {}", e)),
+        Err(e) => Err(format!("Decode identity error: {}", e)),
+    }
+}
+
+pub fn decrypt_id_graph_with_user_shielding_key(
+    encrypted_id_graph: AesOutput,
+    user_shielding_key: &[u8],
+) -> Result<Vec<(Identity, IdentityContext)>, String> {
+    let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
+    let cipher = Aes256Gcm::new(key);
+
+    let ciphertext = encrypted_id_graph.ciphertext;
+    let nonce = encrypted_id_graph.nonce;
+    let nonce = GenericArray::from_slice(&nonce);
+    match cipher.decrypt(nonce, ciphertext.as_ref()) {
+        Ok(plaintext) => Vec::<(Identity, IdentityContext)>::decode(&mut plaintext.as_slice())
             .map_err(|e| format!("Decode identity error: {}", e)),
         Err(e) => Err(format!("Decode identity error: {}", e)),
     }

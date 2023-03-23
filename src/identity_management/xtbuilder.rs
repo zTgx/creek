@@ -63,7 +63,7 @@ pub trait IdentityManagementXtBuilder {
     fn build_extrinsic_verify_identity(
         &self,
         shard: MrEnclave,
-        identity: Identity,
+        identity: &Identity,
         validation_data: ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
@@ -176,7 +176,7 @@ where
     fn build_extrinsic_verify_identity(
         &self,
         shard: MrEnclave,
-        identity: Identity,
+        identity: &Identity,
         validation_data: ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
