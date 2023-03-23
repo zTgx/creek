@@ -435,3 +435,89 @@ fn tc_create_10s_verified_identities() {
 
     assert_eq!(created_identity_idx, identites_len);
 }
+
+/*
+https://github.com/litentry/litentry-parachain/issues/1487
+
+Mainly to see:
+
+if IDGraph will be capped
+how large is the returned IDGraph
+
+ */
+#[test]
+fn tc_create_more_than_20_identities_and_check_idgraph_size() {
+    let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice_pair.clone());
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let alice = hex_account_to_address32(alice).unwrap();
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
+
+    let address_len = 11;
+    let identites_len = networks.len() * address_len;
+
+    let identity_address = create_n_random_sr25519_address(address_len as u32);
+    let mut created_identity_idx = 0;
+    let mut id_graph_size = 0;
+
+    let started_timestamp = SystemTime::now();
+    networks.iter().for_each(|network| {
+        identity_address.iter().for_each(|pair| {
+            let address: Address32 = pair.public().0.into();
+            let identity = Identity::Substrate {
+                network: network.clone(),
+                address,
+            };
+            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+
+            let event = api_client.wait_event_identity_created();
+            assert!(event.is_ok());
+            let event = event.unwrap();
+            assert_eq!(event.who, api_client.get_signer().unwrap());
+
+            // Verify identity
+            {
+                let encrypted_challenge_code = event.code;
+                let challenge_code = decrypt_challage_code_with_user_shielding_key(
+                    encrypted_challenge_code,
+                    &user_shielding_key,
+                )
+                .unwrap();
+
+                let vdata = ValidationData::build_vdata_substrate(
+                    &pair,
+                    &alice,
+                    &identity,
+                    &challenge_code,
+                );
+                api_client.verify_identity(shard, identity, vdata);
+
+                let event = api_client.wait_event_identity_verified();
+                assert!(event.is_ok());
+                let event = event.unwrap();
+                assert_eq!(event.account, api_client.get_signer().unwrap());
+
+                id_graph_size += event.id_graph.len();
+            }
+
+            created_identity_idx += 1;
+        })
+    });
+
+    let elapsed_secs = started_timestamp.elapsed().unwrap().as_secs();
+    println!(
+        " 🚩 Creating {} identities stats: \n
+            >>> Took {} secs \n
+            >>> id_graph {} bytes \n",
+        created_identity_idx, elapsed_secs, id_graph_size
+    );
+
+    assert_eq!(created_identity_idx, identites_len);
+}

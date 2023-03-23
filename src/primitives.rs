@@ -80,6 +80,16 @@ pub struct AesOutput {
     pub nonce: [u8; USER_SHIELDING_KEY_NONCE_LEN], // IV
 }
 
+impl AesOutput {
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    pub fn len(&self) -> usize {
+        self.ciphertext.len() + self.aad.len() + USER_SHIELDING_KEY_NONCE_LEN
+    }
+}
+
 pub type ParentchainBlockNumber = u32;
 
 /// Ed25519 Signature 2018, W3C, 23 July 2021, https://w3c-ccg.github.io/lds-ed25519-2018
