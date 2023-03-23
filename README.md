@@ -4,15 +4,30 @@
 # Unofficial
 Although this is not an official repo, but the libraries(mainly refers to [substrate-api-client](https://github.com/scs/substrate-api-client)) that used in this repo will strictly consistent with [litentry-parachain](https://github.com/litentry/litentry-parachain).
 
-### TODO
-- [x] identity verify
+### Features
+- [x] logically, just run `cargo test --release`
+- [x] rust only
+- [x] flexiable, construct any parameters you want
+- [x] easy to use, You only need to design the test cases and directly call the api to implement
+- [x] based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
+- [x] `IdentityManagement` pallet api supported
+- [x] `VCManagement` pallet api supported
+- [ ] `sidechain` api supported
+- [x] `utils` methods supported
+- [x] covered [identity-management](./tests/test_identity_management.rs)
+- [x] covered [vc-management](./tests/test_vc_management.rs)
+- [x] covered [vc-verify](./tests/test_vc_verify.rs)
+- [x] covered [corner-case](./tests/test_corner_case.rs)
+- [x] covered [ci-error](./tests/test_ci_error.rs)
+- [x] covered all events & errors
+
+### Todo
 - [x] decrypt identity
 - [x] decrypt challenge_code
 - [ ] decrypt id_graph
 - [ ] query sidechain storage
 - [x] build_vdata_substrate
-- [x] [corner-case](./tests/test_corner_case.rs)
-- [x] [CI-error](./tests/test_ci_error.rs)
+- [ ] event timeout
 - [ ] query-related api
   - [x] identity-related query api
     - [x] `fn delegatee`
