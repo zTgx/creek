@@ -2,8 +2,8 @@ use std::time::SystemTime;
 
 use litentry_test_suit::{
     identity_management::api::*,
-    primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    utils::{generate_user_shielding_key, get_random_vc_index, print_passed},
+    primitives::{Assertion, AssertionNetworks, Network, ParameterString, VCContext},
+    utils::{generate_user_shielding_key, get_random_vc_index, print_passed, decrypt_vc_with_user_shielding_key},
     vc_management::{
         api::*,
         events::{VCDisabledEvent, VCRevokedEvent, VcManagementEventApi},
@@ -452,4 +452,30 @@ fn tc_double_revoke_vc() {
     }
 
     print_passed();
+}
+
+#[test]
+fn tc_query_storage_vc_registry_by_endpoint() {
+       let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+
+    let a1 = Assertion::A1;
+    api_client.request_vc(shard, a1);
+
+    let event = api_client.wait_event_vc_issued();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    let encrypted_vc = event.vc;
+    let vc = decrypt_vc_with_user_shielding_key(encrypted_vc, &user_shielding_key).unwrap();
+    let endpoint = vc.credential_subject.endpoint;
+    let vc_index = event.vc_index;
+    let index = vc_index.to_string();
+    let vc_cotext = reqwest::blocking::get(endpoint + &index).unwrap().json::<VCContext>().unwrap();
+    assert_eq!(vc_cotext.hash, vc_index);
 }
