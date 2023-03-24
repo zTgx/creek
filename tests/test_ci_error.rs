@@ -52,7 +52,7 @@ fn tc_ci_pr1475_7809442449() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let who = hex_account_to_address32(alice).unwrap();

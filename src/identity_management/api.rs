@@ -11,7 +11,7 @@ use substrate_api_client::ApiResult;
 use super::IDENTITY_PALLET_NAME;
 
 pub trait IdentityManagementApi {
-    fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>);
+    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8]);
     fn add_delegatee(&self, account: Address32);
     fn create_identity(
         &self,
@@ -42,11 +42,11 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn set_user_shielding_key(&self, shard: MrEnclave, aes_key: Vec<u8>) {
+    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8]) {
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
         let encrpted_shielding_key =
-            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &aes_key);
-        let xt = self.build_extrinsic_set_user_shielding_key(shard, encrpted_shielding_key);
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, user_shielding_key);
+        let xt = self.build_extrinsic_set_user_shielding_key(shard, &encrpted_shielding_key);
         self.send_extrinsic(xt.hex_encode());
     }
 

@@ -22,7 +22,7 @@ fn tc_request_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
 
@@ -73,7 +73,7 @@ pub fn tc_batch_request_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -100,7 +100,7 @@ pub fn tc_batch_all_request_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let balance = 1_u128;
     let a4 = Assertion::A4(balance);
@@ -127,7 +127,7 @@ pub fn tc_request_vc_then_disable_it_success() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -158,7 +158,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -201,7 +201,7 @@ fn tc_request_vc_and_revoke_it_success() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     // Inputs
     let a1 = Assertion::A1;
@@ -232,7 +232,7 @@ fn tc_request_vc_a1() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
 
@@ -261,7 +261,7 @@ fn tc_request_vc_a4() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let balance = 10_u128;
     let a4 = Assertion::A4(balance);
@@ -291,7 +291,7 @@ fn tc_request_vc_all_with_timestamp() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     println!("  [+] Start testing and apply for all assertions based on 30 dentities. ");
 
@@ -341,7 +341,7 @@ fn tc_disable_non_exists_vc_index() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let vc_index = get_random_vc_index();
     api_client.disable_vc(vc_index);
@@ -367,7 +367,7 @@ fn tc_revoke_non_exists_vc_index() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let vc_index = get_random_vc_index();
     api_client.disable_vc(vc_index);
@@ -393,7 +393,7 @@ fn tc_double_disabled_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
     api_client.request_vc(shard, a1);
@@ -428,7 +428,7 @@ fn tc_double_revoke_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
     api_client.request_vc(shard, a1);
@@ -465,7 +465,7 @@ fn tc_query_storage_vc_registry_by_endpoint() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
     api_client.request_vc(shard, a1);

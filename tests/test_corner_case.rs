@@ -39,7 +39,7 @@ fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -90,7 +90,7 @@ fn tc_request_vc_with_20s_identities_or_more_parallelise() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -170,7 +170,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -243,7 +243,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
 
         let shard = api_client.get_shard();
         let user_shielding_key = generate_user_shielding_key();
-        api_client.set_user_shielding_key(shard, user_shielding_key);
+        api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
         println!("  [+] Start testing and apply for all assertions based on 30 dentities. ");
 
@@ -293,7 +293,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -373,7 +373,7 @@ fn tc_create_10s_verified_identities() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -452,7 +452,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();

@@ -21,13 +21,13 @@ use litentry_test_suit::{
 use sp_core::{sr25519, Pair};
 
 #[test]
-fn tc_set_user_shielding_key() {
+fn tc_set_user_shielding_key_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
     let expect_event = SetUserShieldingKeyEvent {
@@ -46,7 +46,7 @@ fn tc_set_user_shielding_key_faild() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_incorrect_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let event = api_client.wait_event_set_user_shielding_key_handle_failed();
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;
@@ -64,7 +64,7 @@ fn tc_add_delegatee_error() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
     let expect_event = SetUserShieldingKeyEvent {
@@ -88,7 +88,7 @@ fn tc_create_identity() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();
@@ -116,7 +116,7 @@ fn tc_create_identity_then_remove_it() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();
@@ -145,7 +145,7 @@ fn tc_create_identity_then_verify_it() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();
@@ -197,7 +197,7 @@ fn tc_create_a_random_identity_then_verify_it() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let alice = hex_account_to_address32(alice).unwrap();
@@ -241,7 +241,7 @@ fn tc_create_identity_with_all_substrate_network() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();
@@ -285,7 +285,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     // Alice
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
@@ -326,7 +326,7 @@ fn tc_create_identity_error_unauthorised_user() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key);
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
@@ -360,7 +360,7 @@ fn tc_create_identity_then_decrypt_it() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(shard, user_shielding_key.clone());
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = hex_account_to_address32(alice).unwrap();

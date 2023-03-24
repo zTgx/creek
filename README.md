@@ -19,13 +19,6 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 - [x] covered [ci-error](./tests/test_ci_error.rs)
 - [x] covered all events & errors
 
-### Todo
-- [ ] query sidechain storage
-- [ ] event timeout
-- [ ] subscribe system events
-  - [ ] ExtrinsicSuccess
-  - [ ] ExtrinsicFailed
-
 ---
 
 ### Process of adding test cases

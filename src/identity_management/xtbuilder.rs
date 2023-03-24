@@ -28,8 +28,8 @@ pub type VerifyIdentityXt<SignedExtra> = UncheckedExtrinsicV4<VerifyIdentityFn, 
 pub trait IdentityManagementXtBuilder {
     fn build_extrinsic_set_user_shielding_key(
         &self,
-        shard: MrEnclave,
-        encrpted_shielding_key: Vec<u8>,
+        shard: &MrEnclave,
+        encrpted_shielding_key: &[u8],
     ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_add_delegatee(
@@ -76,15 +76,15 @@ where
 {
     fn build_extrinsic_set_user_shielding_key(
         &self,
-        shard: MrEnclave,
-        encrpted_shielding_key: Vec<u8>,
+        shard: &MrEnclave,
+        encrpted_shielding_key: &[u8],
     ) -> SetUserShieldingKeyXt<SubstrateDefaultSignedExtra<PlainTip>> {
         compose_extrinsic!(
             self.api.clone(),
             IDENTITY_PALLET_NAME,
             "set_user_shielding_key",
             H256::from(shard),
-            encrpted_shielding_key
+            encrpted_shielding_key.to_vec()
         )
     }
 
