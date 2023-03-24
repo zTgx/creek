@@ -3,6 +3,8 @@ pub mod primitives;
 pub mod utils;
 pub mod vc_management;
 
+use std::sync::mpsc::channel;
+
 use crate::primitives::{Enclave, MrEnclave};
 use codec::Encode;
 use primitives::RsaPublicKeyGenerator;
@@ -10,9 +12,9 @@ use rsa::RsaPublicKey;
 use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
-    compose_extrinsic, extrinsic::common::Batch, rpc::WsRpcClient, Api, CallIndex, Metadata,
-    PlainTip, PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, SubstrateDefaultSignedExtra,
-    UncheckedExtrinsicV4, XtStatus,
+    compose_extrinsic, extrinsic::common::Batch, rpc::WsRpcClient, Api, CallIndex, Error, Events,
+    FromHexString, Metadata, PlainTip, PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder,
+    StaticEvent, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
 
 const ACCOUNT_SEED_CHARSET: &[u8] =
@@ -147,7 +149,7 @@ where
 pub trait ApiClientPatch {
     fn batch_all<Call: Encode + Clone>(
         &self,
-        calls: Vec<Call>,
+        calls: &[Call],
     ) -> UtilityBatchAllXt<Call, SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
@@ -166,9 +168,60 @@ where
 {
     fn batch_all<Call: Encode + Clone>(
         &self,
-        calls: Vec<Call>,
+        calls: &[Call],
     ) -> UtilityBatchAllXt<Call, SubstrateDefaultSignedExtra<PlainTip>> {
-        let calls = Batch { calls };
+        let calls = Batch {
+            calls: calls.to_vec(),
+        };
         compose_extrinsic!(self.api.clone(), UTILITY_MODULE, UTILITY_BATCH_ALL, calls)
+    }
+}
+
+pub trait SubscribeEventPatch<EventType: StaticEvent> {
+    fn collect_events(&self, target_num: usize) -> Vec<EventType>;
+}
+
+impl<P, EventType> SubscribeEventPatch<EventType> for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+    EventType: StaticEvent,
+{
+    fn collect_events(&self, target_num: usize) -> Vec<EventType> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let mut collected = vec![];
+        loop {
+            if collected.len() == target_num {
+                break;
+            }
+
+            let events_str = events_out.recv().unwrap();
+            let event_bytes = Vec::from_hex(events_str).unwrap();
+            let events = Events::new(self.api.metadata.clone(), Default::default(), event_bytes);
+
+            for maybe_event_details in events.iter() {
+                let event_details = maybe_event_details.unwrap();
+                let event_metadata = event_details.event_metadata();
+                println!(
+                    "Found extrinsic: {:?}, {:?}",
+                    event_metadata.pallet(),
+                    event_metadata.event()
+                );
+                if event_metadata.pallet() == EventType::PALLET
+                    && event_metadata.event() == EventType::EVENT
+                {
+                    let event = event_details
+                        .as_event::<EventType>()
+                        .unwrap()
+                        .ok_or(Error::Other("Could not find the specific event".into()));
+                    collected.push(event.unwrap());
+                }
+            }
+        }
+
+        collected
     }
 }

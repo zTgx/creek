@@ -174,7 +174,7 @@ fn tc_create_identity_then_verify_it() {
     let event = api_client.wait_event_identity_verified();
     assert!(event.is_ok());
     let event = event.unwrap();
-    let id_graph = decrypt_id_graph_with_user_shielding_key(event.id_graph, &user_shielding_key);
+    let id_graph = decrypt_id_graph_with_user_shielding_key(&user_shielding_key, event.id_graph);
 
     assert!(id_graph.is_ok());
     let id_graph = id_graph.unwrap();

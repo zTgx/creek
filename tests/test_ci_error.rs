@@ -103,7 +103,7 @@ fn tc_ci_pr1475_7809442449() {
                 .function,
         );
     });
-    api_client.send_extrinsic(api_client.batch_all(calls).hex_encode());
+    api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());

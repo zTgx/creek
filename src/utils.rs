@@ -93,8 +93,8 @@ pub fn decrypt_identity_with_user_shielding_key(
 }
 
 pub fn decrypt_id_graph_with_user_shielding_key(
-    encrypted_id_graph: AesOutput,
     user_shielding_key: &[u8],
+    encrypted_id_graph: AesOutput,
 ) -> Result<Vec<(Identity, IdentityContext)>, String> {
     let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
     let cipher = Aes256Gcm::new(key);

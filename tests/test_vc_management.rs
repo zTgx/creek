@@ -16,7 +16,7 @@ use sp_core::{sr25519, Pair};
 use std::time::SystemTime;
 
 #[test]
-fn tc_request_vc() {
+fn tc_request_vc_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -61,9 +61,9 @@ fn tc_request_vc() {
         assert!(event.is_ok());
         let event = event.unwrap();
         assert_eq!(event.account, api_client.get_signer().unwrap());
-
-        println!(" ✅ [VCRequest] VC Index : {:?}", event.vc_index);
     });
+
+    print_passed()
 }
 
 #[test]
@@ -117,7 +117,7 @@ pub fn tc_batch_all_request_vc() {
                 .function,
         );
     });
-    api_client.send_extrinsic(api_client.batch_all(assertion_calls).hex_encode());
+    api_client.send_extrinsic(api_client.batch_all(&assertion_calls).hex_encode());
 }
 
 #[test]
