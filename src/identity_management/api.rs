@@ -8,33 +8,7 @@ use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::ApiResult;
 
-use super::IDENTITY_PALLET_NAME;
-
-pub trait IdentityManagementApi {
-    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8]);
-    fn add_delegatee(&self, account: Address32);
-    fn create_identity(
-        &self,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
-    );
-    fn create_identity_offline(
-        &self,
-        nonce: u32,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
-    );
-    fn remove_identity(&self, shard: MrEnclave, identity: Identity);
-    fn verify_identity(&self, shard: MrEnclave, identity: &Identity, vdata: ValidationData);
-}
-
-pub trait IdentityManagementQueryApi {
-    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>>;
-}
+use super::{IdentityManagementApi, IdentityManagementQueryApi, IDENTITY_PALLET_NAME};
 
 impl<P> IdentityManagementApi for ApiClient<P>
 where
@@ -50,17 +24,17 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn add_delegatee(&self, account: Address32) {
+    fn add_delegatee(&self, account: &Address32) {
         let xt = self.build_extrinsic_add_delegatee(account);
         self.send_extrinsic(xt.hex_encode());
     }
 
     fn create_identity(
         &self,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) {
         let xt =
             self.build_extrinsic_create_identity(shard, address, identity, ciphertext_metadata);
@@ -70,10 +44,10 @@ where
     fn create_identity_offline(
         &self,
         nonce: u32,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) {
         let xt = self.build_extrinsic_offline_create_identity(
             nonce,
@@ -85,12 +59,12 @@ where
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn remove_identity(&self, shard: MrEnclave, identity: Identity) {
+    fn remove_identity(&self, shard: &MrEnclave, identity: &Identity) {
         let xt = self.build_extrinsic_remove_identity(shard, identity);
         self.send_extrinsic(xt.hex_encode());
     }
 
-    fn verify_identity(&self, shard: MrEnclave, identity: &Identity, vdata: ValidationData) {
+    fn verify_identity(&self, shard: &MrEnclave, identity: &Identity, vdata: &ValidationData) {
         let xt = self.build_extrinsic_verify_identity(shard, identity, vdata);
         self.send_extrinsic(xt.hex_encode());
     }

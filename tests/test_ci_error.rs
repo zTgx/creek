@@ -8,8 +8,8 @@
  */
 use litentry_test_suit::{
     identity_management::{
-        api::IdentityManagementApi, events::IdentityManagementEventApi,
-        xtbuilder::IdentityManagementXtBuilder,
+        events::IdentityManagementEventApi, xtbuilder::IdentityManagementXtBuilder,
+        IdentityManagementApi,
     },
     primitives::{Address32, Identity, MrEnclave, Web2Network},
     utils::{generate_user_shielding_key, hex_account_to_address32, print_passed},
@@ -95,10 +95,10 @@ fn tc_ci_pr1475_7809442449() {
         calls.push(
             api_client
                 .build_extrinsic_create_identity(
-                    item.shard,
-                    item.who,
-                    item.identity,
-                    item.ciphertext_metadata,
+                    &item.shard,
+                    &item.who,
+                    &item.identity,
+                    &item.ciphertext_metadata,
                 )
                 .function,
         );

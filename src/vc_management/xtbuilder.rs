@@ -20,18 +20,18 @@ pub type VCRevokeXt<SignedExtra> = UncheckedExtrinsicV4<VCRevokeFn, SignedExtra>
 pub trait VcManagementXtBuilder {
     fn build_extrinsic_request_vc(
         &self,
-        shard: MrEnclave,
-        assertion: Assertion,
+        shard: &MrEnclave,
+        assertion: &Assertion,
     ) -> VCRequestXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_disable_vc(
         &self,
-        vc_index: H256,
+        vc_index: &H256,
     ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_revoke_vc(
         &self,
-        vc_index: H256,
+        vc_index: &H256,
     ) -> VCRevokeXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
@@ -43,29 +43,29 @@ where
 {
     fn build_extrinsic_request_vc(
         &self,
-        shard: MrEnclave,
-        assertion: Assertion,
+        shard: &MrEnclave,
+        assertion: &Assertion,
     ) -> VCRequestXt<SubstrateDefaultSignedExtra<PlainTip>> {
         compose_extrinsic!(
             self.api.clone(),
             VC_PALLET_NAME,
             "request_vc",
             H256::from(shard),
-            assertion
+            assertion.clone()
         )
     }
 
     fn build_extrinsic_disable_vc(
         &self,
-        vc_index: H256,
+        vc_index: &H256,
     ) -> VCDisableXt<SubstrateDefaultSignedExtra<PlainTip>> {
-        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "disable_vc", vc_index)
+        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "disable_vc", *vc_index)
     }
 
     fn build_extrinsic_revoke_vc(
         &self,
-        vc_index: H256,
+        vc_index: &H256,
     ) -> VCRevokeXt<SubstrateDefaultSignedExtra<PlainTip>> {
-        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "revoke_vc", vc_index)
+        compose_extrinsic!(self.api.clone(), VC_PALLET_NAME, "revoke_vc", *vc_index)
     }
 }

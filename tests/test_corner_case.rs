@@ -1,7 +1,7 @@
 use std::{sync::mpsc::channel, time::SystemTime};
 
 use litentry_test_suit::{
-    identity_management::{api::IdentityManagementApi, events::IdentityManagementEventApi},
+    identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::{
         Address32, Assertion, AssertionNetworks, Identity, ParameterString, SubstrateNetwork,
         ValidationData,
@@ -10,7 +10,7 @@ use litentry_test_suit::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
         generate_user_shielding_key, hex_account_to_address32, ValidationDataBuilder,
     },
-    vc_management::{api::VcManagementApi, events::VcManagementEventApi},
+    vc_management::{events::VcManagementEventApi, VcManagementApi},
     ApiClient,
 };
 use sp_core::{sr25519, Pair};
@@ -64,7 +64,7 @@ fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
                 network: network.clone(),
                 address,
             };
-            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+            api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
@@ -132,10 +132,10 @@ fn tc_request_vc_with_20s_identities_or_more_parallelise() {
             pool.execute(move || {
                 api_client.create_identity_offline(
                     nonce,
-                    shard,
-                    alice,
-                    identity.clone(),
-                    ciphertext_metadata.clone(),
+                    &shard,
+                    &alice,
+                    &identity,
+                    &ciphertext_metadata,
                 );
 
                 let event = api_client.wait_event_identity_created();
@@ -195,7 +195,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                 network: network.clone(),
                 address,
             };
-            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+            api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
@@ -206,8 +206,8 @@ fn tc_request_vc_based_on_more_than_30_identities() {
             {
                 let encrypted_challenge_code = event.code;
                 let challenge_code = decrypt_challage_code_with_user_shielding_key(
-                    encrypted_challenge_code,
                     &user_shielding_key,
+                    encrypted_challenge_code,
                 )
                 .unwrap();
 
@@ -217,7 +217,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, &identity, vdata);
+                api_client.verify_identity(&shard, &identity, &vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());
@@ -272,7 +272,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
 
             let now = SystemTime::now();
 
-            api_client.request_vc(shard, assertion);
+            api_client.request_vc(&shard, &assertion);
             let event = api_client.wait_event_vc_issued();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
@@ -320,7 +320,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
                 address,
             };
 
-            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+            api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
@@ -351,7 +351,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
 
             let now = SystemTime::now();
 
-            api_client.request_vc(shard, assertion);
+            api_client.request_vc(&shard, &assertion);
 
             let event = api_client.wait_event_vc_issued();
             assert!(event.is_ok());
@@ -395,7 +395,7 @@ fn tc_create_10s_verified_identities() {
                 network: network.clone(),
                 address,
             };
-            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+            api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
@@ -406,8 +406,8 @@ fn tc_create_10s_verified_identities() {
             {
                 let encrypted_challenge_code = event.code;
                 let challenge_code = decrypt_challage_code_with_user_shielding_key(
-                    encrypted_challenge_code,
                     &user_shielding_key,
+                    encrypted_challenge_code,
                 )
                 .unwrap();
 
@@ -417,7 +417,7 @@ fn tc_create_10s_verified_identities() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, &identity, vdata);
+                api_client.verify_identity(&shard, &identity, &vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());
@@ -475,7 +475,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
                 network: network.clone(),
                 address,
             };
-            api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+            api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
@@ -486,8 +486,8 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
             {
                 let encrypted_challenge_code = event.code;
                 let challenge_code = decrypt_challage_code_with_user_shielding_key(
-                    encrypted_challenge_code,
                     &user_shielding_key,
+                    encrypted_challenge_code,
                 )
                 .unwrap();
 
@@ -497,7 +497,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
                     &identity,
                     &challenge_code,
                 );
-                api_client.verify_identity(shard, &identity, vdata);
+                api_client.verify_identity(&shard, &identity, &vdata);
 
                 let event = api_client.wait_event_identity_verified();
                 assert!(event.is_ok());

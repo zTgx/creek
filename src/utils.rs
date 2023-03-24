@@ -38,8 +38,8 @@ pub fn encrypt_with_tee_shielding_pubkey(
 }
 
 pub fn decrypt_vc_with_user_shielding_key(
-    encrypted_vc: AesOutput,
     user_shielding_key: &[u8],
+    encrypted_vc: AesOutput,
 ) -> Result<Credential, String> {
     let ciphertext = encrypted_vc.ciphertext;
     let nonce: [u8; USER_SHIELDING_KEY_NONCE_LEN] = encrypted_vc.nonce;
@@ -56,8 +56,8 @@ pub fn decrypt_vc_with_user_shielding_key(
 }
 
 pub fn decrypt_challage_code_with_user_shielding_key(
-    encrypted_challenge_code: AesOutput,
     user_shielding_key: &[u8],
+    encrypted_challenge_code: AesOutput,
 ) -> Result<ChallengeCode, String> {
     let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
     let cipher = Aes256Gcm::new(key);
@@ -76,8 +76,8 @@ pub fn decrypt_challage_code_with_user_shielding_key(
 }
 
 pub fn decrypt_identity_with_user_shielding_key(
-    encrypted_identity: AesOutput,
     user_shielding_key: &[u8],
+    encrypted_identity: AesOutput,
 ) -> Result<Identity, String> {
     let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
     let cipher = Aes256Gcm::new(key);

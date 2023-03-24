@@ -34,37 +34,37 @@ pub trait IdentityManagementXtBuilder {
 
     fn build_extrinsic_add_delegatee(
         &self,
-        account: Address32,
+        account: &Address32,
     ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_create_identity(
         &self,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_offline_create_identity(
         &self,
         nonce: u32,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_remove_identity(
         &self,
-        shard: MrEnclave,
-        identity: Identity,
+        shard: &MrEnclave,
+        identity: &Identity,
     ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 
     fn build_extrinsic_verify_identity(
         &self,
-        shard: MrEnclave,
+        shard: &MrEnclave,
         identity: &Identity,
-        validation_data: ValidationData,
+        validation_data: &ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
 }
 
@@ -90,22 +90,22 @@ where
 
     fn build_extrinsic_add_delegatee(
         &self,
-        account: Address32,
+        account: &Address32,
     ) -> AddDelegateXt<SubstrateDefaultSignedExtra<PlainTip>> {
         compose_extrinsic!(
             self.api.clone(),
             IDENTITY_PALLET_NAME,
             "add_delegatee",
-            account
+            *account
         )
     }
 
     fn build_extrinsic_create_identity(
         &self,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
@@ -117,19 +117,19 @@ where
             IDENTITY_PALLET_NAME,
             "create_identity",
             H256::from(shard),
-            address,
+            *address,
             encrypted_identity,
-            ciphertext_metadata
+            ciphertext_metadata.clone()
         )
     }
 
     fn build_extrinsic_offline_create_identity(
         &self,
         nonce: u32,
-        shard: MrEnclave,
-        address: Address32,
-        identity: Identity,
-        ciphertext_metadata: Option<Vec<u8>>,
+        shard: &MrEnclave,
+        address: &Address32,
+        identity: &Identity,
+        ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
@@ -142,9 +142,9 @@ where
             IDENTITY_PALLET_NAME,
             "create_identity",
             H256::from(shard),
-            address,
+            *address,
             encrypted_identity,
-            ciphertext_metadata
+            ciphertext_metadata.clone()
         );
 
         compose_extrinsic_offline!(
@@ -156,8 +156,8 @@ where
 
     fn build_extrinsic_remove_identity(
         &self,
-        shard: MrEnclave,
-        identity: Identity,
+        shard: &MrEnclave,
+        identity: &Identity,
     ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
@@ -175,9 +175,9 @@ where
 
     fn build_extrinsic_verify_identity(
         &self,
-        shard: MrEnclave,
+        shard: &MrEnclave,
         identity: &Identity,
-        validation_data: ValidationData,
+        validation_data: &ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
 

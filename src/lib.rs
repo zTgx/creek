@@ -93,7 +93,7 @@ where
         let shard = enclave.mr_enclave;
         let shard_in_hex = format!("0x{}", HexDisplay::from(&shard));
 
-        println!("\n ✅ Hex shard : {}", shard_in_hex);
+        println!("\n ✅ New shard : {}", shard_in_hex);
 
         shard
     }

@@ -1,14 +1,14 @@
 use litentry_test_suit::{
-    identity_management::api::*,
+    identity_management::IdentityManagementApi,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString, VCContext},
     utils::{
         decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index,
         print_passed,
     },
     vc_management::{
-        api::*,
         events::{VCDisabledEvent, VCRevokedEvent, VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
+        VcManagementApi, VcManagementQueryApi,
     },
     ApiClient, ApiClientPatch,
 };
@@ -55,7 +55,7 @@ fn tc_request_vc() {
 
     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
     assertions.into_iter().for_each(|assertion| {
-        api_client.request_vc(shard, assertion);
+        api_client.request_vc(&shard, &assertion);
 
         let event = api_client.wait_event_vc_issued();
         assert!(event.is_ok());
@@ -86,7 +86,7 @@ pub fn tc_batch_request_vc() {
     assertions.into_iter().for_each(|assertion| {
         assertion_calls.push(
             api_client
-                .build_extrinsic_request_vc(shard, assertion)
+                .build_extrinsic_request_vc(&shard, &assertion)
                 .function,
         );
     });
@@ -113,7 +113,7 @@ pub fn tc_batch_all_request_vc() {
     assertions.into_iter().for_each(|assertion| {
         assertion_calls.push(
             api_client
-                .build_extrinsic_request_vc(shard, assertion)
+                .build_extrinsic_request_vc(&shard, &assertion)
                 .function,
         );
     });
@@ -131,7 +131,7 @@ pub fn tc_request_vc_then_disable_it_success() {
 
     // Inputs
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     // Wait event
     let event = api_client.wait_event_vc_issued();
@@ -140,7 +140,7 @@ pub fn tc_request_vc_then_disable_it_success() {
     let vc_index = event.unwrap().vc_index;
     println!(" ✅ VC Index : {:?}", vc_index);
 
-    api_client.disable_vc(vc_index);
+    api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
     let expect_event = VCDisabledEvent { vc_index };
@@ -162,7 +162,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
 
     // Inputs
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -171,7 +171,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     println!(" ✅ A1 VC Index : {:?}", vc_index_a1);
 
     let a6 = Assertion::A6;
-    api_client.request_vc(shard, a6);
+    api_client.request_vc(&shard, &a6);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -179,7 +179,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let vc_index_a6 = event.unwrap().vc_index;
     println!(" ✅ A6 VC Index : {:?}", vc_index_a6);
 
-    api_client.disable_vc(vc_index_a6);
+    api_client.disable_vc(&vc_index_a6);
     let event = api_client.wait_event_vc_disabled();
     let expect_event = VCDisabledEvent {
         vc_index: vc_index_a6,
@@ -188,7 +188,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     assert!(event.is_ok());
     assert_eq!(event.unwrap(), expect_event);
 
-    let a1_context = api_client.vc_registry(vc_index_a1);
+    let a1_context = api_client.vc_registry(&vc_index_a1);
     assert!(a1_context.is_some());
 
     print_passed();
@@ -205,7 +205,7 @@ fn tc_request_vc_and_revoke_it_success() {
 
     // Inputs
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     // Wait event
     let event = api_client.wait_event_vc_issued();
@@ -214,7 +214,7 @@ fn tc_request_vc_and_revoke_it_success() {
     let vc_index = event.unwrap().vc_index;
     println!(" ✅ A1 VC Index : {:?}", vc_index);
 
-    api_client.revoke_vc(vc_index);
+    api_client.revoke_vc(&vc_index);
 
     let event = api_client.wait_event_vc_revoked();
     assert!(event.is_ok());
@@ -238,7 +238,7 @@ fn tc_request_vc_a1() {
 
     println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A1. <<<<<<<<<<<<<<<<<<<<<<<< ");
     let now = SystemTime::now();
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -268,7 +268,7 @@ fn tc_request_vc_a4() {
 
     println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A4. <<<<<<<<<<<<<<<<<<<<<<<< ");
     let now = SystemTime::now();
-    api_client.request_vc(shard, a4);
+    api_client.request_vc(&shard, &a4);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -320,7 +320,7 @@ fn tc_request_vc_all_with_timestamp() {
 
         let now = SystemTime::now();
 
-        api_client.request_vc(shard, assertion);
+        api_client.request_vc(&shard, &assertion);
 
         let event = api_client.wait_event_vc_issued();
         assert!(event.is_ok());
@@ -344,7 +344,7 @@ fn tc_disable_non_exists_vc_index() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let vc_index = get_random_vc_index();
-    api_client.disable_vc(vc_index);
+    api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_error();
     assert!(event.is_err());
@@ -370,7 +370,7 @@ fn tc_revoke_non_exists_vc_index() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let vc_index = get_random_vc_index();
-    api_client.disable_vc(vc_index);
+    api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_error();
     assert!(event.is_err());
@@ -396,7 +396,7 @@ fn tc_double_disabled_vc() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -404,8 +404,8 @@ fn tc_double_disabled_vc() {
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
     let vc_index = event.vc_index;
-    api_client.disable_vc(vc_index);
-    api_client.disable_vc(vc_index);
+    api_client.disable_vc(&vc_index);
+    api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_error();
     assert!(event.is_err());
@@ -431,7 +431,7 @@ fn tc_double_revoke_vc() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -439,8 +439,8 @@ fn tc_double_revoke_vc() {
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
     let vc_index = event.vc_index;
-    api_client.revoke_vc(vc_index);
-    api_client.revoke_vc(vc_index);
+    api_client.revoke_vc(&vc_index);
+    api_client.revoke_vc(&vc_index);
 
     let event = api_client.wait_error();
     assert!(event.is_err());
@@ -468,7 +468,7 @@ fn tc_query_storage_vc_registry_by_endpoint() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let a1 = Assertion::A1;
-    api_client.request_vc(shard, a1);
+    api_client.request_vc(&shard, &a1);
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
@@ -476,7 +476,7 @@ fn tc_query_storage_vc_registry_by_endpoint() {
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
     let encrypted_vc = event.vc;
-    let vc = decrypt_vc_with_user_shielding_key(encrypted_vc, &user_shielding_key).unwrap();
+    let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, encrypted_vc).unwrap();
     let endpoint = vc.credential_subject.endpoint;
     let vc_index = event.vc_index;
     let index = vc_index.to_string();

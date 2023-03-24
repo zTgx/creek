@@ -1,10 +1,10 @@
 use litentry_test_suit::{
     identity_management::{
-        api::*,
         events::{
             IdentityManagementEventApi, SetUserShieldingKeyEvent,
             SetUserShieldingKeyHandlingFailedEvent,
         },
+        IdentityManagementApi,
     },
     primitives::{
         Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
@@ -75,7 +75,7 @@ fn tc_add_delegatee_error() {
 
     let bob_pair = sr25519::Pair::from_string("//Bob", None).unwrap();
     let bob: Address32 = bob_pair.public().0.into();
-    api_client.add_delegatee(bob);
+    api_client.add_delegatee(&bob);
 
     let event = api_client.wait_event_delegatee_added();
     assert!(event.is_err());
@@ -100,7 +100,7 @@ fn tc_create_identity() {
     };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(shard, address, identity, ciphertext_metadata);
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
@@ -124,13 +124,13 @@ fn tc_create_identity_then_remove_it() {
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(shard, address, identity.clone(), ciphertext_metadata);
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
-    api_client.remove_identity(shard, identity);
+    api_client.remove_identity(&shard, &identity);
     let event = api_client.wait_event_identity_removed();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
@@ -154,12 +154,7 @@ fn tc_create_identity_then_verify_it() {
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(
-        shard,
-        address,
-        identity.clone(),
-        ciphertext_metadata.clone(),
-    );
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
@@ -168,14 +163,14 @@ fn tc_create_identity_then_verify_it() {
 
     let encrypted_challenge_code = event.code;
     let challenge_code = decrypt_challage_code_with_user_shielding_key(
-        encrypted_challenge_code,
         &user_shielding_key,
+        encrypted_challenge_code,
     )
     .unwrap();
 
     let vdata =
         ValidationData::build_vdata_substrate(&alice_pair, &address, &identity, &challenge_code);
-    api_client.verify_identity(shard, &identity, vdata);
+    api_client.verify_identity(&shard, &identity, &vdata);
     let event = api_client.wait_event_identity_verified();
     assert!(event.is_ok());
     let event = event.unwrap();
@@ -212,7 +207,7 @@ fn tc_create_a_random_identity_then_verify_it() {
     };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(shard, alice, identity.clone(), ciphertext_metadata.clone());
+    api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
@@ -221,13 +216,13 @@ fn tc_create_a_random_identity_then_verify_it() {
 
     let encrypted_challenge_code = event.code;
     let challenge_code = decrypt_challage_code_with_user_shielding_key(
-        encrypted_challenge_code,
         &user_shielding_key,
+        encrypted_challenge_code,
     )
     .unwrap();
 
     let vdata = ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code);
-    api_client.verify_identity(shard, &identity, vdata);
+    api_client.verify_identity(&shard, &identity, &vdata);
     let event = api_client.wait_event_identity_verified();
     assert!(event.is_ok());
 
@@ -262,12 +257,7 @@ fn tc_create_identity_with_all_substrate_network() {
                 network: network.clone(),
                 address: address.clone(),
             };
-            api_client.create_identity(
-                shard,
-                address.clone(),
-                identity,
-                ciphertext_metadata.clone(),
-            );
+            api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
             let event = api_client.wait_event_identity_created();
             assert!(event.is_ok());
@@ -294,12 +284,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(
-        shard,
-        address,
-        identity.clone(),
-        ciphertext_metadata.clone(),
-    );
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
@@ -310,9 +295,8 @@ fn tc_verify_identity_with_unexpected_message_event() {
     let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
     let web3_common_validation_data = Web3CommonValidationData { message, signature };
 
-    let validation_data =
-        ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
-    api_client.verify_identity(shard, &identity, validation_data);
+    let vdata = ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
+    api_client.verify_identity(&shard, &identity, &vdata);
     let event = api_client.wait_event_unexpected_message();
     assert!(event.is_ok());
 
@@ -337,7 +321,7 @@ fn tc_create_identity_error_unauthorised_user() {
         network: SubstrateNetwork::Polkadot,
         address: bob.clone(),
     };
-    api_client.create_identity(shard, bob.clone(), identity, ciphertext_metadata.clone());
+    api_client.create_identity(&shard, &bob, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_err());
@@ -369,12 +353,7 @@ fn tc_create_identity_then_decrypt_it() {
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
-    api_client.create_identity(
-        shard,
-        address,
-        identity.clone(),
-        ciphertext_metadata.clone(),
-    );
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
     let event = api_client.wait_event_identity_created();
     assert!(event.is_ok());
@@ -383,7 +362,7 @@ fn tc_create_identity_then_decrypt_it() {
 
     let encrypted_identity = event.identity;
     let decrypted_identity =
-        decrypt_identity_with_user_shielding_key(encrypted_identity, &user_shielding_key);
+        decrypt_identity_with_user_shielding_key(&user_shielding_key, encrypted_identity);
     assert!(decrypted_identity.is_ok());
     assert_eq!(identity, decrypted_identity.unwrap());
 
