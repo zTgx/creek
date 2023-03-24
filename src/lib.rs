@@ -2,6 +2,7 @@ pub mod identity_management;
 pub mod primitives;
 pub mod utils;
 pub mod vc_management;
+pub mod sidechain;
 
 use crate::primitives::{Enclave, MrEnclave};
 use codec::Encode;
@@ -15,9 +16,11 @@ use substrate_api_client::{
     UncheckedExtrinsicV4, XtStatus,
 };
 
+const NODE_URL: &str = "ws://127.0.0.1:9944";
+const WORKER_URL: &str = "wss://localhost:2000";
+
 const ACCOUNT_SEED_CHARSET: &[u8] =
     b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const NODE_URL: &str = "ws://127.0.0.1:9944";
 pub type ApiType<P> = Api<P, WsRpcClient, PlainTipExtrinsicParams>;
 
 #[derive(Clone)]
@@ -36,6 +39,15 @@ where
 {
     pub fn new_with_signer(signer: P) -> Self {
         let client = WsRpcClient::new(NODE_URL);
+        let api = ApiType::new(client)
+            .map(|api| api.set_signer(signer))
+            .unwrap();
+
+        ApiClient { api }
+    }
+
+    pub fn with_worker(signer: P) -> Self {
+        let client = WsRpcClient::new(WORKER_URL);
         let api = ApiType::new(client)
             .map(|api| api.set_signer(signer))
             .unwrap();
