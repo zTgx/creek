@@ -442,15 +442,6 @@ fn tc_create_10s_verified_identities() {
     assert_eq!(created_identity_idx, identites_len);
 }
 
-/*
-https://github.com/litentry/litentry-parachain/issues/1487
-
-Mainly to see:
-
-if IDGraph will be capped
-how large is the returned IDGraph
-
- */
 #[test]
 fn tc_create_more_than_20_identities_and_check_idgraph_size() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
@@ -528,6 +519,25 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
     assert_eq!(created_identity_idx, identites_len);
 }
 
+/*
+The returned IDGraph in the IdentityVerified event will contain the current IDGraph of all linked identities, capped by 20 (see IDGRAPH_MAX_LEN in trusted_call.rs). That means you only need to check it once when the last identity is linked.
+
+Examples:
+
+link and verify 1st identity => the IDGraph in the IdentityVerified event contains 1 identity
+link and verify 2nd identity => the IDGraph in the IdentityVerified event contains 2 identities
+...
+link and verify 20th identity => the IDGraph in the IdentityVerified event contains 20 identities
+link and verify 21st identity => the IDGraph in the IdentityVerified event contains 20 identities (latest, the first identity is excluded)
+..
+link and verify 100th identity => the IDGraph in the IdentityVerified event contains 20 identities (81st - 100th)
+
+Mainly to see:
+
+if IDGraph will be capped
+how large is the returned IDGraph
+
+ */
 #[test]
 fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
@@ -551,7 +561,6 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     let mut id_graph_size = 0;
     let mut batch_calls = vec![];
     let mut key_pairs = vec![];
-    let mut group_id = 0;
     let mut all_created_identities = vec![];
     let mut all_verifed_identities = vec![];
     let mut the_last_verified = vec![];
@@ -585,8 +594,6 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
                     api_client.send_extrinsic(api_client.batch_all(&batch_calls).hex_encode());
 
                     batch_calls.clear();
-
-                    group_id += 1;
                 }
             }
         });
@@ -641,13 +648,10 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     let elapsed_secs = started_timestamp.elapsed().unwrap().as_secs();
     assert_eq!(created_identity_idx, identites_len);
 
-    // compare
     let left = all_verifed_identities.last().unwrap();
     let right = the_last_verified.last().unwrap();
-
     assert_eq!(left, right);
 
-    // calc the last one
     println!(
         ">>>🚩Creating {} identities stats: \n",
         created_identity_idx
