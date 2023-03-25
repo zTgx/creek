@@ -660,7 +660,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
 
     assert_eq!(decrypted_id_graph.len(), 20);
     decrypted_id_graph.iter().for_each(|(identity, context)| {
-        assert!(all_created_identities.contains(&identity));
+        assert!(all_created_identities[identites_len - 20..].contains(&identity));
 
         let identity_size = identity.encode().len();
         let context_size = context.encode().len();
