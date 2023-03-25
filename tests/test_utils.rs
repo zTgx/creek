@@ -1,6 +1,10 @@
+use codec::Encode;
 use litentry_test_suit::{
     primitives::{Address32, AesOutput},
-    utils::{create_n_random_sr25519_address, decrypt_vc_with_user_shielding_key, print_passed},
+    utils::{
+        create_n_random_sr25519_address, decrypt_vc_with_user_shielding_key,
+        encrypt_with_user_shielding_key, generate_user_shielding_key, print_passed,
+    },
 };
 use sp_core::Pair;
 
@@ -105,4 +109,20 @@ fn tc_test_create_n_random_sr25519_pair() {
     });
 
     println!("all addresses: {}", ret);
+}
+
+#[test]
+fn tc_test_encrypt_size_works() {
+    let user_shielding_key = generate_user_shielding_key();
+
+    let source = "abc123321";
+    let encrypted_source =
+        encrypt_with_user_shielding_key(&user_shielding_key, source.as_bytes()).unwrap();
+    assert_ne!(source.len(), encrypted_source.len());
+
+    let x = serde_json::to_vec(source);
+    println!("x: {} / {}", x.unwrap().len(), source.as_bytes().len());
+
+    let x = source.to_string().encode();
+    println!("Encode = {} / {}", x.len(), source.len());
 }

@@ -147,7 +147,7 @@ impl StaticEvent for IdentityRemovedEvent {
 }
 
 /// IdentityVerified
-#[derive(Decode, Debug)]
+#[derive(Decode, Debug, PartialEq, Eq)]
 pub struct IdentityVerifiedEvent {
     pub account: AccountId,
     pub identity: AesOutput,

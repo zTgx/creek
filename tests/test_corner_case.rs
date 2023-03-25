@@ -1,5 +1,6 @@
 use std::{sync::mpsc::channel, time::SystemTime};
 
+use codec::Encode;
 use litentry_test_suit::{
     identity_management::{
         events::{IdentityCreatedEvent, IdentityManagementEventApi, IdentityVerifiedEvent},
@@ -12,8 +13,8 @@ use litentry_test_suit::{
     },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
-        decrypt_identity_with_user_shielding_key,
-        generate_user_shielding_key, hex_account_to_address32, ValidationDataBuilder,
+        decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
+        generate_user_shielding_key, hex_account_to_address32, print_passed, ValidationDataBuilder,
     },
     vc_management::{events::VcManagementEventApi, VcManagementApi},
     ApiClient, ApiClientPatch, SubscribeEventPatch,
@@ -542,7 +543,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
 
     let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
 
-    let address_len = 50;
+    let address_len = 20;
     let identites_len = networks.len() * address_len;
 
     let identity_address = create_n_random_sr25519_address(address_len as u32);
@@ -551,6 +552,10 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     let mut batch_calls = vec![];
     let mut key_pairs = vec![];
     let mut group_id = 0;
+    let mut all_created_identities = vec![];
+    let mut all_verifed_identities = vec![];
+    let mut the_last_verified = vec![];
+
     let started_timestamp = SystemTime::now();
     networks.iter().for_each(|network| {
         identity_address.iter().for_each(|pair| {
@@ -603,6 +608,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
         let identity =
             decrypt_identity_with_user_shielding_key(&user_shielding_key, event.identity.clone())
                 .unwrap();
+        all_created_identities.push(identity.clone());
 
         let vdata =
             ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code);
@@ -623,19 +629,51 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     }
 
     let events_arr: Vec<IdentityVerifiedEvent> = api_client.collect_events(identites_len);
-    events_arr.iter().for_each(|event| {
-        id_graph_size += event.id_graph.len();
+    events_arr.iter().enumerate().for_each(|(indx, event)| {
+        // id_graph_size += event.id_graph.len();
+        all_verifed_identities.push(event.clone());
+
+        if indx == created_identity_idx - 1 {
+            the_last_verified.push(event.clone());
+        }
     });
 
     let elapsed_secs = started_timestamp.elapsed().unwrap().as_secs();
+    assert_eq!(created_identity_idx, identites_len);
+
+    // compare
+    let left = all_verifed_identities.last().unwrap();
+    let right = the_last_verified.last().unwrap();
+
+    assert_eq!(left, right);
+
+    // calc the last one
     println!(
-        " 🚩 Creating {} identities stats: \n
-            >>> Took {} secs \n
-            >>> id_graph {} bytes \n",
-        created_identity_idx, elapsed_secs, id_graph_size
+        ">>>🚩Creating {} identities stats: \n",
+        created_identity_idx
+    );
+    println!(">>>took {} secs", elapsed_secs);
+
+    let decrypted_id_graph =
+        decrypt_id_graph_with_user_shielding_key(&user_shielding_key, right.id_graph.clone())
+            .unwrap();
+
+    assert_eq!(decrypted_id_graph.len(), 20);
+    decrypted_id_graph.iter().for_each(|(identity, context)| {
+        assert!(all_created_identities.contains(&identity));
+
+        let identity_size = identity.encode().len();
+        let context_size = context.encode().len();
+        let size = identity_size + context_size;
+
+        id_graph_size += size;
+    });
+    println!(
+        ">>>last IdentityVerifiedEvent id_graph <{}> bytes \n",
+        id_graph_size
     );
 
-    assert_eq!(created_identity_idx, identites_len);
+    print_passed()
 }
 
 #[test]

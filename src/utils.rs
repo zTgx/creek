@@ -37,6 +37,21 @@ pub fn encrypt_with_tee_shielding_pubkey(
         .expect("failed to encrypt")
 }
 
+pub fn encrypt_with_user_shielding_key(
+    user_shielding_key: &[u8],
+    plaintext: &[u8],
+) -> Result<Vec<u8>, String> {
+    let nonce: [u8; USER_SHIELDING_KEY_NONCE_LEN] = rand::random();
+
+    let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
+    let nonce = GenericArray::from_slice(&nonce);
+    let cipher = Aes256Gcm::new(key);
+    match cipher.encrypt(nonce, plaintext) {
+        Ok(encrypted) => Ok(encrypted),
+        Err(e) => Err(format!("encrypt error: {:?}", e)),
+    }
+}
+
 pub fn decrypt_vc_with_user_shielding_key(
     user_shielding_key: &[u8],
     encrypted_vc: AesOutput,
