@@ -1,4 +1,14 @@
-use litentry_test_suit::{sidechain::SidechainRpc, ApiClient};
+use basex_rs::{BaseX, Encode, BITCOIN};
+use litentry_test_suit::{
+    identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
+    primitives::{Identity, SubstrateNetwork},
+    sidechain::{storage_key_challenge_code, SidechainRpc},
+    utils::{
+        decrypt_challage_code_with_user_shielding_key, generate_user_shielding_key,
+        hex_account_to_address32, print_passed,
+    },
+    ApiClient,
+};
 use sp_core::{sr25519, Pair};
 
 #[test]
@@ -53,4 +63,105 @@ fn tc_sidechain_state_get_metadata_works() {
 
     let metadata = api_client.state_get_metadata().unwrap();
     println!("Sidechain metadata: {:?}", metadata);
+}
+
+#[test]
+fn tc_sidechain_author_ge_mu_ra_url_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let mu_ra_url = api_client.author_get_mu_ra_url().unwrap();
+    println!("Sidechain mu_ra_url: {:?}", mu_ra_url);
+}
+
+#[test]
+fn tc_sidechain_author_get_shielding_key_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+    let shielding_key_from_worker = api_client.author_get_shielding_key().unwrap();
+    let tee_shielding_pubkey_from_parachain = api_client.get_tee_shielding_pubkey();
+
+    assert_eq!(
+        shielding_key_from_worker,
+        tee_shielding_pubkey_from_parachain
+    );
+}
+
+#[test]
+fn tc_sidechain_author_get_untrusted_url_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let untrusted_url = api_client.author_get_untrusted_url().unwrap();
+    println!("Sidechain untrusted_url: {:?}", untrusted_url);
+}
+
+#[test]
+fn tc_sidechain_author_pending_extrinsics_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let shard_in_base58 = BaseX::new(BITCOIN).encode(&shard);
+    let pending_extrinsics = api_client
+        .author_pending_extrinsics(vec![shard_in_base58])
+        .unwrap();
+    println!("Sidechain pending_extrinsics: {:?}", pending_extrinsics);
+}
+
+#[test]
+fn tc_sidechain_challenge_code_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let shard_in_base58 = BaseX::new(BITCOIN).encode(&shard);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+
+    {
+        let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+        let address = hex_account_to_address32(alice).unwrap();
+
+        let network = SubstrateNetwork::Litentry;
+        let identity = Identity::Substrate {
+            network,
+            address: address.clone(),
+        };
+        let ciphertext_metadata: Option<Vec<u8>> = None;
+
+        api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
+
+        let event = api_client.wait_event_identity_created();
+        assert!(event.is_ok());
+        let event = event.unwrap();
+        assert_eq!(event.who, api_client.get_signer().unwrap());
+        let encrypted_challenge_code = event.code;
+        let challenge_code_from_parachain = decrypt_challage_code_with_user_shielding_key(
+            &user_shielding_key,
+            encrypted_challenge_code,
+        )
+        .unwrap();
+
+        let challenge_code_key = storage_key_challenge_code(&address, &identity);
+        println!("challenge_code_key: {}", challenge_code_key);
+
+        // Waiting sidechain finalize the block
+        std::thread::sleep(std::time::Duration::from_secs(3));
+
+        let challenge_code_from_worker = api_client
+            .state_get_storage(shard_in_base58, challenge_code_key)
+            .unwrap();
+        println!(
+            "Sidechain challenge_code_from_worker: {:?}",
+            challenge_code_from_worker
+        );
+
+        assert_eq!(
+            challenge_code_from_parachain.to_vec(),
+            challenge_code_from_worker
+        );
+    }
+
+    print_passed();
 }
