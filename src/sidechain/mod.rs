@@ -1,11 +1,16 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use substrate_api_client::ApiResult;
+use substrate_api_client::{ApiResult, RuntimeMetadataPrefixed};
 
 pub mod api;
 
 pub trait SidechainRpc {
     fn rpc_methods(&self) -> ApiResult<Vec<String>>;
+    fn system_version(&self) -> ApiResult<String>;
+    fn system_name(&self) -> ApiResult<String>;
+    fn system_health(&self) -> ApiResult<String>;
+    fn state_get_runtime_version(&self) -> ApiResult<String>;
+    fn state_get_metadata(&self) -> ApiResult<RuntimeMetadataPrefixed>;
 }
 
 #[derive(Debug, Serialize, Deserialize)]

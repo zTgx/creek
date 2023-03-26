@@ -1,7 +1,9 @@
 #![feature(string_remove_matches)]
 
 pub mod identity_management;
+pub mod hex;
 pub mod primitives;
+pub mod rpc_error;
 pub mod sidechain;
 pub mod utils;
 pub mod vc_management;
