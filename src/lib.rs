@@ -1,7 +1,7 @@
 #![feature(string_remove_matches)]
 
-pub mod identity_management;
 pub mod hex;
+pub mod identity_management;
 pub mod primitives;
 pub mod rpc_error;
 pub mod sidechain;
@@ -11,21 +11,22 @@ pub mod vc_management;
 use crate::primitives::{Enclave, MrEnclave};
 use codec::Encode;
 use log::*;
+use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use serde_json::Value;
 use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
 use std::fmt::Debug;
+use std::sync::mpsc::{channel, Sender as ThreadOut};
 use substrate_api_client::{
     compose_extrinsic,
     extrinsic::common::Batch,
     rpc::{ws_client::RpcMessage, RpcClientError, WsRpcClient},
-    Api, ApiResult, CallIndex, Metadata, PlainTip, PlainTipExtrinsicParams,
-    PlainTipExtrinsicParamsBuilder, SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus, StaticEvent, FromHexString, Events, Error,
+    Api, ApiResult, CallIndex, Error, Events, FromHexString, Metadata, PlainTip,
+    PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, StaticEvent,
+    SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
-use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
-use std::sync::mpsc::{channel, Sender as ThreadOut};
 use ws::{
     connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
