@@ -1,8 +1,9 @@
 use crate::{
     primitives::{
         Address20, Address32, AesOutput, ChallengeCode, Credential, Identity, IdentityContext,
-        IdentityMultiSignature, ValidationData, ValidationString, Web3CommonValidationData,
-        Web3ValidationData, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_NONCE_LEN,
+        IdentityMultiSignature, MrEnclave, ValidationData, ValidationString,
+        Web3CommonValidationData, Web3ValidationData, CHALLENGE_CODE_SIZE,
+        USER_SHIELDING_KEY_NONCE_LEN,
     },
     ACCOUNT_SEED_CHARSET,
 };
@@ -10,6 +11,7 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, OsRng},
     Aes256Gcm, Key, KeyInit,
 };
+use basex_rs::{BaseX, Decode as Base58Decode, Encode as Base58Encode, BITCOIN};
 use codec::{Decode, Encode};
 use rand::{Rng, RngCore};
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
@@ -156,6 +158,22 @@ pub fn get_a_random_u32() -> u32 {
 pub fn get_random_vc_index() -> H256 {
     let index: [u8; 32] = rand::random();
     H256::from(index)
+}
+
+pub fn mrenclave_to_bs58(mrenclave: &MrEnclave) -> String {
+    BaseX::new(BITCOIN).encode(mrenclave)
+}
+
+pub fn mrenclave_from_bs58(mrenclave: String) -> Result<MrEnclave, String> {
+    match BaseX::new(BITCOIN).decode(mrenclave) {
+        Some(m) => {
+            let mut bytes = [0u8; 32];
+            bytes[..32].clone_from_slice(&m);
+
+            Ok(bytes)
+        }
+        None => Err("Decode base58 error".into()),
+    }
 }
 
 /// Interprets the string `s` in order to generate a key Pair. Returns both the pair and an

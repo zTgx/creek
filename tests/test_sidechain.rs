@@ -1,11 +1,10 @@
-use basex_rs::{BaseX, Encode, BITCOIN};
 use litentry_test_suit::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
     utils::{
         decrypt_challage_code_with_user_shielding_key, generate_user_shielding_key,
-        hex_account_to_address32, print_passed,
+        hex_account_to_address32, mrenclave_to_bs58, print_passed,
     },
     ApiClient,
 };
@@ -102,7 +101,7 @@ fn tc_sidechain_author_pending_extrinsics_works() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let shard_in_base58 = BaseX::new(BITCOIN).encode(&shard);
+    let shard_in_base58 = mrenclave_to_bs58(&shard);
     let pending_extrinsics = api_client
         .author_pending_extrinsics(vec![shard_in_base58])
         .unwrap();
@@ -115,7 +114,7 @@ fn tc_sidechain_challenge_code_works() {
     let api_client = ApiClient::new_with_signer(alice);
 
     let shard = api_client.get_shard();
-    let shard_in_base58 = BaseX::new(BITCOIN).encode(&shard);
+    let shard_in_base58 = mrenclave_to_bs58(&shard);
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
