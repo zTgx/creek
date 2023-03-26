@@ -6,7 +6,7 @@ use crate::{sidechain::json_resp, ApiClient, SidechainRpcClientTrait};
 use codec::Decode;
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::{ApiResult, Error};
+use substrate_api_client::ApiResult;
 use substrate_api_client::RuntimeMetadataPrefixed;
 
 impl<P> SidechainRpc for ApiClient<P>
