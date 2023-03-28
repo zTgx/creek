@@ -17,12 +17,13 @@ Priority:
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
     primitives::{Assertion, AssertionNetworks, Network, ParameterString},
-    utils::{generate_user_shielding_key, get_random_vc_index},
+    utils::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index},
     vc_management::{
         events::{
             VCDisabledEvent, VCIssuedEvent, VCRevokedEvent, VcManagementErrorApi,
             VcManagementEventApi,
         },
+        verify::verify_vc,
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
     },
@@ -51,6 +52,11 @@ fn alpha_request_vc_a1_works() {
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, event.vc);
+    assert!(vc.is_ok());
+    let vc = vc.unwrap();
+    assert!(verify_vc(&vc));
 }
 
 #[test]
