@@ -553,7 +553,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
 
     let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
 
-    let address_len = 20;
+    let address_len = 50;
     let identites_len = networks.len() * address_len;
 
     let identity_address = create_n_random_sr25519_address(address_len as u32);
@@ -637,7 +637,6 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
 
     let events_arr: Vec<IdentityVerifiedEvent> = api_client.collect_events(identites_len);
     events_arr.iter().enumerate().for_each(|(indx, event)| {
-        // id_graph_size += event.id_graph.len();
         all_verifed_identities.push(event.clone());
 
         if indx == created_identity_idx - 1 {
@@ -674,7 +673,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
         id_graph_size += size;
     });
     println!(
-        ">>>last IdentityVerifiedEvent id_graph <{}> bytes \n",
+        ">>>last IdentityVerifiedEvent id_graph(Vec<(Identity, IdentityContext).len() == 20) <{}> bytes \n",
         id_graph_size
     );
 
