@@ -241,12 +241,17 @@ pub struct Credential {
     pub issuer: Issuer,
     pub issuance_block_number: ParentchainBlockNumber,
     /// (Optional)
-    #[serde(skip_serializing_if = "Option::is_none")]
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub expiration_block_number: Option<ParentchainBlockNumber>,
+
     /// Digital proof with the signature of Issuer
     #[serde(skip_serializing_if = "Option::is_none")]
+    // #[serde(skip_serializing)]
     pub proof: Option<Proof>,
+
     #[serde(skip_deserializing)]
+    #[serde(skip_serializing)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub credential_schema: Option<CredentialSchema>,
 }

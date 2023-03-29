@@ -18,7 +18,7 @@ use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
 use sp_core::{blake2_256, sr25519, Pair};
-use sp_core::{sr25519::Pair as SubstratePair, H256}; // TODO: maybe use more generic struct
+use sp_core::{sr25519::Pair as SubstratePair, H256};
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
     let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
@@ -174,6 +174,15 @@ pub fn mrenclave_from_bs58(mrenclave: String) -> Result<MrEnclave, String> {
         }
         None => Err("Decode base58 error".into()),
     }
+}
+
+pub fn vec_to_u8_32_array(input: Vec<u8>) -> [u8; 32] {
+    assert_eq!(input.len(), 32);
+
+    let mut bytes = [0u8; 32];
+    bytes[..32].clone_from_slice(&input);
+
+    bytes
 }
 
 /// Interprets the string `s` in order to generate a key Pair. Returns both the pair and an

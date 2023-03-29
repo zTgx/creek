@@ -56,7 +56,8 @@ fn alpha_request_vc_a1_works() {
     let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, event.vc);
     assert!(vc.is_ok());
     let vc = vc.unwrap();
-    assert!(verify_vc(&vc));
+    let vc_pubkey = api_client.get_vc_pubkey();
+    assert!(verify_vc(&vc_pubkey, &vc));
 }
 
 #[test]

@@ -15,6 +15,7 @@ use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
 use primitives::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use serde_json::Value;
+use sp_core::ed25519;
 use sp_core::{crypto::AccountId32 as AccountId, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
 use std::fmt::Debug;
@@ -27,6 +28,7 @@ use substrate_api_client::{
     PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, StaticEvent,
     SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
+use utils::vec_to_u8_32_array;
 use ws::{
     connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
@@ -96,6 +98,23 @@ where
 
         let shielding_key = enclave.shielding_key.unwrap();
         RsaPublicKey::new_with_rsa3072_pubkey(shielding_key)
+    }
+
+    pub fn get_vc_pubkey(&self) -> ed25519::Public {
+        let enclave_count: u64 = self
+            .api
+            .get_storage_value("Teerex", "EnclaveCount", None)
+            .unwrap()
+            .unwrap();
+
+        let enclave: Enclave<AccountId, Vec<u8>> = self
+            .api
+            .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
+            .unwrap()
+            .unwrap();
+
+        let vc_pubkey = enclave.vc_pubkey.expect("vc pubkey");
+        ed25519::Public(vec_to_u8_32_array(vc_pubkey))
     }
 
     pub fn get_shard(&self) -> MrEnclave {

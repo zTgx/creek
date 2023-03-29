@@ -1,6 +1,9 @@
-use jsonschema::{Draft, JSONSchema};
-
 use crate::primitives::{Credential, CredentialType};
+use jsonschema::{Draft, JSONSchema};
+use sp_core::{
+    ed25519::{self, Pair as Ed25519Pair},
+    Pair,
+};
 
 /**
  * Here are the key points that need to be verified for VC, and a large number of verifiable tests need to be conducted for VC.
@@ -14,12 +17,14 @@ const CONTEXT: [&str; 2] = [
     "https://w3id.org/security/suites/ed25519-2020/v1",
 ];
 
-pub fn verify_vc(vc: &Credential) -> bool {
+pub fn verify_vc(vc_pubkey: &ed25519::Public, vc: &Credential) -> bool {
     let verified_schema = verify_vc_schema(vc);
     let verified_vc_info = verify_vc_info(vc);
-    let verified_subject = verify_vc_credential_subject(vc);
+    let verified_subject = verify_vc_subject(vc);
+    let verified_issuer = verify_vc_issuer(vc);
+    let verified_proof = verify_vc_proof(vc_pubkey, vc);
 
-    verified_schema && verified_vc_info && verified_subject
+    verified_schema && verified_vc_info && verified_subject && verified_issuer && verified_proof
 }
 
 pub fn verify_vc_schema(vc: &Credential) -> bool {
@@ -47,6 +52,28 @@ pub fn verify_vc_info(vc: &Credential) -> bool {
     verified_context && verified_types
 }
 
-pub fn verify_vc_credential_subject(_vc: &Credential) -> bool {
+pub fn verify_vc_subject(_vc: &Credential) -> bool {
     true
+}
+
+pub fn verify_vc_issuer(_vc: &Credential) -> bool {
+    true
+}
+
+pub fn verify_vc_proof(vc_pubkey: &ed25519::Public, _vc: &Credential) -> bool {
+    let mut value = serde_json::to_value(_vc).expect("msg");
+
+    let sig = _vc.proof.clone().unwrap().proof_value;
+    let sig = hex::decode(sig).unwrap();
+
+    value["proof"] = serde_json::to_value::<Option<String>>(None).unwrap();
+
+    let _vc: Credential = serde_json::from_value(value).unwrap();
+    let message = serde_json::to_string(&_vc).expect("msg");
+
+    Ed25519Pair::verify(
+        &ed25519::Signature::from_slice(&sig).unwrap(),
+        message,
+        vc_pubkey,
+    )
 }
