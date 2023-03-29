@@ -10,11 +10,9 @@ Although this is not an official repo, but the libraries(mainly refers to [subst
 - [x] based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
 - [x] `IdentityManagement` pallet api is supported
 - [x] `VCManagement` pallet api is supported
+- [x] `VC verify` is supported
 - [x] `sidechain` api is supported
 
----
-
-### A Test
 ```rust
 #[test]
 fn tc_set_user_shielding_key_works() {

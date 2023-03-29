@@ -456,6 +456,8 @@ fn tc_double_revoke_vc() {
     print_passed();
 }
 
+/// TODO:
+/// Remove sidecar related code
 /// Maybe sidecar is not a suitable solution right now, keep it here for future use.
 #[allow(dead_code)]
 // #[test]

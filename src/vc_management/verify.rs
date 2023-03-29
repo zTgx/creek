@@ -40,8 +40,6 @@ pub fn verify_vc_schema(vc: &Credential) -> bool {
 }
 
 pub fn verify_vc_info(vc: &Credential) -> bool {
-    println!("vc: {:?}", vc);
-
     let context = &vc.context;
     let verified_context =
         context.len() == 2 && context[0] == CONTEXT[0] && context[1] == CONTEXT[1];
@@ -53,7 +51,7 @@ pub fn verify_vc_info(vc: &Credential) -> bool {
 }
 
 /// TODO:
-/// This data structure is the main content of VC, including the core content of assertion. 
+/// This data structure is the main content of VC, including the core content of assertion.
 /// How to verify this part accurately and effectively?
 pub fn verify_vc_subject(_vc: &Credential) -> bool {
     true
@@ -65,16 +63,16 @@ pub fn verify_vc_issuer(_vc: &Credential) -> bool {
     true
 }
 
-pub fn verify_vc_proof(vc_pubkey: &ed25519::Public, _vc: &Credential) -> bool {
-    let mut value = serde_json::to_value(_vc).expect("msg");
+pub fn verify_vc_proof(vc_pubkey: &ed25519::Public, vc: &Credential) -> bool {
+    let mut value = serde_json::to_value(vc).expect("msg");
 
-    let sig = _vc.proof.clone().unwrap().proof_value;
+    let sig = vc.proof.clone().unwrap().proof_value;
     let sig = hex::decode(sig).unwrap();
 
     value["proof"] = serde_json::to_value::<Option<String>>(None).unwrap();
 
-    let _vc: Credential = serde_json::from_value(value).unwrap();
-    let message = serde_json::to_string(&_vc).expect("msg");
+    let vc: Credential = serde_json::from_value(value).unwrap();
+    let message = serde_json::to_string(&vc).expect("msg");
 
     Ed25519Pair::verify(
         &ed25519::Signature::from_slice(&sig).unwrap(),

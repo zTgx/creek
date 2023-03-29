@@ -39,7 +39,7 @@ where
      */
     fn rpc_methods(&self) -> ApiResult<Vec<String>> {
         let jsonreq = json_req("rpc_methods", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let resp = json_resp(resp)?;
         let mut sresult = remove_whitespace(&resp.result);
         sresult.remove_matches("methods:[");
@@ -59,35 +59,35 @@ where
      */
     fn system_version(&self) -> ApiResult<String> {
         let jsonreq = json_req("system_version", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let resp = json_resp(resp)?;
         Ok(resp.result)
     }
 
     fn system_name(&self) -> ApiResult<String> {
         let jsonreq = json_req("system_name", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let resp = json_resp(resp)?;
         Ok(resp.result)
     }
 
     fn system_health(&self) -> ApiResult<String> {
         let jsonreq = json_req("system_health", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let resp = json_resp(resp)?;
         Ok(resp.result)
     }
 
     fn state_get_runtime_version(&self) -> ApiResult<String> {
         let jsonreq = json_req("state_getRuntimeVersion", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let resp = json_resp(resp)?;
         Ok(resp.result)
     }
 
     fn state_get_metadata(&self) -> ApiResult<RuntimeMetadataPrefixed> {
         let jsonreq = json_req("state_getMetadata", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let rpc_response = json_resp(resp)?;
         let rpc_return_value = RpcReturnValue::from_hex(&rpc_response.result)
             .map_err(|e| ApiError::Other(format!("{:?}", e)))?;
@@ -106,14 +106,14 @@ where
     /// "localhost:3443"
     fn author_get_mu_ra_url(&self) -> ApiResult<String> {
         let jsonreq = json_req("author_getMuRaUrl", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let response_message = decode_from_rpc_response(&resp)?;
         Ok(response_message)
     }
 
     fn author_get_shielding_key(&self) -> ApiResult<RsaPublicKey> {
         let jsonreq = json_req("author_getShieldingKey", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let shielding_pubkey_string = decode_from_rpc_response(&resp)?;
         Ok(RsaPublicKey::new_with_rsa3072_pubkey(
             shielding_pubkey_string.as_bytes().to_vec(),
@@ -123,7 +123,7 @@ where
     /// ws://localhost:3000
     fn author_get_untrusted_url(&self) -> ApiResult<String> {
         let jsonreq = json_req("author_getUntrustedUrl", [0_u8; 0], 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let response_message = decode_from_rpc_response(&resp)?;
         Ok(response_message)
     }
@@ -131,7 +131,7 @@ where
     /// shards: Base58 format
     fn author_pending_extrinsics(&self, shards: Vec<String>) -> ApiResult<Vec<Vec<Vec<u8>>>> {
         let jsonreq = json_req("author_pendingExtrinsics", shards, 1);
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let rpc_response = json_resp(resp)?;
 
         let rpc_return_value = RpcReturnValue::from_hex(&rpc_response.result)
@@ -155,7 +155,7 @@ where
             [mrenclave_in_base58, storage_key_in_hex],
             1,
         );
-        let resp = self.sidechain.get_sidechain_request(jsonreq)?;
+        let resp = self.sidechain.request(jsonreq)?;
         let rpc_response = json_resp(resp)?;
 
         let rpc_return_value = RpcReturnValue::from_hex(&rpc_response.result)

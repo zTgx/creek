@@ -3,7 +3,6 @@
 pub mod hex;
 pub mod identity_management;
 pub mod primitives;
-pub mod rpc_error;
 pub mod sidechain;
 pub mod utils;
 pub mod vc_management;
@@ -388,10 +387,10 @@ impl SidechainRpcClient {
 }
 
 pub trait SidechainRpcClientTrait {
-    fn get_sidechain_request(&self, jsonreq: serde_json::Value) -> ApiResult<String>;
+    fn request(&self, jsonreq: serde_json::Value) -> ApiResult<String>;
 }
 impl SidechainRpcClientTrait for SidechainRpcClient {
-    fn get_sidechain_request(&self, jsonreq: Value) -> ApiResult<String> {
+    fn request(&self, jsonreq: Value) -> ApiResult<String> {
         Ok(self
             .direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())??
             .unwrap_or_default())
