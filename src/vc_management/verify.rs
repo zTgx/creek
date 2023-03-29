@@ -52,10 +52,15 @@ pub fn verify_vc_info(vc: &Credential) -> bool {
     verified_context && verified_types
 }
 
+/// TODO:
+/// This data structure is the main content of VC, including the core content of assertion. 
+/// How to verify this part accurately and effectively?
 pub fn verify_vc_subject(_vc: &Credential) -> bool {
     true
 }
 
+/// TODO:
+/// Here is the RA related verification
 pub fn verify_vc_issuer(_vc: &Credential) -> bool {
     true
 }
