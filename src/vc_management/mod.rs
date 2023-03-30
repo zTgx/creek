@@ -4,6 +4,7 @@ use crate::primitives::{Assertion, MrEnclave, VCContext};
 
 pub mod api;
 pub mod events;
+pub mod fuzz;
 pub mod verify;
 pub mod xtbuilder;
 
