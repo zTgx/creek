@@ -1,10 +1,13 @@
 use sp_core::{sr25519, Pair};
 
-use crate::{ApiClient, utils::{generate_user_shielding_key, hex_account_to_address32, print_passed}, identity_management::{IdentityManagementApi, events::IdentityManagementEventApi}, primitives::{SubstrateNetwork, Identity}};
+use crate::{
+    identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
+    primitives::{Identity, SubstrateNetwork},
+    utils::{generate_user_shielding_key, hex_account_to_address32, print_passed},
+    ApiClient,
+};
 
-
-
-fn tc_create_identity(data: &[u8]) {
+pub fn fuzz_create_identity_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -16,10 +19,7 @@ fn tc_create_identity(data: &[u8]) {
     let address = hex_account_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
-    let identity = Identity::Substrate {
-        network,
-        address: address.clone(),
-    };
+    let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);

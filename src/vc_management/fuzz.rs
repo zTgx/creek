@@ -2,7 +2,13 @@ use std::time::SystemTime;
 
 use sp_core::{sr25519, Pair};
 
-use crate::{ApiClient, utils::{generate_user_shielding_key, print_passed}, identity_management::IdentityManagementApi, primitives::Assertion, vc_management::{VcManagementApi, events::VcManagementEventApi}};
+use crate::{
+    identity_management::IdentityManagementApi,
+    primitives::Assertion,
+    utils::{generate_user_shielding_key, print_passed},
+    vc_management::{events::VcManagementEventApi, VcManagementApi},
+    ApiClient,
+};
 
 pub fn fuzz_request_vc_a4(balance: u128) {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
