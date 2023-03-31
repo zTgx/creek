@@ -10,6 +10,9 @@ use crate::{
     ApiClient,
 };
 
+/// The relevant documentation for the fuzzy interface is here
+/// @github : https://github.com/rust-fuzz/cargo-fuzz
+/// Tutorial: https://rust-fuzz.github.io/book/cargo-fuzz/tutorial.html
 pub fn fuzz_request_vc_a4(balance: u128) {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
