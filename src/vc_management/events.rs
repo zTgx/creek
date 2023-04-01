@@ -1,6 +1,6 @@
 use super::VC_PALLET_NAME;
 use crate::{
-    primitives::{AccountId, AesOutput},
+    primitives::{AccountId, AesOutput, Assertion, VCIndex},
     ApiClient,
 };
 use codec::Decode;
@@ -71,8 +71,10 @@ where
 #[derive(Decode, Debug, PartialEq, Eq)]
 pub struct VCIssuedEvent {
     pub account: AccountId,
-    pub vc_index: H256,
+    pub assertion: Assertion,
+    pub index: VCIndex,
     pub vc: AesOutput,
+    pub req_ext_hash: H256,
 }
 
 impl StaticEvent for VCIssuedEvent {

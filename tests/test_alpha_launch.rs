@@ -16,7 +16,7 @@ Priority:
 
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
-    primitives::{Assertion, AssertionNetworks, Network, ParameterString},
+    primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index},
     vc_management::{
         events::{
@@ -251,8 +251,8 @@ fn alpha_request_vc_a8_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let litentry = Network::try_from("litentry".as_bytes().to_vec()).unwrap();
-    let mut networks = AssertionNetworks::with_bounded_capacity(1);
+    let litentry = IndexingNetwork::Litentry;
+    let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
     let a8 = Assertion::A8(networks);
 
@@ -427,8 +427,8 @@ pub fn alpha_batch_all_request_vc_all_works() {
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
     let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
-    let litentry = Network::try_from("litentry".as_bytes().to_vec()).unwrap();
-    let mut networks = AssertionNetworks::with_bounded_capacity(1);
+    let litentry = IndexingNetwork::Litentry;
+    let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
     let balance = 10_u128;
 
@@ -473,7 +473,7 @@ pub fn alpha_request_vc_a1_then_disable_it_works() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index = event.unwrap().vc_index;
+    let vc_index = event.unwrap().index;
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
@@ -498,7 +498,7 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
 
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
-    let vc_index_first_a1 = event.unwrap().vc_index;
+    let vc_index_first_a1 = event.unwrap().index;
 
     // Second A1
     let a1 = Assertion::A1;
@@ -507,7 +507,7 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index_second_a1 = event.unwrap().vc_index;
+    let vc_index_second_a1 = event.unwrap().index;
 
     api_client.disable_vc(&vc_index_second_a1);
     let event = api_client.wait_event_vc_disabled();
@@ -563,7 +563,7 @@ fn alpha_disabled_vc_twice_works() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let vc_index = event.vc_index;
+    let vc_index = event.index;
     api_client.disable_vc(&vc_index);
     api_client.disable_vc(&vc_index);
 
@@ -594,7 +594,7 @@ fn alpha_request_vc_then_revoke_it_works() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index = event.unwrap().vc_index;
+    let vc_index = event.unwrap().index;
     api_client.revoke_vc(&vc_index);
 
     let event = api_client.wait_event_vc_revoked();
@@ -645,7 +645,7 @@ fn alpha_revoke_vc_twice_works() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let vc_index = event.vc_index;
+    let vc_index = event.index;
     api_client.revoke_vc(&vc_index);
     api_client.revoke_vc(&vc_index);
 
@@ -676,7 +676,7 @@ fn alpha_request_disable_revoke_works() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index = event.unwrap().vc_index;
+    let vc_index = event.unwrap().index;
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
@@ -861,7 +861,7 @@ fn alpha_query_vc_registry_works() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let vc_context = api_client.vc_registry(&event.vc_index);
+    let vc_context = api_client.vc_registry(&event.index);
     assert!(vc_context.is_some());
 }
 

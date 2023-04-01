@@ -1,6 +1,6 @@
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
-    primitives::{Assertion, AssertionNetworks, Network, ParameterString, VCContext},
+    primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString, VCContext},
     utils::{
         decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index,
         print_passed,
@@ -42,8 +42,8 @@ fn tc_request_vc_works() {
     let balance = 10_u128;
     let a7 = Assertion::A7(balance);
 
-    let litentry = Network::try_from("litentry".as_bytes().to_vec()).unwrap();
-    let mut networks = AssertionNetworks::with_bounded_capacity(1);
+    let litentry = IndexingNetwork::Litentry;
+    let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
     let a8 = Assertion::A8(networks);
 
@@ -137,7 +137,7 @@ pub fn tc_request_vc_then_disable_it_success() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index = event.unwrap().vc_index;
+    let vc_index = event.unwrap().index;
     println!(" ✅ VC Index : {:?}", vc_index);
 
     api_client.disable_vc(&vc_index);
@@ -167,7 +167,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index_a1 = event.unwrap().vc_index;
+    let vc_index_a1 = event.unwrap().index;
     println!(" ✅ A1 VC Index : {:?}", vc_index_a1);
 
     let a6 = Assertion::A6;
@@ -176,7 +176,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index_a6 = event.unwrap().vc_index;
+    let vc_index_a6 = event.unwrap().index;
     println!(" ✅ A6 VC Index : {:?}", vc_index_a6);
 
     api_client.disable_vc(&vc_index_a6);
@@ -211,7 +211,7 @@ fn tc_request_vc_and_revoke_it_success() {
     let event = api_client.wait_event_vc_issued();
     assert!(event.is_ok());
 
-    let vc_index = event.unwrap().vc_index;
+    let vc_index = event.unwrap().index;
     println!(" ✅ A1 VC Index : {:?}", vc_index);
 
     api_client.revoke_vc(&vc_index);
@@ -299,7 +299,7 @@ fn tc_request_vc_all_with_timestamp() {
     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
     let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
     let balance = 10_u128;
-    let networks = AssertionNetworks::with_bounded_capacity(1);
+    let networks = IndexingNetworks::with_bounded_capacity(1);
 
     let a1 = Assertion::A1;
     let a2 = Assertion::A2(guild_id.clone());
@@ -403,7 +403,7 @@ fn tc_double_disabled_vc() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let vc_index = event.vc_index;
+    let vc_index = event.index;
     api_client.disable_vc(&vc_index);
     api_client.disable_vc(&vc_index);
 
@@ -438,7 +438,7 @@ fn tc_double_revoke_vc() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let vc_index = event.vc_index;
+    let vc_index = event.index;
     api_client.revoke_vc(&vc_index);
     api_client.revoke_vc(&vc_index);
 
@@ -480,7 +480,7 @@ fn tc_query_storage_vc_registry_by_endpoint() {
     let encrypted_vc = event.vc;
     let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, encrypted_vc).unwrap();
     let endpoint = vc.credential_subject.endpoint;
-    let vc_index = event.vc_index;
+    let vc_index = event.index;
     let index = vc_index.to_string();
     let vc_cotext = reqwest::blocking::get(endpoint + &index)
         .unwrap()

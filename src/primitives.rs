@@ -24,6 +24,8 @@ use sp_runtime::{traits::ConstU32, BoundedVec};
 // use kitchensink_runtime::{Block, Header, AccountId};
 pub use sp_core::crypto::AccountId32 as AccountId;
 
+pub type VCIndex = H256;
+
 #[derive(
     Serialize, Deserialize, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo,
 )]
@@ -259,8 +261,17 @@ pub struct Credential {
 pub type Balance = u128;
 type MaxStringLength = ConstU32<64>;
 pub type ParameterString = BoundedVec<u8, MaxStringLength>;
-pub type Network = BoundedVec<u8, MaxStringLength>;
-pub type AssertionNetworks = BoundedVec<Network, MaxStringLength>;
+pub type IndexingNetworks = BoundedVec<IndexingNetwork, MaxStringLength>;
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+pub enum IndexingNetwork {
+    Litentry,
+    Litmus,
+    Polkadot,
+    Kusama,
+    Khala,
+    Ethereum,
+}
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
 pub enum Assertion {
@@ -270,8 +281,8 @@ pub enum Assertion {
     A4(Balance),                                           // (minimum_amount)
     A5(ParameterString, ParameterString),                  // (twitter_account, tweet_id)
     A6,
-    A7(Balance),           // (minimum_amount)
-    A8(AssertionNetworks), // litentry, litmus, polkadot, kusama, khala, ethereum
+    A7(Balance),          // (minimum_amount)
+    A8(IndexingNetworks), // litentry, litmus, polkadot, kusama, khala, ethereum
     A9,
     A10(Balance), // (minimum_amount)
     A11(Balance), // (minimum_amount)

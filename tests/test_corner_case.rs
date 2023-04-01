@@ -8,7 +8,7 @@ use litentry_test_suit::{
         IdentityManagementApi,
     },
     primitives::{
-        Address32, Assertion, AssertionNetworks, Identity, ParameterString, SubstrateNetwork,
+        Address32, Assertion, Identity, IndexingNetworks, ParameterString, SubstrateNetwork,
         ValidationData,
     },
     utils::{
@@ -175,7 +175,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
         let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
         let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
         let balance = 10_u128;
-        let networks = AssertionNetworks::with_bounded_capacity(1);
+        let networks = IndexingNetworks::with_bounded_capacity(1);
 
         let a1 = Assertion::A1;
         let a2 = Assertion::A2(guild_id.clone());
