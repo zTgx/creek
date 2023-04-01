@@ -1,4 +1,4 @@
-use crate::primitives::{Credential, CredentialType};
+use crate::primitives::vc::{Credential, CredentialType};
 use jsonschema::{Draft, JSONSchema};
 use sp_core::{
     ed25519::{self, Pair as Ed25519Pair},

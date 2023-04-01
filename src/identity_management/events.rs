@@ -1,6 +1,6 @@
 use super::IDENTITY_PALLET_NAME;
 use crate::{
-    primitives::{AccountId, AesOutput},
+    primitives::{crypto::AesOutput, AccountId},
     ApiClient,
 };
 use codec::Decode;

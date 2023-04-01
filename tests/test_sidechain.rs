@@ -1,6 +1,6 @@
 use litentry_test_suit::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
-    primitives::{Identity, SubstrateNetwork},
+    primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
     utils::{
         decrypt_challage_code_with_user_shielding_key, generate_user_shielding_key,

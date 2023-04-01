@@ -4,8 +4,12 @@ use litentry_test_suit::{
         IdentityManagementApi,
     },
     primitives::{
-        Address32, Identity, IdentityMultiSignature, ParameterString, SubstrateNetwork,
-        ValidationData, Web3CommonValidationData, Web3ValidationData,
+        address::Address32,
+        assertion::ParameterString,
+        identity::{
+            Identity, IdentityMultiSignature, SubstrateNetwork, ValidationData,
+            Web3CommonValidationData, Web3ValidationData,
+        },
     },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,

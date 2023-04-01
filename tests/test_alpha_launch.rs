@@ -16,7 +16,7 @@ Priority:
 
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
-    primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
+    primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index},
     vc_management::{
         events::{VCIssuedEvent, VcManagementErrorApi, VcManagementEventApi},

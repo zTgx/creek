@@ -1,4 +1,8 @@
-use crate::primitives::{Address32, Identity, MrEnclave, ValidationData};
+use crate::primitives::{
+    address::Address32,
+    identity::{Identity, ValidationData},
+    MrEnclave,
+};
 use substrate_api_client::ApiResult;
 
 pub mod api;

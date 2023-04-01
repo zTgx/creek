@@ -1,6 +1,6 @@
 use sp_core::H256;
 
-use crate::primitives::{Assertion, MrEnclave, VCContext};
+use crate::primitives::{assertion::Assertion, vc::VCContext, MrEnclave};
 
 pub mod api;
 pub mod events;

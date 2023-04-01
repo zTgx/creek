@@ -7,11 +7,11 @@ pub mod sidechain;
 pub mod utils;
 pub mod vc_management;
 
-use crate::primitives::{Enclave, MrEnclave};
+use crate::primitives::{enclave::Enclave, MrEnclave};
 use codec::Encode;
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
-use primitives::RsaPublicKeyGenerator;
+use primitives::crypto::RsaPublicKeyGenerator;
 use rsa::RsaPublicKey;
 use serde_json::Value;
 use sp_core::ed25519;

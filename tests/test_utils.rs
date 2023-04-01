@@ -1,6 +1,6 @@
 use codec::Encode;
 use litentry_test_suit::{
-    primitives::{Address32, AesOutput},
+    primitives::{address::Address32, crypto::AesOutput},
     utils::{
         create_n_random_sr25519_address, decrypt_vc_with_user_shielding_key,
         encrypt_with_user_shielding_key, generate_user_shielding_key, print_passed,

@@ -8,8 +8,9 @@ use litentry_test_suit::{
         IdentityManagementApi,
     },
     primitives::{
-        Address32, Assertion, Identity, IndexingNetworks, ParameterString, SubstrateNetwork,
-        ValidationData,
+        address::Address32,
+        assertion::{Assertion, IndexingNetworks, ParameterString},
+        identity::{Identity, SubstrateNetwork, ValidationData},
     },
     utils::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,

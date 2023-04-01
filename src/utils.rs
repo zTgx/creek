@@ -1,9 +1,13 @@
 use crate::{
     primitives::{
-        Address20, Address32, AesOutput, ChallengeCode, Credential, Identity, IdentityContext,
-        IdentityMultiSignature, MrEnclave, ValidationData, ValidationString,
-        Web3CommonValidationData, Web3ValidationData, CHALLENGE_CODE_SIZE,
-        USER_SHIELDING_KEY_NONCE_LEN,
+        address::{Address20, Address32},
+        crypto::AesOutput,
+        identity::{
+            Identity, IdentityContext, IdentityMultiSignature, ValidationData, ValidationString,
+            Web3CommonValidationData, Web3ValidationData,
+        },
+        vc::Credential,
+        ChallengeCode, MrEnclave, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_NONCE_LEN,
     },
     ACCOUNT_SEED_CHARSET,
 };

@@ -1,5 +1,5 @@
 use crate::{
-    primitives::{Assertion, MrEnclave},
+    primitives::{assertion::Assertion, MrEnclave},
     vc_management::VC_PALLET_NAME,
     ApiClient,
 };

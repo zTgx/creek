@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use substrate_api_client::{std::error::Error as ApiError, ApiResult, RuntimeMetadataPrefixed};
 
-use crate::primitives::{Address32, Identity};
+use crate::primitives::{address::Address32, identity::Identity};
 use crate::{
     hex::FromHexPrefixed,
-    primitives::{DirectRequestStatus, RpcReturnValue},
+    primitives::crypto::{DirectRequestStatus, RpcReturnValue},
 };
 
 pub mod api;

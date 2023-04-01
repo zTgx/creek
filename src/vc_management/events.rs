@@ -1,6 +1,6 @@
 use super::VC_PALLET_NAME;
 use crate::{
-    primitives::{AccountId, AesOutput, Assertion, VCIndex},
+    primitives::{assertion::Assertion, crypto::AesOutput, AccountId, VCIndex},
     ApiClient,
 };
 use codec::Decode;

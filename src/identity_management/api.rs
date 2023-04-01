@@ -1,6 +1,6 @@
 use crate::{
     identity_management::xtbuilder::IdentityManagementXtBuilder,
-    primitives::{Address32, Identity, MrEnclave, ValidationData},
+    primitives::{address::Address32, identity::Identity, identity::ValidationData, MrEnclave},
     utils::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };

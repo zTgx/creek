@@ -11,7 +11,11 @@ use litentry_test_suit::{
         events::IdentityManagementEventApi, xtbuilder::IdentityManagementXtBuilder,
         IdentityManagementApi,
     },
-    primitives::{Address32, Identity, MrEnclave, Web2Network},
+    primitives::{
+        address::Address32,
+        identity::{Identity, Web2Network},
+        MrEnclave,
+    },
     utils::{generate_user_shielding_key, hex_account_to_address32, print_passed},
     ApiClient, ApiClientPatch,
 };

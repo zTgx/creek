@@ -1,6 +1,6 @@
 use super::{VcManagementApi, VcManagementQueryApi};
 use crate::{
-    primitives::{Assertion, MrEnclave, VCContext},
+    primitives::{assertion::Assertion, vc::VCContext, MrEnclave},
     vc_management::xtbuilder::VcManagementXtBuilder,
     ApiClient,
 };
