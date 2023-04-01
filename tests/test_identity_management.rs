@@ -11,7 +11,7 @@ use litentry_test_suit::{
             Web3CommonValidationData, Web3ValidationData,
         },
     },
-    utils::{
+    utils::util::{
         create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
         decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
         generate_incorrect_user_shielding_key, generate_user_shielding_key,

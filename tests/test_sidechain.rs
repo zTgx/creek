@@ -2,7 +2,7 @@ use litentry_test_suit::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
-    utils::{
+    utils::util::{
         decrypt_challage_code_with_user_shielding_key, generate_user_shielding_key,
         hex_account_to_address32, mrenclave_to_bs58, print_passed,
     },

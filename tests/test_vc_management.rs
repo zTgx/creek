@@ -1,7 +1,7 @@
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
-    utils::{generate_user_shielding_key, get_random_vc_index, print_passed},
+    utils::util::{generate_user_shielding_key, get_random_vc_index, print_passed},
     vc_management::{
         events::{VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,

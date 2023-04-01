@@ -7,8 +7,8 @@ use substrate_api_client::{std::error::Error as ApiError, ApiResult, RuntimeMeta
 
 use crate::primitives::{address::Address32, identity::Identity};
 use crate::{
-    hex::FromHexPrefixed,
     primitives::crypto::{DirectRequestStatus, RpcReturnValue},
+    utils::hex::FromHexPrefixed,
 };
 
 pub mod api;
