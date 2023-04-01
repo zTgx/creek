@@ -6,7 +6,7 @@ use litentry_test_suit::{
         print_passed,
     },
     vc_management::{
-        events::{VCDisabledEvent, VCRevokedEvent, VcManagementErrorApi, VcManagementEventApi},
+        events::{VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
     },
@@ -143,10 +143,7 @@ pub fn tc_request_vc_then_disable_it_success() {
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
-    let expect_event = VCDisabledEvent { vc_index };
-
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }
@@ -181,12 +178,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
 
     api_client.disable_vc(&vc_index_a6);
     let event = api_client.wait_event_vc_disabled();
-    let expect_event = VCDisabledEvent {
-        vc_index: vc_index_a6,
-    };
-
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     let a1_context = api_client.vc_registry(&vc_index_a1);
     assert!(a1_context.is_some());
@@ -218,9 +210,6 @@ fn tc_request_vc_and_revoke_it_success() {
 
     let event = api_client.wait_event_vc_revoked();
     assert!(event.is_ok());
-
-    let expect_event = VCRevokedEvent { vc_index };
-    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }

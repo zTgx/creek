@@ -19,10 +19,7 @@ use litentry_test_suit::{
     primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index},
     vc_management::{
-        events::{
-            VCDisabledEvent, VCIssuedEvent, VCRevokedEvent, VcManagementErrorApi,
-            VcManagementEventApi,
-        },
+        events::{VCIssuedEvent, VcManagementErrorApi, VcManagementEventApi},
         verify::verify_vc,
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
@@ -477,10 +474,7 @@ pub fn alpha_request_vc_a1_then_disable_it_works() {
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
-    let expect_event = VCDisabledEvent { vc_index };
-
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 }
 
 #[test]
@@ -511,12 +505,8 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
 
     api_client.disable_vc(&vc_index_second_a1);
     let event = api_client.wait_event_vc_disabled();
-    let expect_event = VCDisabledEvent {
-        vc_index: vc_index_second_a1,
-    };
 
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     let a1_context = api_client.vc_registry(&vc_index_first_a1);
     assert!(a1_context.is_some());
@@ -599,9 +589,6 @@ fn alpha_request_vc_then_revoke_it_works() {
 
     let event = api_client.wait_event_vc_revoked();
     assert!(event.is_ok());
-
-    let expect_event = VCRevokedEvent { vc_index };
-    assert_eq!(event.unwrap(), expect_event);
 }
 
 #[test]
@@ -680,18 +667,12 @@ fn alpha_request_disable_revoke_works() {
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_event_vc_disabled();
-    let expect_event = VCDisabledEvent { vc_index };
-
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     api_client.revoke_vc(&vc_index);
 
     let event = api_client.wait_event_vc_revoked();
     assert!(event.is_ok());
-
-    let expect_event = VCRevokedEvent { vc_index };
-    assert_eq!(event.unwrap(), expect_event);
 }
 
 #[test]

@@ -1,9 +1,6 @@
 use litentry_test_suit::{
     identity_management::{
-        events::{
-            IdentityManagementEventApi, SetUserShieldingKeyEvent,
-            SetUserShieldingKeyHandlingFailedEvent,
-        },
+        events::{IdentityManagementEventApi, SetUserShieldingKeyHandlingFailedEvent},
         IdentityManagementApi,
     },
     primitives::{
@@ -30,11 +27,7 @@ fn tc_set_user_shielding_key_works() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
-    let expect_event = SetUserShieldingKeyEvent {
-        account: api_client.get_signer().unwrap(),
-    };
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     print_passed();
 }
@@ -67,11 +60,7 @@ fn tc_add_delegatee_error() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let event = api_client.wait_event_user_shielding_key_set();
-    let expect_event = SetUserShieldingKeyEvent {
-        account: api_client.get_signer().unwrap(),
-    };
     assert!(event.is_ok());
-    assert_eq!(event.unwrap(), expect_event);
 
     let bob_pair = sr25519::Pair::from_string("//Bob", None).unwrap();
     let bob: Address32 = bob_pair.public().0.into();

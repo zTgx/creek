@@ -85,7 +85,8 @@ impl StaticEvent for VCIssuedEvent {
 /// VCDisabled
 #[derive(Decode, Debug, PartialEq, Eq)]
 pub struct VCDisabledEvent {
-    pub vc_index: H256,
+    pub account: AccountId,
+    pub index: VCIndex,
 }
 
 impl StaticEvent for VCDisabledEvent {
@@ -96,7 +97,8 @@ impl StaticEvent for VCDisabledEvent {
 /// VCRevoked
 #[derive(Decode, Debug, PartialEq, Eq)]
 pub struct VCRevokedEvent {
-    pub vc_index: H256,
+    pub account: AccountId,
+    pub index: VCIndex,
 }
 
 impl StaticEvent for VCRevokedEvent {

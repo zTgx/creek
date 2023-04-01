@@ -4,7 +4,7 @@ use crate::{
     ApiClient,
 };
 use codec::Decode;
-use sp_core::Pair;
+use sp_core::{Pair, H256};
 use sp_runtime::{MultiSignature, MultiSigner};
 use std::sync::mpsc::channel;
 use substrate_api_client::{ApiResult, StaticEvent};
@@ -106,6 +106,7 @@ where
 #[derive(Decode, Debug, PartialEq, Eq)]
 pub struct SetUserShieldingKeyEvent {
     pub account: AccountId,
+    pub req_ext_hash: H256,
 }
 
 impl StaticEvent for SetUserShieldingKeyEvent {
@@ -127,6 +128,7 @@ pub struct IdentityCreatedEvent {
     pub who: AccountId,
     pub identity: AesOutput,
     pub code: AesOutput,
+    pub req_ext_hash: H256,
 }
 
 impl StaticEvent for IdentityCreatedEvent {
@@ -139,6 +141,7 @@ impl StaticEvent for IdentityCreatedEvent {
 pub struct IdentityRemovedEvent {
     pub who: AccountId,
     pub identity: AesOutput,
+    pub req_ext_hash: H256,
 }
 
 impl StaticEvent for IdentityRemovedEvent {
@@ -152,6 +155,7 @@ pub struct IdentityVerifiedEvent {
     pub account: AccountId,
     pub identity: AesOutput,
     pub id_graph: AesOutput,
+    pub req_ext_hash: H256,
 }
 
 impl StaticEvent for IdentityVerifiedEvent {
