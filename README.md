@@ -1,12 +1,12 @@
-# litentry-test-suit ![](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=flat)
+# litentry-test-suit [![](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=flat-square)](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=for-the-badge)
 
 ### Features
-- [x] rust only
-- [x] based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
+- [x] Rust nightly only
+- [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
 - [x] `IdentityManagement` pallet api is supported
 - [x] `VCManagement` pallet api is supported
 - [x] `VC verify` is supported
-- [x] `sidechain` api is supported
+- [x] `Sidechain` api is supported
 
 ```rust
 #[test]
