@@ -1,10 +1,7 @@
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
-    primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString, VCContext},
-    utils::{
-        decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index,
-        print_passed,
-    },
+    primitives::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
+    utils::{generate_user_shielding_key, get_random_vc_index, print_passed},
     vc_management::{
         events::{VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
@@ -445,35 +442,35 @@ fn tc_double_revoke_vc() {
     print_passed();
 }
 
-/// TODO:
-/// Remove sidecar related code
-/// Maybe sidecar is not a suitable solution right now, keep it here for future use.
-#[allow(dead_code)]
-// #[test]
-fn tc_query_storage_vc_registry_by_endpoint() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+// TODO:
+// Remove sidecar related code
+// Maybe sidecar is not a suitable solution right now, keep it here for future use.
+// #[allow(dead_code)]
+// // #[test]
+// fn tc_query_storage_vc_registry_by_endpoint() {
+//     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+//     let api_client = ApiClient::new_with_signer(alice);
 
-    let shard = api_client.get_shard();
-    let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+//     let shard = api_client.get_shard();
+//     let user_shielding_key = generate_user_shielding_key();
+//     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let a1 = Assertion::A1;
-    api_client.request_vc(&shard, &a1);
+//     let a1 = Assertion::A1;
+//     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
-    assert!(event.is_ok());
-    let event = event.unwrap();
-    assert_eq!(event.account, api_client.get_signer().unwrap());
+//     let event = api_client.wait_event_vc_issued();
+//     assert!(event.is_ok());
+//     let event = event.unwrap();
+//     assert_eq!(event.account, api_client.get_signer().unwrap());
 
-    let encrypted_vc = event.vc;
-    let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, encrypted_vc).unwrap();
-    let endpoint = vc.credential_subject.endpoint;
-    let vc_index = event.index;
-    let index = vc_index.to_string();
-    let vc_cotext = reqwest::blocking::get(endpoint + &index)
-        .unwrap()
-        .json::<VCContext>()
-        .unwrap();
-    assert_eq!(vc_cotext.hash, vc_index);
-}
+//     let encrypted_vc = event.vc;
+//     let vc = decrypt_vc_with_user_shielding_key(&user_shielding_key, encrypted_vc).unwrap();
+//     let endpoint = vc.credential_subject.endpoint;
+//     let vc_index = event.index;
+//     let index = vc_index.to_string();
+//     let vc_cotext = reqwest::blocking::get(endpoint + &index)
+//         .unwrap()
+//         .json::<VCContext>()
+//         .unwrap();
+//     assert_eq!(vc_cotext.hash, vc_index);
+// }
