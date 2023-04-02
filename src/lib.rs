@@ -115,6 +115,13 @@ where
         ed25519::Public(vec_to_u8_32_array(vc_pubkey))
     }
 
+    /// There're two methos to get the mrenclave
+    /// 1. Online -> to use this method `get_shard` or
+    /// 2. Offline -> to `litentry-parachain/tee-worker` run `make enclave`
+    /// Both should be display exactly same value.
+    ///
+    /// TODO:
+    /// But there's a question, what's the difference betwwen `mrenclave` and `shard`?
     pub fn get_shard(&self) -> MrEnclave {
         let enclave_count: u64 = self
             .api
