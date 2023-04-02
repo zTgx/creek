@@ -3,7 +3,7 @@ use litentry_test_suit::{
     primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
     utils::{
-        address::hex_account_to_address32,
+        address::pubkey_to_address32,
         crypto::{decrypt_challage_code_with_user_shielding_key, generate_user_shielding_key},
         enclave::mrenclave_to_bs58,
         print_passed,
@@ -122,7 +122,7 @@ fn tc_sidechain_challenge_code_works() {
 
     {
         let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-        let address = hex_account_to_address32(alice).unwrap();
+        let address = pubkey_to_address32(alice).unwrap();
 
         let network = SubstrateNetwork::Litentry;
         let identity = Identity::Substrate {

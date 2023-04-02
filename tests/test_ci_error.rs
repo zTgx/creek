@@ -16,7 +16,7 @@ use litentry_test_suit::{
         identity::{Identity, Web2Network},
         MrEnclave,
     },
-    utils::{address::hex_account_to_address32, crypto::generate_user_shielding_key, print_passed},
+    utils::{address::public_to_address32, crypto::generate_user_shielding_key, print_passed},
     ApiClient, ApiClientPatch,
 };
 use sp_core::{sr25519, Pair};
@@ -52,14 +52,13 @@ Syncing Parentchain block number 24 at Sidechain block number  42
 #[test]
 fn tc_ci_pr1475_7809442449() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice.clone());
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let who = hex_account_to_address32(alice).unwrap();
+    let who = public_to_address32(&alice.public());
 
     struct IdentityItem {
         pub shard: MrEnclave,

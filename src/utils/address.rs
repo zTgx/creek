@@ -4,29 +4,46 @@ use crate::{
 };
 use aes_gcm::aead::OsRng;
 use rand::{Rng, RngCore};
-use sp_core::{sr25519, Pair};
+use sp_core::{crypto::Ss58Codec, sr25519, Pair};
 
-/// TODO:
-/// refacotr function name
-pub fn hex_account_to_address32(hex_account: &str) -> Result<Address32, &'static str> {
-    if !hex_account.starts_with("0x") && hex_account.len() != 62 {
+/// How public key transimit>>>
+/// [u8; 32] -> Pair::Public
+/// [u8; 32] -> hex::encode -> Public key
+/// [u8; 32] -> Pair::Public -> Ss58Codec -> ss58 address
+/// Online check: https://ss58.org/
+pub fn pubkey_to_address32(pubkey: &str) -> Result<Address32, &'static str> {
+    if !pubkey.starts_with("0x") && pubkey.len() != 62 {
         return Err("Incorrect hex account format!");
     }
 
-    let decoded_account = hex::decode(&hex_account[2..]).unwrap();
+    let decoded_account = hex::decode(&pubkey[2..]).unwrap();
     let bytes = vec_to_u8_array::<32>(decoded_account);
     Ok(Address32::from(bytes))
 }
 
-pub fn hex_account_to_address20(hex_account: &str) -> Result<Address20, &'static str> {
-    if !hex_account.starts_with("0x") && hex_account.len() != 42 {
+pub fn pubkey_to_address20(pubkey: &str) -> Result<Address20, &'static str> {
+    if !pubkey.starts_with("0x") && pubkey.len() != 42 {
         return Err("Incorrect hex account format!");
     }
 
-    let decoded_account = hex::decode(&hex_account[2..]).unwrap();
+    let decoded_account = hex::decode(&pubkey[2..]).unwrap();
     let bytes = vec_to_u8_array::<20>(decoded_account);
 
     Ok(Address20::from(bytes))
+}
+
+/// sr25519 pubkey -> ss58 address
+pub fn sr25519_public_to_ss58(pubkey: &sr25519::Public) -> String {
+    pubkey.to_ss58check()
+}
+
+pub fn sr25519_public_from_ss58(ss58_address: &str) -> sr25519::Public {
+    sr25519::Public::from_ss58check(ss58_address).unwrap()
+}
+
+pub fn public_to_address32(public: &sr25519::Public) -> Address32 {
+    let bytes = public.as_array_ref();
+    Address32::from(*bytes)
 }
 
 pub fn vec_to_u8_array<const LEN: usize>(input: Vec<u8>) -> [u8; LEN] {

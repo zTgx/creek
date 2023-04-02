@@ -3,7 +3,7 @@ use sp_core::{sr25519, Pair};
 use crate::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
-    utils::{address::hex_account_to_address32, crypto::generate_user_shielding_key, print_passed},
+    utils::{address::pubkey_to_address32, crypto::generate_user_shielding_key, print_passed},
     ApiClient,
 };
 
@@ -16,7 +16,7 @@ pub fn fuzz_create_identity_works() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };

@@ -12,7 +12,7 @@ use litentry_test_suit::{
         },
     },
     utils::{
-        address::{create_n_random_sr25519_address, hex_account_to_address32},
+        address::{create_n_random_sr25519_address, pubkey_to_address32},
         crypto::{
             decrypt_challage_code_with_user_shielding_key,
             decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
@@ -88,7 +88,7 @@ fn tc_create_identity() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate {
@@ -116,7 +116,7 @@ fn tc_create_identity_then_remove_it() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
@@ -145,7 +145,7 @@ fn tc_create_identity_then_verify_it() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };
@@ -192,7 +192,7 @@ fn tc_create_a_random_identity_then_verify_it() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
     let pair = create_n_random_sr25519_address(1)[0].clone();
@@ -236,7 +236,7 @@ fn tc_create_identity_with_all_substrate_network() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
@@ -276,7 +276,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
 
     // Alice
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };
     let ciphertext_metadata: Option<Vec<u8>> = None;
@@ -344,7 +344,7 @@ fn tc_create_identity_then_decrypt_it() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let address = hex_account_to_address32(alice).unwrap();
+    let address = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
     let identity = Identity::Substrate { network, address };

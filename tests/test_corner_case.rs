@@ -13,7 +13,7 @@ use litentry_test_suit::{
         identity::{Identity, SubstrateNetwork, ValidationData},
     },
     utils::{
-        address::{create_n_random_sr25519_address, hex_account_to_address32},
+        address::{create_n_random_sr25519_address, pubkey_to_address32},
         crypto::{
             decrypt_challage_code_with_user_shielding_key,
             decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
@@ -53,7 +53,7 @@ fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
@@ -103,7 +103,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
@@ -226,7 +226,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [
@@ -306,7 +306,7 @@ fn tc_create_10s_verified_identities() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
@@ -376,7 +376,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
@@ -472,7 +472,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [SubstrateNetwork::Litentry, SubstrateNetwork::Litmus];
@@ -614,7 +614,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
-    let alice = hex_account_to_address32(alice).unwrap();
+    let alice = pubkey_to_address32(alice).unwrap();
     let ciphertext_metadata: Option<Vec<u8>> = None;
 
     let networks = [

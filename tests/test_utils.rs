@@ -2,15 +2,19 @@ use codec::Encode;
 use litentry_test_suit::{
     primitives::{address::Address32, crypto::AesOutput},
     utils::{
-        address::create_n_random_sr25519_address,
+        address::{
+            create_n_random_sr25519_address, pubkey_to_address32, sr25519_public_from_ss58,
+            sr25519_public_to_ss58,
+        },
         crypto::{
             decrypt_vc_with_user_shielding_key, encrypt_with_user_shielding_key,
             generate_user_shielding_key,
         },
-        print_passed, enclave::mock_a_shard,
+        enclave::mock_a_shard,
+        print_passed,
     },
 };
-use sp_core::Pair;
+use sp_core::{sr25519, Pair};
 
 #[test]
 fn tc_decrypt_vc_works() {
@@ -135,4 +139,26 @@ fn tc_test_encrypt_size_works() {
 fn tc_mock_shard_works() {
     let shard = mock_a_shard();
     println!("mock shard: {:?}", shard);
+}
+
+#[test]
+fn tc_pubkey_to_address32_works() {
+    let pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let pubkey = pair.public();
+
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let alice = pubkey_to_address32(alice).unwrap();
+
+    assert_eq!(pubkey.as_array_ref(), alice.as_ref());
+}
+
+#[test]
+fn tc_pubkey_to_ss58_works() {
+    let pair = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let pubkey_source = pair.public();
+
+    let address = sr25519_public_to_ss58(&pubkey_source);
+    let pubkey_end = sr25519_public_from_ss58(&address);
+
+    assert_eq!(pubkey_source, pubkey_end);
 }
