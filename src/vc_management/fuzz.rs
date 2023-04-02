@@ -5,7 +5,7 @@ use sp_core::{sr25519, Pair};
 use crate::{
     identity_management::IdentityManagementApi,
     primitives::assertion::Assertion,
-    utils::util::{generate_user_shielding_key, print_passed},
+    utils::{crypto::generate_user_shielding_key, print_passed},
     vc_management::{events::VcManagementEventApi, VcManagementApi},
     ApiClient,
 };

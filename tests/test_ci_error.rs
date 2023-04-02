@@ -16,7 +16,7 @@ use litentry_test_suit::{
         identity::{Identity, Web2Network},
         MrEnclave,
     },
-    utils::util::{generate_user_shielding_key, hex_account_to_address32, print_passed},
+    utils::{address::hex_account_to_address32, crypto::generate_user_shielding_key, print_passed},
     ApiClient, ApiClientPatch,
 };
 use sp_core::{sr25519, Pair};

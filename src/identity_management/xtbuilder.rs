@@ -5,7 +5,7 @@ use crate::{
         identity::{Identity, ValidationData},
         MrEnclave,
     },
-    utils::util::encrypt_with_tee_shielding_pubkey,
+    utils::crypto::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
 use codec::Encode;

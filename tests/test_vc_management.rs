@@ -1,7 +1,7 @@
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
-    utils::util::{generate_user_shielding_key, get_random_vc_index, print_passed},
+    utils::{crypto::generate_user_shielding_key, print_passed, vc::create_a_random_vc_index},
     vc_management::{
         events::{VcManagementErrorApi, VcManagementEventApi},
         xtbuilder::VcManagementXtBuilder,
@@ -329,7 +329,7 @@ fn tc_disable_non_exists_vc_index() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let vc_index = get_random_vc_index();
+    let vc_index = create_a_random_vc_index();
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_error();
@@ -355,7 +355,7 @@ fn tc_revoke_non_exists_vc_index() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let vc_index = get_random_vc_index();
+    let vc_index = create_a_random_vc_index();
     api_client.disable_vc(&vc_index);
 
     let event = api_client.wait_error();

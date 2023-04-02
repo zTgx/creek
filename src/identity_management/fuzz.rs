@@ -3,7 +3,7 @@ use sp_core::{sr25519, Pair};
 use crate::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
-    utils::util::{generate_user_shielding_key, hex_account_to_address32, print_passed},
+    utils::{address::hex_account_to_address32, crypto::generate_user_shielding_key, print_passed},
     ApiClient,
 };
 

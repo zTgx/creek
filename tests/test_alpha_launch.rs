@@ -17,8 +17,9 @@ Priority:
 use litentry_test_suit::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
-    utils::util::{
-        decrypt_vc_with_user_shielding_key, generate_user_shielding_key, get_random_vc_index,
+    utils::{
+        crypto::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key},
+        vc::create_a_random_vc_index,
     },
     vc_management::{
         events::{VCIssuedEvent, VcManagementErrorApi, VcManagementEventApi},
@@ -523,7 +524,7 @@ pub fn alpha_disable_vc_no_exsits_index_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let non_exists_vc_index = get_random_vc_index();
+    let non_exists_vc_index = create_a_random_vc_index();
     api_client.disable_vc(&non_exists_vc_index);
 
     let event = api_client.wait_error();
@@ -602,7 +603,7 @@ fn alpha_revoke_non_exists_vc_index_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let vc_index = get_random_vc_index();
+    let vc_index = create_a_random_vc_index();
     api_client.revoke_vc(&vc_index);
 
     let event = api_client.wait_error();
@@ -857,7 +858,7 @@ fn alpha_query_vc_registry_non_exists_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let non_exists_vc_index = get_random_vc_index();
+    let non_exists_vc_index = create_a_random_vc_index();
     let vc_context = api_client.vc_registry(&non_exists_vc_index);
     assert!(vc_context.is_none());
 }

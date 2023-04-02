@@ -1,7 +1,7 @@
 use crate::{
     identity_management::xtbuilder::IdentityManagementXtBuilder,
     primitives::{address::Address32, identity::Identity, identity::ValidationData, MrEnclave},
-    utils::util::encrypt_with_tee_shielding_pubkey,
+    utils::crypto::encrypt_with_tee_shielding_pubkey,
     ApiClient,
 };
 use sp_core::Pair;

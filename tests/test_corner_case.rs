@@ -12,10 +12,15 @@ use litentry_test_suit::{
         assertion::{Assertion, IndexingNetworks, ParameterString},
         identity::{Identity, SubstrateNetwork, ValidationData},
     },
-    utils::util::{
-        create_n_random_sr25519_address, decrypt_challage_code_with_user_shielding_key,
-        decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
-        generate_user_shielding_key, hex_account_to_address32, print_passed, ValidationDataBuilder,
+    utils::{
+        address::{create_n_random_sr25519_address, hex_account_to_address32},
+        crypto::{
+            decrypt_challage_code_with_user_shielding_key,
+            decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
+            generate_user_shielding_key,
+        },
+        identity::ValidationDataBuilder,
+        print_passed,
     },
     vc_management::{events::VcManagementEventApi, VcManagementApi},
     ApiClient, ApiClientPatch, SubscribeEventPatch,

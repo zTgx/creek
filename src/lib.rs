@@ -26,7 +26,7 @@ use substrate_api_client::{
     PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, StaticEvent,
     SubstrateDefaultSignedExtra, UncheckedExtrinsicV4, XtStatus,
 };
-use utils::util::vec_to_u8_32_array;
+use utils::address::vec_to_u8_32_array;
 use ws::{
     connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
