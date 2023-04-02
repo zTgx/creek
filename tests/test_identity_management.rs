@@ -1,4 +1,4 @@
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::{
         events::{IdentityManagementEventApi, SetUserShieldingKeyHandlingFailedEvent},
         IdentityManagementApi,

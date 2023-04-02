@@ -1,4 +1,4 @@
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},

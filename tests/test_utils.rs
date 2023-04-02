@@ -1,5 +1,5 @@
 use codec::Encode;
-use litentry_test_suit::{
+use litentry_api_client::{
     primitives::{address::Address32, crypto::AesOutput},
     utils::{
         address::{

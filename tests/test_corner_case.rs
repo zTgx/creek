@@ -1,7 +1,7 @@
 use std::time::SystemTime;
 
 use codec::Encode;
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::{
         events::{IdentityCreatedEvent, IdentityManagementEventApi, IdentityVerifiedEvent},
         xtbuilder::IdentityManagementXtBuilder,

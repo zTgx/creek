@@ -14,7 +14,7 @@ Priority:
 * P2 -> cover corner cases -> 60%
 */
 
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{

@@ -6,7 +6,7 @@
  * 2. add test function name: tc_ci_pr name_job
  *
  */
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::{
         events::IdentityManagementEventApi, xtbuilder::IdentityManagementXtBuilder,
         IdentityManagementApi,

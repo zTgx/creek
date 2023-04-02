@@ -1,4 +1,4 @@
-use litentry_test_suit::{
+use litentry_api_client::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{crypto::generate_user_shielding_key, print_passed, vc::create_a_random_vc_index},
