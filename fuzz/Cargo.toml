@@ -1,5 +1,5 @@
 [package]
-name = "litentry-test-suit-fuzz"
+name = "litentry-api-client-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -10,7 +10,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.litentry-test-suit]
+[dependencies.litentry-api-client]
 path = ".."
 
 # Prevent this from interfering with workspaces
