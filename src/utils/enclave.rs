@@ -1,12 +1,12 @@
 use crate::primitives::MrEnclave;
-use basex_rs::{BaseX, Decode as Base58Decode, Encode as Base58Encode, BITCOIN};
+use basex_rs::{BaseX, ALPHABET_BITCOIN};
 
 pub fn mrenclave_to_bs58(mrenclave: &MrEnclave) -> String {
-    BaseX::new(BITCOIN).encode(mrenclave)
+    BaseX::with_alphabet(ALPHABET_BITCOIN).to_bs58(mrenclave)
 }
 
 pub fn mrenclave_from_bs58(mrenclave: String) -> Result<MrEnclave, String> {
-    match BaseX::new(BITCOIN).decode(mrenclave) {
+    match BaseX::with_alphabet(ALPHABET_BITCOIN).from_bs58(&mrenclave) {
         Some(m) => {
             let mut bytes = [0u8; 32];
             bytes[..32].clone_from_slice(&m);

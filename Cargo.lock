@@ -275,9 +275,9 @@ checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
 
 [[package]]
 name = "basex-rs"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1c50147713f635888f61a089b99f4fd80345492f3c238181d2d7db78f44e9cf"
+checksum = "710f3a0d047def12388a55d9cb7e7b846f4ded482a6a954e54f581784f2cdfa4"
 
 [[package]]
 name = "bincode"
