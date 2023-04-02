@@ -16,3 +16,8 @@ pub fn mrenclave_from_bs58(mrenclave: String) -> Result<MrEnclave, String> {
         None => Err("Decode base58 error".into()),
     }
 }
+
+pub fn mock_a_shard() -> MrEnclave {
+    let shard: MrEnclave = rand::random();
+    shard
+}

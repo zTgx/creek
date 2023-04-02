@@ -171,24 +171,6 @@ where
     }
 }
 
-pub trait MockApiClient {
-    fn mock_get_shard(&self) -> MrEnclave;
-}
-
-impl<P> MockApiClient for ApiClient<P>
-where
-    P: Pair,
-    MultiSignature: From<P::Signature>,
-    MultiSigner: From<P::Public>,
-{
-    fn mock_get_shard(&self) -> MrEnclave {
-        [
-            65_u8, 56, 208, 116, 135, 54, 101, 208, 13, 173, 159, 82, 115, 60, 181, 148, 205, 211,
-            71, 48, 174, 210, 172, 218, 70, 146, 182, 230, 5, 74, 110, 208,
-        ]
-    }
-}
-
 pub trait ApiClientPatch {
     fn batch_all<Call: Encode + Clone>(
         &self,

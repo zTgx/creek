@@ -7,7 +7,7 @@ use litentry_test_suit::{
             decrypt_vc_with_user_shielding_key, encrypt_with_user_shielding_key,
             generate_user_shielding_key,
         },
-        print_passed,
+        print_passed, enclave::mock_a_shard,
     },
 };
 use sp_core::Pair;
@@ -129,4 +129,10 @@ fn tc_test_encrypt_size_works() {
 
     let x = source.to_string().encode();
     println!("Encode = {} / {}", x.len(), source.len());
+}
+
+#[test]
+fn tc_mock_shard_works() {
+    let shard = mock_a_shard();
+    println!("mock shard: {:?}", shard);
 }
