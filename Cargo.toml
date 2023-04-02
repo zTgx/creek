@@ -1,11 +1,11 @@
 [package]
-name = "litentry-test-suit"
-version = "0.1.0"
+name = "litentry-api-client"
+version = "0.0.1"
 edition = "2021"
 authors = ["zTgx <beautifularea@gmail.com>"]
-repository = "https://github.com/zTgx/litentry-test-suit.git"
+repository = "https://github.com/zTgx/litentry-api-client.git"
 readme = "README.md"
-description = "Litentry parachain test suit.(unofficial)"
+description = "Litentry parachain api client."
 
 [dependencies]
 substrate-api-client = { features = [
