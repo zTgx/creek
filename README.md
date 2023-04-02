@@ -1,4 +1,4 @@
-# litentry-test-suit [![](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=flat-square)](https://img.shields.io/tokei/lines/github/zTgx/litentry-test-suit?style=for-the-badge)
+# litentry-api-client [![](https://img.shields.io/tokei/lines/github/zTgx/litentry-api-client?style=flat-square)](https://img.shields.io/tokei/lines/github/zTgx/litentry-api-client?style=for-the-badge)
 
 ### Features
 - [x] Rust nightly only
@@ -8,9 +8,9 @@
 - [x] `VC verify` is supported
 - [x] `Sidechain` api is supported
 
+### Usage
 ```rust
-#[test]
-fn tc_set_user_shielding_key_works() {
+fn set_user_shielding_key() {
     // 1. Create Api client with signer
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
