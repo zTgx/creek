@@ -14,9 +14,7 @@ pub fn hex_account_to_address32(hex_account: &str) -> Result<Address32, &'static
     }
 
     let decoded_account = hex::decode(&hex_account[2..]).unwrap();
-    let mut bytes = [0u8; 32];
-    bytes[..32].clone_from_slice(&decoded_account);
-
+    let bytes = vec_to_u8_array::<32>(decoded_account);
     Ok(Address32::from(bytes))
 }
 
@@ -26,22 +24,16 @@ pub fn hex_account_to_address20(hex_account: &str) -> Result<Address20, &'static
     }
 
     let decoded_account = hex::decode(&hex_account[2..]).unwrap();
-    let mut bytes = [0u8; 20];
-    bytes[..20].clone_from_slice(&decoded_account);
+    let bytes = vec_to_u8_array::<20>(decoded_account);
 
     Ok(Address20::from(bytes))
 }
 
-pub fn get_a_random_u32() -> u32 {
-    let mut os_rng = OsRng;
-    os_rng.next_u32()
-}
+pub fn vec_to_u8_array<const LEN: usize>(input: Vec<u8>) -> [u8; LEN] {
+    assert_eq!(input.len(), LEN);
 
-pub fn vec_to_u8_32_array(input: Vec<u8>) -> [u8; 32] {
-    assert_eq!(input.len(), 32);
-
-    let mut bytes = [0u8; 32];
-    bytes[..32].clone_from_slice(&input);
+    let mut bytes = [0u8; LEN];
+    bytes[..LEN].clone_from_slice(&input);
 
     bytes
 }
@@ -76,7 +68,7 @@ pub fn vec_to_u8_32_array(input: Vec<u8>) -> [u8; 32] {
 ///
 /// `None` is returned if no matches are found.
 /// See `from_string_with_seed` for more details in substrate.
-pub fn get_random_account_seed(len: usize) -> String {
+pub fn create_a_random_account_seed(len: usize) -> String {
     let mut rng = rand::thread_rng();
 
     let account_str: String = (0..len)
@@ -93,7 +85,7 @@ pub fn create_n_random_sr25519_address(num: u32) -> Vec<sr25519::Pair> {
     let mut addresses = vec![];
     let mut index = 0;
     while index < num {
-        let mut account_seed = get_random_account_seed(3);
+        let mut account_seed = create_a_random_account_seed(3);
         account_seed.insert_str(0, "//");
         let account_pair = sr25519::Pair::from_string(&account_seed, None).unwrap();
         // let address: Address32 = account_pair.public().0.into();
@@ -104,4 +96,9 @@ pub fn create_n_random_sr25519_address(num: u32) -> Vec<sr25519::Pair> {
     }
 
     addresses
+}
+
+pub fn create_a_random_u32() -> u32 {
+    let mut os_rng = OsRng;
+    os_rng.next_u32()
 }
