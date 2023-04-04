@@ -22,7 +22,36 @@ pub type uint16_t = u16;
 pub type uint32_t = u32;
 pub type uint64_t = u64;
 
+pub const SGX_KEYID_SIZE: size_t = 32;
+pub const SGX_CPUSVN_SIZE: size_t = 16;
+pub const SGX_CONFIGID_SIZE: size_t = 64;
+pub const SGX_KEY_REQUEST_RESERVED2_BYTES: size_t = 434;
+
 pub const SGX_PLATFORM_INFO_SIZE: size_t = 101;
+pub const SGX_TARGET_INFO_RESERVED1_BYTES: size_t = 2;
+pub const SGX_TARGET_INFO_RESERVED2_BYTES: size_t = 8;
+pub const SGX_TARGET_INFO_RESERVED3_BYTES: size_t = 384;
+pub const SGX_REPORT_BODY_RESERVED1_BYTES: size_t = 12;
+pub const SGX_REPORT_BODY_RESERVED2_BYTES: size_t = 32;
+pub const SGX_REPORT_BODY_RESERVED3_BYTES: size_t = 32;
+pub const SGX_REPORT_BODY_RESERVED4_BYTES: size_t = 42;
+pub const SGX_REPORT_DATA_SIZE: size_t = 64;
+pub const SGX_ISVEXT_PROD_ID_SIZE: size_t = 16;
+pub const SGX_ISV_FAMILY_ID_SIZE: size_t = 16;
+pub const SGX_HASH_SIZE: size_t = 32;
+pub const SGX_MAC_SIZE: size_t = 16;
+
+pub type SgxResult<T> = std::result::Result<T, sgx_status_t>;
+
+pub type sgx_epid_group_id_t = [uint8_t; 4];
+pub type sgx_key_128bit_t = [uint8_t; 16];
+pub type sgx_isv_svn_t = uint16_t;
+pub type sgx_config_svn_t = uint16_t;
+pub type sgx_config_id_t = [uint8_t; SGX_CONFIGID_SIZE];
+pub type sgx_isvfamily_id_t = [uint8_t; SGX_ISV_FAMILY_ID_SIZE];
+pub type sgx_misc_select_t = uint32_t;
+pub type sgx_prod_id_t = uint16_t;
+pub type sgx_isvext_prod_id_t = [uint8_t; SGX_ISVEXT_PROD_ID_SIZE];
 
 #[repr(u32)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
@@ -121,43 +150,21 @@ pub enum sgx_status_t {
     SGX_ERROR_FAAS_INTERNAL_ERROR = 0x0F00_E002,   /* faas exec internal error */
 }
 
-pub type SgxResult<T> = std::result::Result<T, sgx_status_t>;
-
-pub type sgx_epid_group_id_t = [uint8_t; 4];
-pub type sgx_key_128bit_t = [uint8_t; 16];
-pub type sgx_isv_svn_t = uint16_t;
-pub type sgx_config_svn_t = uint16_t;
-pub type sgx_config_id_t = [uint8_t; SGX_CONFIGID_SIZE];
+pub struct sgx_spid_t {
+    pub id: [uint8_t; 16],
+}
 
 pub struct sgx_basename_t {
     pub name: [uint8_t; 32],
 }
 
+pub struct sgx_quote_nonce_t {
+    pub rand: [uint8_t; 16],
+}
+
 pub struct sgx_cpu_svn_t {
     pub svn: [uint8_t; SGX_CPUSVN_SIZE],
 }
-pub type sgx_misc_select_t = uint32_t;
-pub const SGX_TARGET_INFO_RESERVED1_BYTES: size_t = 2;
-pub const SGX_TARGET_INFO_RESERVED2_BYTES: size_t = 8;
-pub const SGX_TARGET_INFO_RESERVED3_BYTES: size_t = 384;
-
-pub const SGX_REPORT_BODY_RESERVED1_BYTES: size_t = 12;
-pub const SGX_REPORT_BODY_RESERVED2_BYTES: size_t = 32;
-pub const SGX_REPORT_BODY_RESERVED3_BYTES: size_t = 32;
-pub const SGX_REPORT_BODY_RESERVED4_BYTES: size_t = 42;
-
-pub const SGX_REPORT_DATA_SIZE: size_t = 64;
-
-pub const SGX_ISVEXT_PROD_ID_SIZE: size_t = 16;
-pub const SGX_ISV_FAMILY_ID_SIZE: size_t = 16;
-
-pub type sgx_prod_id_t = uint16_t;
-pub type sgx_isvext_prod_id_t = [uint8_t; SGX_ISVEXT_PROD_ID_SIZE];
-
-pub const SGX_KEYID_SIZE: size_t = 32;
-pub const SGX_CPUSVN_SIZE: size_t = 16;
-pub const SGX_CONFIGID_SIZE: size_t = 64;
-pub const SGX_KEY_REQUEST_RESERVED2_BYTES: size_t = 434;
 
 pub struct sgx_attributes_t {
     pub flags: uint64_t,
@@ -172,11 +179,6 @@ pub struct sgx_misc_attribute_t {
 pub struct sgx_measurement_t {
     pub m: [uint8_t; SGX_HASH_SIZE],
 }
-
-pub const SGX_HASH_SIZE: size_t = 32;
-pub const SGX_MAC_SIZE: size_t = 16;
-
-pub type sgx_isvfamily_id_t = [uint8_t; SGX_ISV_FAMILY_ID_SIZE];
 
 pub struct sgx_report_data_t {
     pub d: [uint8_t; SGX_REPORT_DATA_SIZE],
