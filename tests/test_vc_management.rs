@@ -31,23 +31,19 @@ fn tc_request_vc_works() {
     let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
     let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
 
-    let balance = 10_u128;
-    let a4 = Assertion::A4(balance);
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a4 = Assertion::A4(balance.clone());
 
     let a6 = Assertion::A6;
 
-    let balance = 10_u128;
-    let a7 = Assertion::A7(balance);
+    let a7 = Assertion::A7(balance.clone());
 
     let litentry = IndexingNetwork::Litentry;
     let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
     let a8 = Assertion::A8(networks);
 
-    let balance = 10_u128;
-    let a10 = Assertion::A10(balance);
-
-    let balance = 10_u128;
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
@@ -72,10 +68,10 @@ pub fn tc_batch_request_vc() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = 1_u128;
-    let a4 = Assertion::A4(balance);
-    let a7 = Assertion::A7(balance);
-    let a10 = Assertion::A10(balance);
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a4 = Assertion::A4(balance.clone());
+    let a7 = Assertion::A7(balance.clone());
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = [a4, a7, a10, a11];
@@ -99,10 +95,10 @@ pub fn tc_batch_all_request_vc() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = 1_u128;
-    let a4 = Assertion::A4(balance);
-    let a7 = Assertion::A7(balance);
-    let a10 = Assertion::A10(balance);
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a4 = Assertion::A4(balance.clone());
+    let a7 = Assertion::A7(balance.clone());
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = [a4, a7, a10, a11];
@@ -249,7 +245,7 @@ fn tc_request_vc_a4() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = 10_u128;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
 
     println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A4. <<<<<<<<<<<<<<<<<<<<<<<< ");
@@ -284,17 +280,17 @@ fn tc_request_vc_all_with_timestamp() {
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
     let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
-    let balance = 10_u128;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let networks = IndexingNetworks::with_bounded_capacity(1);
 
     let a1 = Assertion::A1;
     let a2 = Assertion::A2(guild_id.clone());
     let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
-    let a4 = Assertion::A4(balance);
+    let a4 = Assertion::A4(balance.clone());
     let a6 = Assertion::A6;
-    let a7 = Assertion::A7(balance);
+    let a7 = Assertion::A7(balance.clone());
     let a8 = Assertion::A8(networks);
-    let a10 = Assertion::A10(balance);
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];

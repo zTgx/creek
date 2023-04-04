@@ -180,17 +180,17 @@ fn tc_request_vc_based_on_more_than_30_identities() {
         let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
         let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
         let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
-        let balance = 10_u128;
+        let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
         let networks = IndexingNetworks::with_bounded_capacity(1);
 
         let a1 = Assertion::A1;
         let a2 = Assertion::A2(guild_id.clone());
         let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
-        let a4 = Assertion::A4(balance);
+        let a4 = Assertion::A4(balance.clone());
         let a6 = Assertion::A6;
-        let a7 = Assertion::A7(balance);
+        let a7 = Assertion::A7(balance.clone());
         let a8 = Assertion::A8(networks);
-        let a10 = Assertion::A10(balance);
+        let a10 = Assertion::A10(balance.clone());
         let a11 = Assertion::A11(balance);
 
         let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
@@ -270,7 +270,9 @@ fn tc_create_all_substrate_network_then_request_vc() {
     {
         println!("  [+] Start testing and apply for assertions based on 6 dentities. ");
 
-        let a4 = Assertion::A4(10);
+        let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+
+        let a4 = Assertion::A4(balance);
 
         let assertions = vec![a4];
         let assertion_names = vec!["A4"];

@@ -111,7 +111,7 @@ fn alpha_request_vc_a4_10_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
 
     api_client.request_vc(&shard, &a4);
@@ -131,7 +131,7 @@ fn alpha_request_vc_a4_min_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
 
     api_client.request_vc(&shard, &a4);
@@ -151,7 +151,7 @@ fn alpha_request_vc_a4_max_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MAX;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
 
     api_client.request_vc(&shard, &a4);
@@ -190,7 +190,7 @@ fn alpha_request_vc_a7_10_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
 
     api_client.request_vc(&shard, &a7);
@@ -210,7 +210,7 @@ fn alpha_request_vc_a7_min_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
 
     api_client.request_vc(&shard, &a7);
@@ -230,7 +230,7 @@ fn alpha_request_vc_a7_max_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MAX;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
 
     api_client.request_vc(&shard, &a7);
@@ -273,7 +273,7 @@ fn alpha_request_vc_a10_10_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
 
     api_client.request_vc(&shard, &a10);
@@ -293,7 +293,7 @@ fn alpha_request_vc_a10_min_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
 
     api_client.request_vc(&shard, &a10);
@@ -313,7 +313,7 @@ fn alpha_request_vc_a10_max_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MAX;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
 
     api_client.request_vc(&shard, &a10);
@@ -333,7 +333,7 @@ fn alpha_request_vc_a11_10_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
 
     api_client.request_vc(&shard, &a11);
@@ -353,7 +353,7 @@ fn alpha_request_vc_a11_min_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MIN;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
 
     api_client.request_vc(&shard, &a11);
@@ -373,7 +373,7 @@ fn alpha_request_vc_a11_max_u128_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MAX;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
 
     api_client.request_vc(&shard, &a11);
@@ -393,10 +393,10 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let balance = u128::MAX;
-    let a4 = Assertion::A4(balance);
-    let a7 = Assertion::A7(balance);
-    let a10 = Assertion::A10(balance);
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a4 = Assertion::A4(balance.clone());
+    let a7 = Assertion::A7(balance.clone());
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = [a4, a7, a10, a11];
@@ -430,16 +430,16 @@ pub fn alpha_batch_all_request_vc_all_works() {
     let litentry = IndexingNetwork::Litentry;
     let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
-    let balance = 10_u128;
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
 
     let a1 = Assertion::A1;
     let a2 = Assertion::A2(guild_id.clone());
     let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
-    let a4 = Assertion::A4(balance);
+    let a4 = Assertion::A4(balance.clone());
     let a6 = Assertion::A6;
-    let a7 = Assertion::A7(balance);
+    let a7 = Assertion::A7(balance.clone());
     let a8 = Assertion::A8(networks);
-    let a10 = Assertion::A10(balance);
+    let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];

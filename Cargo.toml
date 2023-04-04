@@ -42,6 +42,7 @@ url = "2.0.0"
 openssl = "0.10.48"
 thiserror = { version = "1.0" }
 basex-rs = "0.2.0"
+sp-arithmetic = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.37", default-features = false }
 
 [dev-dependencies]
 reqwest = { version = "0.11", features = ["blocking", "json"] }
