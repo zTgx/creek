@@ -7,6 +7,7 @@
 - [x] `VCManagement` pallet api is supported
 - [x] `VC verify` is supported
 - [x] `Sidechain` api is supported
+- [x] `RA Attestation` is supported
 
 ### Usage
 ```rust

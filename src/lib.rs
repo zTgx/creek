@@ -2,6 +2,7 @@
 
 pub mod identity_management;
 pub mod primitives;
+pub mod ra;
 pub mod sidechain;
 pub mod utils;
 pub mod vc_management;
@@ -31,7 +32,8 @@ use ws::{
     connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
 
-const NODE_URL: &str = "ws://127.0.0.1:9944";
+const _NODE_URL: &str = "ws://127.0.0.1:9944";
+const PROD_NODE_URL: &str = "wss://tee-staging.litentry.io:443";
 const WORKER_URL: &str = "wss://localhost:2000";
 
 const ACCOUNT_SEED_CHARSET: &[u8] =
@@ -54,7 +56,7 @@ where
     MultiSigner: From<P::Public>,
 {
     pub fn new_with_signer(signer: P) -> Self {
-        let client = WsRpcClient::new(NODE_URL);
+        let client = WsRpcClient::new(PROD_NODE_URL);
         let api = ApiType::new(client)
             .map(|api| api.set_signer(signer))
             .unwrap();

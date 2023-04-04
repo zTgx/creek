@@ -29,7 +29,7 @@ pub struct Enclave<PubKey, Url> {
     pub shielding_key: Option<Vec<u8>>, // JSON serialised enclave shielding key
     pub vc_pubkey: Option<Vec<u8>>,
     pub sgx_mode: SgxBuildMode,
-    // pub sgx_metadata: SgxEnclaveMetadata,
+    pub sgx_metadata: SgxEnclaveMetadata,
 }
 
 #[derive(Encode, Decode, Clone, TypeInfo, PartialEq, Eq, Default, sp_core::RuntimeDebug)]
