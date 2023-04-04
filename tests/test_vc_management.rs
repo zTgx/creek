@@ -470,3 +470,33 @@ fn tc_double_revoke_vc() {
 //         .unwrap();
 //     assert_eq!(vc_cotext.hash, vc_index);
 // }
+
+#[test]
+fn tc_request_vc_a5_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice);
+
+    let shard = api_client.get_shard();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+
+    let original_tweet_id = ParameterString::try_from([].to_vec()).unwrap();
+    let a5 = Assertion::A5(original_tweet_id);
+
+    println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A5. <<<<<<<<<<<<<<<<<<<<<<<< ");
+    let now = SystemTime::now();
+    api_client.request_vc(&shard, &a5);
+
+    let event = api_client.wait_event_vc_issued();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    let elapsed_secs = now.elapsed().unwrap().as_secs();
+    println!(
+        " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue A5 took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
+        elapsed_secs
+    );
+
+    print_passed();
+}
