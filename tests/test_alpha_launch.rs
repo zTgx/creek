@@ -15,6 +15,9 @@ Priority:
 */
 
 use litentry_api_client::{
+    api_client_patch::{
+        batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
+    },
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{
@@ -25,9 +28,9 @@ use litentry_api_client::{
         events::{VCDisabledEvent, VCIssuedEvent, VCManagementError, VCRevokedEvent},
         verify::verify_vc,
         xtbuilder::VcManagementXtBuilder,
-        VcManagementApi, VcManagementQueryApi,
+        VcManagementApi,
     },
-    ApiClient, ApiClientPatch, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 

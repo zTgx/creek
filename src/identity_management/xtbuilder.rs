@@ -1,4 +1,5 @@
 use crate::{
+    api_client_patch::parachain::ParachainPatch,
     identity_management::IDENTITY_PALLET_NAME,
     primitives::{
         address::Address32,

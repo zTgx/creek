@@ -3,11 +3,12 @@ use std::time::SystemTime;
 use sp_core::{sr25519, Pair};
 
 use crate::{
+    api_client_patch::{event::SubscribeEventPatch, parachain::ParachainPatch},
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, ParameterString},
     utils::{crypto::generate_user_shielding_key, print_passed},
     vc_management::{events::VCIssuedEvent, VcManagementApi},
-    ApiClient, SubscribeEventPatch,
+    ApiClient,
 };
 
 /// The relevant documentation for the fuzzy interface is here

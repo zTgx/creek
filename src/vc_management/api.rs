@@ -1,6 +1,6 @@
-use super::{VcManagementApi, VcManagementQueryApi};
+use super::VcManagementApi;
 use crate::{
-    primitives::{assertion::Assertion, vc::VCContext, MrEnclave},
+    primitives::{assertion::Assertion, MrEnclave},
     vc_management::xtbuilder::VcManagementXtBuilder,
     ApiClient,
 };
@@ -26,21 +26,5 @@ where
     fn revoke_vc(&self, vc_index: &H256) {
         let xt = self.build_extrinsic_revoke_vc(vc_index);
         self.send_extrinsic(xt.hex_encode());
-    }
-}
-
-impl<P> VcManagementQueryApi for ApiClient<P>
-where
-    P: Pair,
-    MultiSignature: From<P::Signature>,
-    MultiSigner: From<P::Public>,
-{
-    fn vc_registry(&self, vc_index: &H256) -> Option<VCContext> {
-        let vc_context: Option<VCContext> = self
-            .api
-            .get_storage_map("VCManagement", "VCRegistry", vc_index, None)
-            .unwrap();
-
-        vc_context
     }
 }

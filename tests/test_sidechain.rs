@@ -1,4 +1,5 @@
 use litentry_api_client::{
+    api_client_patch::{event::SubscribeEventPatch, parachain::ParachainPatch},
     identity_management::{events::IdentityCreatedEvent, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
@@ -8,7 +9,7 @@ use litentry_api_client::{
         enclave::mrenclave_to_bs58,
         print_passed,
     },
-    ApiClient, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 

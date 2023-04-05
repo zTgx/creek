@@ -12,6 +12,7 @@ use crate::{
 };
 
 pub mod api;
+pub mod rpc;
 
 pub trait SidechainRpc {
     fn rpc_methods(&self) -> ApiResult<Vec<String>>;

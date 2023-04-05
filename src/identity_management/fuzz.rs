@@ -1,10 +1,11 @@
 use sp_core::{sr25519, Pair};
 
 use crate::{
+    api_client_patch::{event::SubscribeEventPatch, parachain::ParachainPatch},
     identity_management::{events::IdentityCreatedEvent, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     utils::{address::pubkey_to_address32, crypto::generate_user_shielding_key, print_passed},
-    ApiClient, SubscribeEventPatch,
+    ApiClient,
 };
 
 pub fn fuzz_create_identity_works() {

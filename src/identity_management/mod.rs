@@ -3,7 +3,6 @@ use crate::primitives::{
     identity::{Identity, ValidationData},
     MrEnclave,
 };
-use substrate_api_client::ApiResult;
 
 pub mod api;
 pub mod events;
@@ -32,8 +31,4 @@ pub trait IdentityManagementApi {
     );
     fn remove_identity(&self, shard: &MrEnclave, identity: &Identity);
     fn verify_identity(&self, shard: &MrEnclave, identity: &Identity, vdata: &ValidationData);
-}
-
-pub trait IdentityManagementQueryApi {
-    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>>;
 }

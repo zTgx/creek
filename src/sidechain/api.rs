@@ -1,7 +1,8 @@
+use super::rpc::SidechainRpcClientTrait;
 use super::{decode_from_rpc_response, json_req, remove_whitespace, SidechainRpc};
 use crate::primitives::crypto::{DirectRequestStatus, RpcReturnValue, RsaPublicKeyGenerator};
 use crate::utils::hex::FromHexPrefixed;
-use crate::{sidechain::json_resp, ApiClient, SidechainRpcClientTrait};
+use crate::{sidechain::json_resp, ApiClient};
 use codec::{Decode, Error as CodecError};
 use rsa::RsaPublicKey;
 use sp_core::Pair;

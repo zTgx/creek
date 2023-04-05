@@ -7,6 +7,9 @@
  *
  */
 use litentry_api_client::{
+    api_client_patch::{
+        batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
+    },
     identity_management::{
         events::IdentityCreatedEvent, xtbuilder::IdentityManagementXtBuilder, IdentityManagementApi,
     },
@@ -16,7 +19,7 @@ use litentry_api_client::{
         MrEnclave,
     },
     utils::{address::public_to_address32, crypto::generate_user_shielding_key, print_passed},
-    ApiClient, ApiClientPatch, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 use sp_runtime::BoundedVec;

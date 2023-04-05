@@ -2,6 +2,9 @@ use std::time::SystemTime;
 
 use codec::Encode;
 use litentry_api_client::{
+    api_client_patch::{
+        batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
+    },
     identity_management::{
         events::{IdentityCreatedEvent, IdentityVerifiedEvent},
         xtbuilder::IdentityManagementXtBuilder,
@@ -23,7 +26,7 @@ use litentry_api_client::{
         print_passed,
     },
     vc_management::{events::VCIssuedEvent, VcManagementApi},
-    ApiClient, ApiClientPatch, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 

@@ -2,7 +2,7 @@
 
 ### Features
 - [x] Rust nightly only
-- [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `ApiClientPatch`
+- [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client) and `BatchPatch`
 - [x] `IdentityManagement` pallet api is supported
 - [x] `VCManagement` pallet api is supported
 - [x] `VC verify` is supported

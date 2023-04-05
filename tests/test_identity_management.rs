@@ -1,4 +1,5 @@
 use litentry_api_client::{
+    api_client_patch::{event::SubscribeEventPatch, parachain::ParachainPatch},
     identity_management::{
         events::{
             DelegateeAddedEvent, IdentityCreatedEvent, IdentityRemovedEvent, IdentityVerifiedEvent,
@@ -24,7 +25,7 @@ use litentry_api_client::{
         identity::ValidationDataBuilder,
         print_passed,
     },
-    ApiClient, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 

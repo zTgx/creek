@@ -1,4 +1,5 @@
 use crate::{
+    api_client_patch::parachain::ParachainPatch,
     identity_management::xtbuilder::IdentityManagementXtBuilder,
     primitives::{address::Address32, identity::Identity, identity::ValidationData, MrEnclave},
     utils::crypto::encrypt_with_tee_shielding_pubkey,
@@ -6,9 +7,8 @@ use crate::{
 };
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::ApiResult;
 
-use super::{IdentityManagementApi, IdentityManagementQueryApi, IDENTITY_PALLET_NAME};
+use super::IdentityManagementApi;
 
 impl<P> IdentityManagementApi for ApiClient<P>
 where
@@ -67,20 +67,5 @@ where
     fn verify_identity(&self, shard: &MrEnclave, identity: &Identity, vdata: &ValidationData) {
         let xt = self.build_extrinsic_verify_identity(shard, identity, vdata);
         self.send_extrinsic(xt.hex_encode());
-    }
-}
-
-impl<P> IdentityManagementQueryApi for ApiClient<P>
-where
-    P: Pair,
-    MultiSignature: From<P::Signature>,
-    MultiSigner: From<P::Public>,
-{
-    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>> {
-        let ret: ApiResult<Option<()>> =
-            self.api
-                .get_storage_map(IDENTITY_PALLET_NAME, "Delegatee", account, None);
-
-        ret
     }
 }

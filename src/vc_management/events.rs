@@ -1,5 +1,7 @@
 use super::VC_PALLET_NAME;
-use crate::primitives::{assertion::Assertion, crypto::AesOutput, vc::ErrorDetail, AccountId, VCIndex};
+use crate::primitives::{
+    assertion::Assertion, crypto::AesOutput, vc::ErrorDetail, AccountId, VCIndex,
+};
 use codec::Decode;
 use sp_core::H256;
 use substrate_api_client::StaticEvent;

@@ -1,4 +1,7 @@
 use litentry_api_client::{
+    api_client_patch::{
+        batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
+    },
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{crypto::generate_user_shielding_key, print_passed, vc::create_a_random_vc_index},
@@ -7,9 +10,9 @@ use litentry_api_client::{
             RequestVCFailedEvent, VCDisabledEvent, VCIssuedEvent, VCManagementError, VCRevokedEvent,
         },
         xtbuilder::VcManagementXtBuilder,
-        VcManagementApi, VcManagementQueryApi,
+        VcManagementApi,
     },
-    ApiClient, ApiClientPatch, SubscribeEventPatch,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 use std::time::SystemTime;
