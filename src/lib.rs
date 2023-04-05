@@ -15,12 +15,16 @@ use substrate_api_client::{
     rpc::WsRpcClient, Api, PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, XtStatus,
 };
 
-const _NODE_URL: &str = "ws://127.0.0.1:9944";
-const _PROD_NODE_URL: &str = "wss://tee-staging.litentry.io:443";
-const WORKER_URL: &str = "wss://localhost:2000";
+#[cfg(not(feature = "staging"))]
+const NODE_URL: &str = "ws://127.0.0.1:9944";
+#[cfg(not(feature = "staging"))]
+const WORKER_URL: &str = "ws://127.0.0.1:2000";
 
-const ACCOUNT_SEED_CHARSET: &[u8] =
-    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+#[cfg(feature = "staging")]
+const NODE_URL: &str = "wss://tee-staging.litentry.io:443";
+#[cfg(feature = "staging")]
+const WORKER_URL: &str = "wss://tee-staging.litentry.io:2000";
+
 pub type ApiType<P> = Api<P, WsRpcClient, PlainTipExtrinsicParams>;
 
 #[derive(Clone)]
@@ -39,7 +43,11 @@ where
     MultiSigner: From<P::Public>,
 {
     pub fn new_with_signer(signer: P) -> Self {
-        let client = WsRpcClient::new(_NODE_URL);
+        env_logger::init();
+
+        println!("[+] {} Connected", NODE_URL);
+
+        let client = WsRpcClient::new(NODE_URL);
         let api = ApiType::new(client)
             .map(|api| api.set_signer(signer))
             .unwrap();

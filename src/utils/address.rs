@@ -1,10 +1,10 @@
-use crate::{
-    primitives::address::{Address20, Address32},
-    ACCOUNT_SEED_CHARSET,
-};
+use crate::primitives::address::{Address20, Address32};
 use aes_gcm::aead::OsRng;
 use rand::{Rng, RngCore};
 use sp_core::{crypto::Ss58Codec, sr25519, Pair};
+
+const ACCOUNT_SEED_CHARSET: &[u8] =
+    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 /// How public key transimit>>>
 /// [u8; 32] -> Pair::Public

@@ -3,7 +3,8 @@ use litentry_api_client::{
     identity_management::{
         events::{
             DelegateeAddedEvent, IdentityCreatedEvent, IdentityRemovedEvent, IdentityVerifiedEvent,
-            SetUserShieldingKeyHandlingFailedEvent, UnexpectedMessageEvent,
+            SetUserShieldingKeyEvent, SetUserShieldingKeyHandlingFailedEvent,
+            UnexpectedMessageEvent,
         },
         IdentityManagementApi,
     },
@@ -38,7 +39,7 @@ fn tc_set_user_shielding_key_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let event = api_client.wait_event::<SetUserShieldingKeyHandlingFailedEvent>();
+    let event = api_client.wait_event::<SetUserShieldingKeyEvent>();
     assert!(event.is_ok());
 
     print_passed();
