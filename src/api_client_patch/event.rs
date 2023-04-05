@@ -10,7 +10,7 @@ pub trait SubscribeEventPatch {
     fn wait_event<EventType: StaticEvent>(&self) -> ApiResult<EventType>;
 
     // For subscribe batch call events
-    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> Vec<EventType>;
+    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> ApiResult<Vec<EventType>>;
 
     // For wait error
     fn wait_error<EventType: StaticEvent>(&self) -> ApiResult<EventType>;
@@ -24,24 +24,24 @@ where
 {
     fn wait_event<EventType: StaticEvent>(&self) -> ApiResult<EventType> {
         let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
+        self.api.subscribe_events(events_in)?;
 
         let event: ApiResult<EventType> = self.api.wait_for_event(&events_out);
         event
     }
 
-    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> Vec<EventType> {
+    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> ApiResult<Vec<EventType>> {
         let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
+        self.api.subscribe_events(events_in)?;
 
-        let mut collected = vec![];
+        let mut collected_events = vec![];
         loop {
-            if collected.len() == target_num {
+            if collected_events.len() == target_num {
                 break;
             }
 
-            let events_str = events_out.recv().unwrap();
-            let event_bytes = Vec::from_hex(events_str).unwrap();
+            let events_str = events_out.recv()?;
+            let event_bytes = Vec::from_hex(events_str)?;
             let events = Events::new(self.api.metadata.clone(), Default::default(), event_bytes);
 
             // TODO:
@@ -49,7 +49,7 @@ where
             // "System", "ExtrinsicSuccess"
             // "System", "ExtrinsicFailed"
             for maybe_event_details in events.iter() {
-                let event_details = maybe_event_details.unwrap();
+                let event_details = maybe_event_details?;
                 let event_metadata = event_details.event_metadata();
                 println!(
                     "Found extrinsic: {:?}, {:?}",
@@ -61,20 +61,19 @@ where
                 {
                     println!("meta: {:?}", event_metadata);
                     let event = event_details
-                        .as_event::<EventType>()
-                        .unwrap()
-                        .ok_or(Error::Other("Could not find the specific event".into()));
-                    collected.push(event.unwrap());
+                        .as_event::<EventType>()?
+                        .ok_or(Error::Other("Could not find the specific event".into()))?;
+                    collected_events.push(event);
                 }
             }
         }
 
-        collected
+        Ok(collected_events)
     }
 
     fn wait_error<EventType: StaticEvent>(&self) -> ApiResult<EventType> {
         let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
+        self.api.subscribe_events(events_in)?;
 
         let vc_disabled_event: ApiResult<EventType> = self.api.wait_for_event(&events_out);
         vc_disabled_event

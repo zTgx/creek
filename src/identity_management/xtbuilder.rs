@@ -113,7 +113,7 @@ where
         ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey().unwrap();
         let encrypted_identity =
             encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
 
@@ -137,7 +137,7 @@ where
         ciphertext_metadata: &Option<Vec<u8>>,
     ) -> CreateIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey().unwrap();
         let encrypted_identity =
             encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
 
@@ -165,7 +165,7 @@ where
         identity: &Identity,
     ) -> RemoveIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
         let identity_encoded = identity.encode();
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey().unwrap();
         let encrypted_identity =
             encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
 
@@ -184,7 +184,7 @@ where
         identity: &Identity,
         validation_data: &ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>> {
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey().unwrap();
 
         let identity_encoded = identity.encode();
         let encrypted_identity =

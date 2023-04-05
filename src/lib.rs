@@ -1,3 +1,4 @@
+#![recursion_limit = "256"]
 #![feature(string_remove_matches)]
 
 pub mod api_client_patch;

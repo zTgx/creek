@@ -11,10 +11,10 @@ use crate::{
 use rsa::RsaPublicKey;
 use sp_core::{ed25519, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::ApiResult;
+use substrate_api_client::{std::error::Error as ApiError, ApiResult};
 
 pub trait ParachainPatch {
-    fn get_tee_shielding_pubkey(&self) -> RsaPublicKey;
+    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey>;
     fn get_vc_pubkey(&self) -> ed25519::Public;
     fn get_shard(&self) -> MrEnclave;
     fn vc_registry(&self, vc_index: &VCIndex) -> Option<VCContext>;
@@ -27,21 +27,26 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn get_tee_shielding_pubkey(&self) -> RsaPublicKey {
-        let enclave_count: u64 = self
-            .api
-            .get_storage_value("Teerex", "EnclaveCount", None)
-            .unwrap()
-            .unwrap();
+    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey> {
+        let enclave_count: Option<u64> =
+            self.api.get_storage_value("Teerex", "EnclaveCount", None)?;
 
-        let enclave: Enclave<AccountId, Vec<u8>> = self
-            .api
-            .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
-            .unwrap()
-            .unwrap();
+        let enclave_count = enclave_count
+            .ok_or_else(|| ApiError::Other("[+] get enclave count error".to_string().into()))?;
 
-        let shielding_key = enclave.shielding_key.unwrap();
+        let enclave: Option<Enclave<AccountId, String>> =
+            self.api
+                .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)?;
+
+        let enclave =
+            enclave.ok_or_else(|| ApiError::Other("[+] get enclave error".to_string().into()))?;
+
+        let shielding_key = enclave.shielding_key.ok_or_else(|| {
+            ApiError::Other("[+] get tee shielding pubkey error".to_string().into())
+        })?;
+
         RsaPublicKey::new_with_rsa3072_pubkey(shielding_key)
+            .map_err(|e| ApiError::Other(format!("Generate Rsa pubkey error: {:?}", e).into()))
     }
 
     fn get_vc_pubkey(&self) -> ed25519::Public {

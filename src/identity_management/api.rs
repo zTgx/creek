@@ -7,6 +7,7 @@ use crate::{
 };
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
+use substrate_api_client::ApiResult;
 
 use super::IdentityManagementApi;
 
@@ -16,12 +17,18 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8]) {
-        let tee_shielding_pubkey = self.get_tee_shielding_pubkey();
+    fn set_user_shielding_key(
+        &self,
+        shard: &MrEnclave,
+        user_shielding_key: &[u8],
+    ) -> ApiResult<()> {
+        let tee_shielding_pubkey = self.get_tee_shielding_pubkey()?;
         let encrpted_shielding_key =
             encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, user_shielding_key);
         let xt = self.build_extrinsic_set_user_shielding_key(shard, &encrpted_shielding_key);
         self.send_extrinsic(xt.hex_encode());
+
+        Ok(())
     }
 
     fn add_delegatee(&self, account: &Address32) {

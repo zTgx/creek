@@ -14,7 +14,9 @@ pub fn fuzz_create_identity_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
     let address = pubkey_to_address32(alice).unwrap();

@@ -15,7 +15,10 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 use codec::{Decode, Encode};
-use rsa::{BigUint, RsaPublicKey};
+use rsa::{
+    errors::{Error as RsaError, Result as RsaResult},
+    BigUint, RsaPublicKey,
+};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 
@@ -32,18 +35,19 @@ pub struct Rsa3072Pubkey {
 pub trait RsaPublicKeyGenerator {
     type Input;
 
-    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaPublicKey;
+    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaResult<RsaPublicKey>;
 }
 
 impl RsaPublicKeyGenerator for RsaPublicKey {
     type Input = Vec<u8>;
 
-    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaPublicKey {
-        let key: Rsa3072Pubkey = serde_json::from_slice(&shielding_key).unwrap();
-        let b = BigUint::from_radix_le(&key.n, 256).unwrap();
-        let a = BigUint::from_radix_le(&key.e, 256).unwrap();
+    fn new_with_rsa3072_pubkey(shielding_key: Self::Input) -> RsaResult<RsaPublicKey> {
+        let key: Rsa3072Pubkey =
+            serde_json::from_slice(&shielding_key).map_err(|_| RsaError::InvalidPaddingScheme)?;
+        let b = BigUint::from_radix_le(&key.n, 256).ok_or(RsaError::InvalidCoefficient)?;
+        let a = BigUint::from_radix_le(&key.e, 256).ok_or(RsaError::InvalidCoefficient)?;
 
-        RsaPublicKey::new(b, a).unwrap()
+        RsaPublicKey::new(b, a)
     }
 }
 

@@ -46,7 +46,9 @@ fn alpha_request_vc_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -70,7 +72,9 @@ fn alpha_request_vc_a2_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
     let a2 = Assertion::A2(guild_id.clone());
@@ -90,7 +94,9 @@ fn alpha_request_vc_a3_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
@@ -112,7 +118,9 @@ fn alpha_request_vc_a4_10_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
@@ -132,7 +140,9 @@ fn alpha_request_vc_a4_min_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
@@ -152,7 +162,9 @@ fn alpha_request_vc_a4_max_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
@@ -172,7 +184,9 @@ fn alpha_request_vc_a6_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a6 = Assertion::A6;
 
@@ -191,7 +205,9 @@ fn alpha_request_vc_a7_10_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
@@ -211,7 +227,9 @@ fn alpha_request_vc_a7_min_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
@@ -231,7 +249,9 @@ fn alpha_request_vc_a7_max_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a7 = Assertion::A7(balance);
@@ -252,7 +272,9 @@ fn alpha_request_vc_a8_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let litentry = IndexingNetwork::Litentry;
     let mut networks = IndexingNetworks::with_bounded_capacity(1);
@@ -274,7 +296,9 @@ fn alpha_request_vc_a10_10_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
@@ -294,7 +318,9 @@ fn alpha_request_vc_a10_min_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
@@ -314,7 +340,9 @@ fn alpha_request_vc_a10_max_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a10 = Assertion::A10(balance);
@@ -334,7 +362,9 @@ fn alpha_request_vc_a11_10_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
@@ -354,7 +384,9 @@ fn alpha_request_vc_a11_min_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
@@ -374,7 +406,9 @@ fn alpha_request_vc_a11_max_u128_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a11 = Assertion::A11(balance);
@@ -394,7 +428,9 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance.clone());
@@ -414,7 +450,7 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -425,7 +461,9 @@ pub fn alpha_batch_all_request_vc_all_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
@@ -457,7 +495,7 @@ pub fn alpha_batch_all_request_vc_all_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -468,7 +506,9 @@ pub fn alpha_request_vc_a1_then_disable_it_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -490,7 +530,9 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     // Frist A1
     let a1 = Assertion::A1;
@@ -525,7 +567,9 @@ pub fn alpha_disable_vc_no_exsits_index_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let non_exists_vc_index = create_a_random_vc_index();
     api_client.disable_vc(&non_exists_vc_index);
@@ -549,7 +593,9 @@ fn alpha_disabled_vc_twice_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -582,7 +628,9 @@ fn alpha_request_vc_then_revoke_it_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -604,7 +652,9 @@ fn alpha_revoke_non_exists_vc_index_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let vc_index = create_a_random_vc_index();
     api_client.revoke_vc(&vc_index);
@@ -628,7 +678,9 @@ fn alpha_revoke_vc_twice_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -661,7 +713,9 @@ fn alpha_request_disable_revoke_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -688,7 +742,9 @@ fn alpha_request_vc_batch_all_10s_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let len = 10;
     let mut assertions = vec![];
@@ -707,7 +763,7 @@ fn alpha_request_vc_batch_all_10s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -718,7 +774,9 @@ fn alpha_request_vc_batch_all_20s_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let len = 20;
     let mut assertions = vec![];
@@ -737,7 +795,7 @@ fn alpha_request_vc_batch_all_20s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -748,7 +806,9 @@ fn alpha_request_vc_batch_all_50s_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let len = 50;
     let mut assertions = vec![];
@@ -767,7 +827,7 @@ fn alpha_request_vc_batch_all_50s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -778,7 +838,9 @@ fn alpha_request_vc_batch_all_100s_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let len = 100;
     let mut assertions = vec![];
@@ -797,7 +859,7 @@ fn alpha_request_vc_batch_all_100s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -808,7 +870,9 @@ fn alpha_request_vc_batch_all_200s_a1_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let len = 200;
     let mut assertions = vec![];
@@ -827,7 +891,7 @@ fn alpha_request_vc_batch_all_200s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -838,7 +902,9 @@ fn alpha_query_vc_registry_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
@@ -859,7 +925,9 @@ fn alpha_query_vc_registry_non_exists_works() {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let non_exists_vc_index = create_a_random_vc_index();
     let vc_context = api_client.vc_registry(&non_exists_vc_index);

@@ -1,3 +1,5 @@
+use substrate_api_client::ApiResult;
+
 use crate::primitives::{
     address::Address32,
     identity::{Identity, ValidationData},
@@ -12,7 +14,8 @@ pub mod xtbuilder;
 pub const IDENTITY_PALLET_NAME: &str = "IdentityManagement";
 
 pub trait IdentityManagementApi {
-    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8]);
+    fn set_user_shielding_key(&self, shard: &MrEnclave, user_shielding_key: &[u8])
+        -> ApiResult<()>;
     fn add_delegatee(&self, account: &Address32);
     fn create_identity(
         &self,

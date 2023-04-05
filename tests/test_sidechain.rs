@@ -81,7 +81,7 @@ fn tc_sidechain_author_get_shielding_key_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
     let shielding_key_from_worker = api_client.author_get_shielding_key().unwrap();
-    let tee_shielding_pubkey_from_parachain = api_client.get_tee_shielding_pubkey();
+    let tee_shielding_pubkey_from_parachain = api_client.get_tee_shielding_pubkey().unwrap();
 
     assert_eq!(
         shielding_key_from_worker,
@@ -119,7 +119,9 @@ fn tc_sidechain_challenge_code_works() {
     let shard = api_client.get_shard();
     let shard_in_base58 = mrenclave_to_bs58(&shard);
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     {
         let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";

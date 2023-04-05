@@ -116,9 +116,10 @@ where
         let jsonreq = json_req("author_getShieldingKey", [0_u8; 0], 1);
         let resp = self.sidechain.request(jsonreq)?;
         let shielding_pubkey_string = decode_from_rpc_response(&resp)?;
-        Ok(RsaPublicKey::new_with_rsa3072_pubkey(
-            shielding_pubkey_string.as_bytes().to_vec(),
-        ))
+        Ok(
+            RsaPublicKey::new_with_rsa3072_pubkey(shielding_pubkey_string.as_bytes().to_vec())
+                .map_err(|e| ApiError::Other(format!("Get author shielding key error: {:?}", e)))?,
+        )
     }
 
     /// ws://localhost:3000

@@ -20,7 +20,9 @@ pub fn fuzz_request_vc_a4(_balance: u128) {
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
-    api_client.set_user_shielding_key(&shard, &user_shielding_key);
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance);
