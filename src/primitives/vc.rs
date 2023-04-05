@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{AccountId, ParentchainBlockNumber};
+use super::{AccountId, ErrorString, ParentchainBlockNumber};
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
@@ -193,4 +193,28 @@ pub struct VCContext {
     pub hash: H256,
     // status of the VC
     pub status: Status,
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+pub enum ErrorDetail {
+    // error when importing the parentchain blocks and executing indirect calls
+    ImportError,
+    // generic error when executing STF, the `ErrorString` should indicate the actual reasons
+    StfError(ErrorString),
+    // error when sending stf request to the receiver
+    SendStfRequestFailed,
+    ChallengeCodeNotFound,
+    UserShieldingKeyNotFound,
+    // generic parse error, can be caused by UTF8/JSON serde..
+    ParseError,
+    // errors when verifying identities
+    DecodeHexPayloadFailed(ErrorString),
+    HttpRequestFailed(ErrorString),
+    InvalidIdentity,
+    WrongWeb2Handle,
+    UnexpectedMessage,
+    WrongSignatureType,
+    VerifySubstrateSignatureFailed,
+    VerifyEvmSignatureFailed,
+    RecoverEvmAddressFailed,
 }

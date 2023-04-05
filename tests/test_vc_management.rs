@@ -3,11 +3,13 @@ use litentry_api_client::{
     primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{crypto::generate_user_shielding_key, print_passed, vc::create_a_random_vc_index},
     vc_management::{
-        events::{VcManagementErrorApi, VcManagementEventApi},
+        events::{
+            RequestVCFailedEvent, VcManagementErrorApi, VcManagementEventApi, VcManagementEventApiX,
+        },
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
     },
-    ApiClient, ApiClientPatch,
+    ApiClient, ApiClientPatch, SubscribeEventPatch,
 };
 use sp_core::{sr25519, Pair};
 use std::time::SystemTime;
@@ -472,7 +474,7 @@ fn tc_double_revoke_vc() {
 // }
 
 #[test]
-fn tc_request_vc_a5_works() {
+fn tc_request_vc_a5_invalid_input_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice);
 
@@ -487,10 +489,15 @@ fn tc_request_vc_a5_works() {
     let now = SystemTime::now();
     api_client.request_vc(&shard, &a5);
 
-    let event = api_client.wait_event_vc_issued();
+    {
+        let issued_events: Vec<RequestVCFailedEvent> = api_client.collect_events(1);
+        println!("event collect: {:?}", issued_events);
+    }
+    let event = api_client.wait_event_vc::<RequestVCFailedEvent>();
+    println!("event: {:?}", event);
     assert!(event.is_ok());
     let event = event.unwrap();
-    assert_eq!(event.account, api_client.get_signer().unwrap());
+    assert_eq!(event.assertion, a5);
 
     let elapsed_secs = now.elapsed().unwrap().as_secs();
     println!(

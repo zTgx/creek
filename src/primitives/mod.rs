@@ -35,6 +35,7 @@ pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];
 
 type MaxStringLength = ConstU32<64>;
 pub type IdentityString = BoundedVec<u8, MaxStringLength>;
+pub type ErrorString = BoundedVec<u8, MaxStringLength>;
 
 pub type ParentchainBlockNumber = u32;
 

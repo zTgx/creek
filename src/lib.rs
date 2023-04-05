@@ -229,6 +229,10 @@ where
             let event_bytes = Vec::from_hex(events_str).unwrap();
             let events = Events::new(self.api.metadata.clone(), Default::default(), event_bytes);
 
+            // TODO:
+            // Should capture
+            // "System", "ExtrinsicSuccess"
+            // "System", "ExtrinsicFailed"
             for maybe_event_details in events.iter() {
                 let event_details = maybe_event_details.unwrap();
                 let event_metadata = event_details.event_metadata();
@@ -240,6 +244,7 @@ where
                 if event_metadata.pallet() == EventType::PALLET
                     && event_metadata.event() == EventType::EVENT
                 {
+                    println!("meta: {:?}", event_metadata);
                     let event = event_details
                         .as_event::<EventType>()
                         .unwrap()

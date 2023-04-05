@@ -1,6 +1,6 @@
 use super::VC_PALLET_NAME;
 use crate::{
-    primitives::{assertion::Assertion, crypto::AesOutput, AccountId, VCIndex},
+    primitives::{assertion::Assertion, crypto::AesOutput, vc::ErrorDetail, AccountId, VCIndex},
     ApiClient,
 };
 use codec::Decode;
@@ -48,6 +48,24 @@ where
         self.api.subscribe_events(events_in).unwrap();
 
         let vc_disabled_event: ApiResult<VCRevokedEvent> = self.api.wait_for_event(&events_out);
+        vc_disabled_event
+    }
+}
+
+pub trait VcManagementEventApiX {
+    fn wait_event_vc<T: StaticEvent>(&self) -> ApiResult<T>;
+}
+impl<P> VcManagementEventApiX for ApiClient<P>
+where
+    P: Pair,
+    MultiSignature: From<P::Signature>,
+    MultiSigner: From<P::Public>,
+{
+    fn wait_event_vc<T: StaticEvent>(&self) -> ApiResult<T> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let vc_disabled_event: ApiResult<T> = self.api.wait_for_event(&events_out);
         vc_disabled_event
     }
 }
@@ -104,6 +122,20 @@ pub struct VCRevokedEvent {
 impl StaticEvent for VCRevokedEvent {
     const PALLET: &'static str = VC_PALLET_NAME;
     const EVENT: &'static str = "VCRevoked";
+}
+
+/// VCRevoked
+#[derive(Decode, Debug, PartialEq, Eq)]
+pub struct RequestVCFailedEvent {
+    pub account: Option<AccountId>,
+    pub assertion: Assertion,
+    pub detail: ErrorDetail,
+    pub req_ext_hash: H256,
+}
+
+impl StaticEvent for RequestVCFailedEvent {
+    const PALLET: &'static str = VC_PALLET_NAME;
+    const EVENT: &'static str = "RequestVCFailed";
 }
 
 /// Error
