@@ -42,7 +42,7 @@ fn alpha_function_name_should_be_descriptive_and_clear_works() {
 #[test]
 fn alpha_request_vc_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -66,7 +66,7 @@ fn alpha_request_vc_a1_works() {
 #[test]
 fn alpha_request_vc_a2_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -86,7 +86,7 @@ fn alpha_request_vc_a2_works() {
 #[test]
 fn alpha_request_vc_a3_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -108,7 +108,7 @@ fn alpha_request_vc_a3_works() {
 #[test]
 fn alpha_request_vc_a4_10_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -128,7 +128,7 @@ fn alpha_request_vc_a4_10_u128_works() {
 #[test]
 fn alpha_request_vc_a4_min_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -148,7 +148,7 @@ fn alpha_request_vc_a4_min_u128_works() {
 #[test]
 fn alpha_request_vc_a4_max_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -168,7 +168,7 @@ fn alpha_request_vc_a4_max_u128_works() {
 #[test]
 fn alpha_request_vc_a6_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -187,7 +187,7 @@ fn alpha_request_vc_a6_works() {
 #[test]
 fn alpha_request_vc_a7_10_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -207,7 +207,7 @@ fn alpha_request_vc_a7_10_u128_works() {
 #[test]
 fn alpha_request_vc_a7_min_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -227,7 +227,7 @@ fn alpha_request_vc_a7_min_u128_works() {
 #[test]
 fn alpha_request_vc_a7_max_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -248,7 +248,7 @@ fn alpha_request_vc_a7_max_u128_works() {
 #[test]
 fn alpha_request_vc_a8_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -270,7 +270,7 @@ fn alpha_request_vc_a8_works() {
 #[test]
 fn alpha_request_vc_a10_10_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -290,7 +290,7 @@ fn alpha_request_vc_a10_10_u128_works() {
 #[test]
 fn alpha_request_vc_a10_min_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -310,7 +310,7 @@ fn alpha_request_vc_a10_min_u128_works() {
 #[test]
 fn alpha_request_vc_a10_max_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -330,7 +330,7 @@ fn alpha_request_vc_a10_max_u128_works() {
 #[test]
 fn alpha_request_vc_a11_10_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -350,7 +350,7 @@ fn alpha_request_vc_a11_10_u128_works() {
 #[test]
 fn alpha_request_vc_a11_min_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -370,7 +370,7 @@ fn alpha_request_vc_a11_min_u128_works() {
 #[test]
 fn alpha_request_vc_a11_max_u128_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -390,7 +390,7 @@ fn alpha_request_vc_a11_max_u128_works() {
 #[test]
 pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -421,7 +421,7 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
 #[test]
 pub fn alpha_batch_all_request_vc_all_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -464,7 +464,7 @@ pub fn alpha_batch_all_request_vc_all_works() {
 #[test]
 pub fn alpha_request_vc_a1_then_disable_it_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -486,7 +486,7 @@ pub fn alpha_request_vc_a1_then_disable_it_works() {
 #[test]
 pub fn alpha_request_vc_two_a1_then_disable_second_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -521,7 +521,7 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
 #[test]
 pub fn alpha_disable_vc_no_exsits_index_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -545,7 +545,7 @@ pub fn alpha_disable_vc_no_exsits_index_works() {
 #[test]
 fn alpha_disabled_vc_twice_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -578,7 +578,7 @@ fn alpha_disabled_vc_twice_works() {
 #[test]
 fn alpha_request_vc_then_revoke_it_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -600,7 +600,7 @@ fn alpha_request_vc_then_revoke_it_works() {
 #[test]
 fn alpha_revoke_non_exists_vc_index_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -624,7 +624,7 @@ fn alpha_revoke_non_exists_vc_index_works() {
 #[test]
 fn alpha_revoke_vc_twice_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -657,7 +657,7 @@ fn alpha_revoke_vc_twice_works() {
 #[test]
 fn alpha_request_disable_revoke_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -684,7 +684,7 @@ fn alpha_request_disable_revoke_works() {
 #[test]
 fn alpha_request_vc_batch_all_10s_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -714,7 +714,7 @@ fn alpha_request_vc_batch_all_10s_a1_works() {
 #[test]
 fn alpha_request_vc_batch_all_20s_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -744,7 +744,7 @@ fn alpha_request_vc_batch_all_20s_a1_works() {
 #[test]
 fn alpha_request_vc_batch_all_50s_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -774,7 +774,7 @@ fn alpha_request_vc_batch_all_50s_a1_works() {
 #[test]
 fn alpha_request_vc_batch_all_100s_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -804,7 +804,7 @@ fn alpha_request_vc_batch_all_100s_a1_works() {
 #[test]
 fn alpha_request_vc_batch_all_200s_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -834,7 +834,7 @@ fn alpha_request_vc_batch_all_200s_a1_works() {
 #[test]
 fn alpha_query_vc_registry_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -855,7 +855,7 @@ fn alpha_query_vc_registry_works() {
 #[test]
 fn alpha_query_vc_registry_non_exists_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();

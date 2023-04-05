@@ -20,7 +20,7 @@ use std::time::SystemTime;
 #[test]
 fn tc_request_vc_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -67,7 +67,7 @@ fn tc_request_vc_works() {
 #[test]
 pub fn tc_batch_request_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -94,7 +94,7 @@ pub fn tc_batch_request_vc() {
 #[test]
 pub fn tc_batch_all_request_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -121,7 +121,7 @@ pub fn tc_batch_all_request_vc() {
 #[test]
 pub fn tc_request_vc_then_disable_it_success() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -149,7 +149,7 @@ pub fn tc_request_vc_then_disable_it_success() {
 #[test]
 pub fn tc_request_2_vc_then_disable_second_success() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -187,7 +187,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
 #[test]
 fn tc_request_vc_and_revoke_it_success() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -215,7 +215,7 @@ fn tc_request_vc_and_revoke_it_success() {
 #[test]
 fn tc_request_vc_a1() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -244,7 +244,7 @@ fn tc_request_vc_a1() {
 #[test]
 fn tc_request_vc_a4() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -274,7 +274,7 @@ fn tc_request_vc_a4() {
 #[test]
 fn tc_request_vc_all_with_timestamp() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -324,7 +324,7 @@ fn tc_request_vc_all_with_timestamp() {
 #[test]
 fn tc_disable_non_exists_vc_index() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -350,7 +350,7 @@ fn tc_disable_non_exists_vc_index() {
 #[test]
 fn tc_revoke_non_exists_vc_index() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -376,7 +376,7 @@ fn tc_revoke_non_exists_vc_index() {
 #[test]
 fn tc_double_disabled_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -411,7 +411,7 @@ fn tc_double_disabled_vc() {
 #[test]
 fn tc_double_revoke_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
@@ -450,7 +450,7 @@ fn tc_double_revoke_vc() {
 // // #[test]
 // fn tc_query_storage_vc_registry_by_endpoint() {
 //     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-//     let api_client = ApiClient::new_with_signer(alice);
+//     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
 //     let shard = api_client.get_shard();
 //     let user_shielding_key = generate_user_shielding_key();
@@ -479,7 +479,7 @@ fn tc_double_revoke_vc() {
 #[test]
 fn tc_request_vc_a5_invalid_input_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();

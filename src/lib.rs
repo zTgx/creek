@@ -11,9 +11,7 @@ pub mod vc_management;
 use sidechain::rpc::SidechainRpcClient;
 use sp_core::{crypto::AccountId32 as AccountId, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::{
-    rpc::WsRpcClient, Api, PlainTipExtrinsicParams, PlainTipExtrinsicParamsBuilder, XtStatus,
-};
+use substrate_api_client::{rpc::WsRpcClient, Api, ApiResult, PlainTipExtrinsicParams, XtStatus};
 
 #[cfg(not(feature = "staging"))]
 const NODE_URL: &str = "ws://127.0.0.1:9944";
@@ -42,35 +40,35 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    pub fn new_with_signer(signer: P) -> Self {
+    pub fn new_with_signer(signer: P) -> ApiResult<Self> {
         env_logger::init();
 
         println!("[+] {} Connected", NODE_URL);
 
         let client = WsRpcClient::new(NODE_URL);
-        let api = ApiType::new(client)
-            .map(|api| api.set_signer(signer))
-            .unwrap();
+        let api = ApiType::new(client).map(|api| api.set_signer(signer))?;
 
         let sidechain = SidechainRpcClient::new(WORKER_URL);
-
-        ApiClient { api, sidechain }
+        Ok(ApiClient { api, sidechain })
     }
 
     pub fn get_signer(&self) -> Option<AccountId> {
         self.api.signer_account()
     }
 
-    pub fn update_api(&mut self, tx_params: PlainTipExtrinsicParamsBuilder) {
-        let updated_api = self.api.clone().set_extrinsic_params_builder(tx_params);
-        self.api = updated_api;
-    }
-
     pub fn send_extrinsic(&self, xthex_prefixed: String) {
-        let tx_hash = self
-            .api
-            .send_extrinsic(xthex_prefixed, XtStatus::InBlock)
-            .unwrap();
-        println!(" ✅ Transaction got included. Hash: {:?}", tx_hash);
+        match self.api.send_extrinsic(xthex_prefixed, XtStatus::InBlock) {
+            Ok(tx_hash) => match tx_hash {
+                Some(tx_hash) => {
+                    println!(" ✅ Transaction got included. Hash: {:?}", tx_hash);
+                }
+                None => {
+                    println!(" ❌ Transaction None");
+                }
+            },
+            Err(e) => {
+                println!(" ❌ Transaction error : {:?}", e);
+            }
+        }
     }
 }

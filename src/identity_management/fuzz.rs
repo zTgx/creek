@@ -10,7 +10,7 @@ use crate::{
 
 pub fn fuzz_create_identity_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();

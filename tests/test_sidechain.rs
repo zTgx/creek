@@ -16,7 +16,7 @@ use sp_core::{sr25519, Pair};
 #[test]
 fn tc_sidechain_rpc_methods_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let methods = api_client.rpc_methods().unwrap();
     println!("Sidechain supported methods: {:?}", methods);
@@ -25,7 +25,7 @@ fn tc_sidechain_rpc_methods_works() {
 #[test]
 fn tc_sidechain_system_version_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let system_version = api_client.system_version().unwrap();
     println!("Sidechain system_version: {}", system_version);
@@ -34,7 +34,7 @@ fn tc_sidechain_system_version_works() {
 #[test]
 fn tc_sidechain_system_name_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let system_name = api_client.system_name().unwrap();
     println!("Sidechain system_name: {}", system_name);
@@ -43,7 +43,7 @@ fn tc_sidechain_system_name_works() {
 #[test]
 fn tc_sidechain_system_health_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let system_health = api_client.system_health().unwrap();
     println!("Sidechain system_health: {}", system_health);
@@ -52,7 +52,7 @@ fn tc_sidechain_system_health_works() {
 #[test]
 fn tc_sidechain_state_get_runtime_version_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let runtime_version = api_client.state_get_runtime_version().unwrap();
     println!("Sidechain runtime_version: {}", runtime_version);
@@ -61,7 +61,7 @@ fn tc_sidechain_state_get_runtime_version_works() {
 #[test]
 fn tc_sidechain_state_get_metadata_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let metadata = api_client.state_get_metadata().unwrap();
     println!("Sidechain metadata: {:?}", metadata);
@@ -70,7 +70,7 @@ fn tc_sidechain_state_get_metadata_works() {
 #[test]
 fn tc_sidechain_author_ge_mu_ra_url_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let mu_ra_url = api_client.author_get_mu_ra_url().unwrap();
     println!("Sidechain mu_ra_url: {:?}", mu_ra_url);
@@ -79,7 +79,7 @@ fn tc_sidechain_author_ge_mu_ra_url_works() {
 #[test]
 fn tc_sidechain_author_get_shielding_key_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
     let shielding_key_from_worker = api_client.author_get_shielding_key().unwrap();
     let tee_shielding_pubkey_from_parachain = api_client.get_tee_shielding_pubkey();
 
@@ -92,7 +92,7 @@ fn tc_sidechain_author_get_shielding_key_works() {
 #[test]
 fn tc_sidechain_author_get_untrusted_url_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let untrusted_url = api_client.author_get_untrusted_url().unwrap();
     println!("Sidechain untrusted_url: {:?}", untrusted_url);
@@ -101,7 +101,7 @@ fn tc_sidechain_author_get_untrusted_url_works() {
 #[test]
 fn tc_sidechain_author_pending_extrinsics_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let shard_in_base58 = mrenclave_to_bs58(&shard);
@@ -114,7 +114,7 @@ fn tc_sidechain_author_pending_extrinsics_works() {
 #[test]
 fn tc_sidechain_challenge_code_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice);
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
 
     let shard = api_client.get_shard();
     let shard_in_base58 = mrenclave_to_bs58(&shard);

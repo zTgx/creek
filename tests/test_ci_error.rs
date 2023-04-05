@@ -54,7 +54,7 @@ Syncing Parentchain block number 24 at Sidechain block number  42
 #[test]
 fn tc_ci_pr1475_7809442449() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice.clone());
+    let api_client = ApiClient::new_with_signer(alice.clone()).unwrap();
 
     let shard = api_client.get_shard();
     let user_shielding_key = generate_user_shielding_key();
