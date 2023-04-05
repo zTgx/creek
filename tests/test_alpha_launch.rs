@@ -22,7 +22,7 @@ use litentry_api_client::{
         vc::create_a_random_vc_index,
     },
     vc_management::{
-        events::{VCIssuedEvent, VcManagementErrorApi, VcManagementEventApi},
+        events::{VCDisabledEvent, VCIssuedEvent, VCManagementError, VCRevokedEvent},
         verify::verify_vc,
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
@@ -48,7 +48,7 @@ fn alpha_request_vc_a1_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -74,7 +74,7 @@ fn alpha_request_vc_a2_works() {
 
     api_client.request_vc(&shard, &a2);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -96,7 +96,7 @@ fn alpha_request_vc_a3_works() {
 
     api_client.request_vc(&shard, &a3);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -116,7 +116,7 @@ fn alpha_request_vc_a4_10_u128_works() {
 
     api_client.request_vc(&shard, &a4);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -136,7 +136,7 @@ fn alpha_request_vc_a4_min_u128_works() {
 
     api_client.request_vc(&shard, &a4);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -156,7 +156,7 @@ fn alpha_request_vc_a4_max_u128_works() {
 
     api_client.request_vc(&shard, &a4);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -175,7 +175,7 @@ fn alpha_request_vc_a6_works() {
 
     api_client.request_vc(&shard, &a6);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -195,7 +195,7 @@ fn alpha_request_vc_a7_10_u128_works() {
 
     api_client.request_vc(&shard, &a7);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -215,7 +215,7 @@ fn alpha_request_vc_a7_min_u128_works() {
 
     api_client.request_vc(&shard, &a7);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -235,7 +235,7 @@ fn alpha_request_vc_a7_max_u128_works() {
 
     api_client.request_vc(&shard, &a7);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -258,7 +258,7 @@ fn alpha_request_vc_a8_works() {
 
     api_client.request_vc(&shard, &a8);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -278,7 +278,7 @@ fn alpha_request_vc_a10_10_u128_works() {
 
     api_client.request_vc(&shard, &a10);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -298,7 +298,7 @@ fn alpha_request_vc_a10_min_u128_works() {
 
     api_client.request_vc(&shard, &a10);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -318,7 +318,7 @@ fn alpha_request_vc_a10_max_u128_works() {
 
     api_client.request_vc(&shard, &a10);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -338,7 +338,7 @@ fn alpha_request_vc_a11_10_u128_works() {
 
     api_client.request_vc(&shard, &a11);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -358,7 +358,7 @@ fn alpha_request_vc_a11_min_u128_works() {
 
     api_client.request_vc(&shard, &a11);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -378,7 +378,7 @@ fn alpha_request_vc_a11_max_u128_works() {
 
     api_client.request_vc(&shard, &a11);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -411,7 +411,7 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -454,7 +454,7 @@ pub fn alpha_batch_all_request_vc_all_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -470,13 +470,13 @@ pub fn alpha_request_vc_a1_then_disable_it_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index = event.unwrap().index;
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_disabled();
+    let event = api_client.wait_event::<VCDisabledEvent>();
     assert!(event.is_ok());
 }
 
@@ -493,7 +493,7 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let vc_index_first_a1 = event.unwrap().index;
 
@@ -501,13 +501,13 @@ pub fn alpha_request_vc_two_a1_then_disable_second_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index_second_a1 = event.unwrap().index;
 
     api_client.disable_vc(&vc_index_second_a1);
-    let event = api_client.wait_event_vc_disabled();
+    let event = api_client.wait_event::<VCDisabledEvent>();
 
     assert!(event.is_ok());
 
@@ -527,7 +527,7 @@ pub fn alpha_disable_vc_no_exsits_index_works() {
     let non_exists_vc_index = create_a_random_vc_index();
     api_client.disable_vc(&non_exists_vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -551,7 +551,7 @@ fn alpha_disabled_vc_twice_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -560,7 +560,7 @@ fn alpha_disabled_vc_twice_works() {
     api_client.disable_vc(&vc_index);
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -584,13 +584,13 @@ fn alpha_request_vc_then_revoke_it_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index = event.unwrap().index;
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_revoked();
+    let event = api_client.wait_event::<VCRevokedEvent>();
     assert!(event.is_ok());
 }
 
@@ -606,7 +606,7 @@ fn alpha_revoke_non_exists_vc_index_works() {
     let vc_index = create_a_random_vc_index();
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -630,7 +630,7 @@ fn alpha_revoke_vc_twice_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -639,7 +639,7 @@ fn alpha_revoke_vc_twice_works() {
     api_client.revoke_vc(&vc_index);
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -663,18 +663,18 @@ fn alpha_request_disable_revoke_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index = event.unwrap().index;
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_disabled();
+    let event = api_client.wait_event::<VCDisabledEvent>();
     assert!(event.is_ok());
 
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_revoked();
+    let event = api_client.wait_event::<VCRevokedEvent>();
     assert!(event.is_ok());
 }
 
@@ -704,7 +704,7 @@ fn alpha_request_vc_batch_all_10s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -734,7 +734,7 @@ fn alpha_request_vc_batch_all_20s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -764,7 +764,7 @@ fn alpha_request_vc_batch_all_50s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -794,7 +794,7 @@ fn alpha_request_vc_batch_all_100s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -824,7 +824,7 @@ fn alpha_request_vc_batch_all_200s_a1_works() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.collect_events(assertions.len());
+    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len());
     assert_eq!(issued_events.len(), assertions.len());
 }
 
@@ -840,7 +840,7 @@ fn alpha_query_vc_registry_works() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());

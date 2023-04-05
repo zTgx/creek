@@ -3,7 +3,7 @@ use std::time::SystemTime;
 use codec::Encode;
 use litentry_api_client::{
     identity_management::{
-        events::{IdentityCreatedEvent, IdentityManagementEventApi, IdentityVerifiedEvent},
+        events::{IdentityCreatedEvent, IdentityVerifiedEvent},
         xtbuilder::IdentityManagementXtBuilder,
         IdentityManagementApi,
     },
@@ -22,7 +22,7 @@ use litentry_api_client::{
         identity::ValidationDataBuilder,
         print_passed,
     },
-    vc_management::{events::VcManagementEventApi, VcManagementApi},
+    vc_management::{events::VCIssuedEvent, VcManagementApi},
     ApiClient, ApiClientPatch, SubscribeEventPatch,
 };
 use sp_core::{sr25519, Pair};
@@ -76,7 +76,7 @@ fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
                 address,
             };
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
@@ -127,7 +127,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
             };
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             let event = event.unwrap();
             assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -149,7 +149,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
                 );
                 api_client.verify_identity(&shard, &identity, &vdata);
 
-                let event = api_client.wait_event_identity_verified();
+                let event = api_client.wait_event::<IdentityVerifiedEvent>();
                 assert!(event.is_ok());
             }
 
@@ -203,7 +203,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
             let now = SystemTime::now();
 
             api_client.request_vc(&shard, &assertion);
-            let event = api_client.wait_event_vc_issued();
+            let event = api_client.wait_event::<VCIssuedEvent>();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
 
@@ -251,7 +251,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
             };
 
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
@@ -285,7 +285,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
 
             api_client.request_vc(&shard, &assertion);
 
-            let event = api_client.wait_event_vc_issued();
+            let event = api_client.wait_event::<VCIssuedEvent>();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
 
@@ -329,7 +329,7 @@ fn tc_create_10s_verified_identities() {
             };
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             let event = event.unwrap();
             assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -351,7 +351,7 @@ fn tc_create_10s_verified_identities() {
                 );
                 api_client.verify_identity(&shard, &identity, &vdata);
 
-                let event = api_client.wait_event_identity_verified();
+                let event = api_client.wait_event::<IdentityVerifiedEvent>();
                 assert!(event.is_ok());
             }
 
@@ -400,7 +400,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
             };
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             let event = event.unwrap();
             assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -422,7 +422,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
                 );
                 api_client.verify_identity(&shard, &identity, &vdata);
 
-                let event = api_client.wait_event_identity_verified();
+                let event = api_client.wait_event::<IdentityVerifiedEvent>();
                 assert!(event.is_ok());
                 let event = event.unwrap();
                 assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -525,7 +525,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
         });
     });
 
-    let events_arr: Vec<IdentityCreatedEvent> = api_client.collect_events(identites_len);
+    let events_arr: Vec<IdentityCreatedEvent> = api_client.wait_events(identites_len);
     let mut verified_calls = vec![];
 
     // Verify identity
@@ -561,7 +561,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
         }
     }
 
-    let events_arr: Vec<IdentityVerifiedEvent> = api_client.collect_events(identites_len);
+    let events_arr: Vec<IdentityVerifiedEvent> = api_client.wait_events(identites_len);
     events_arr.iter().enumerate().for_each(|(indx, event)| {
         all_verifed_identities.push(event.clone());
 
@@ -641,7 +641,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
             };
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             let event = event.unwrap();
             assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -663,7 +663,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
                 );
                 api_client.verify_identity(&shard, &identity, &vdata);
 
-                let event = api_client.wait_event_identity_verified();
+                let event = api_client.wait_event::<IdentityVerifiedEvent>();
                 assert!(event.is_ok());
             }
 

@@ -1,6 +1,9 @@
 use litentry_api_client::{
     identity_management::{
-        events::{IdentityManagementEventApi, SetUserShieldingKeyHandlingFailedEvent},
+        events::{
+            DelegateeAddedEvent, IdentityCreatedEvent, IdentityRemovedEvent, IdentityVerifiedEvent,
+            SetUserShieldingKeyHandlingFailedEvent, UnexpectedMessageEvent,
+        },
         IdentityManagementApi,
     },
     primitives::{
@@ -21,7 +24,7 @@ use litentry_api_client::{
         identity::ValidationDataBuilder,
         print_passed,
     },
-    ApiClient,
+    ApiClient, SubscribeEventPatch,
 };
 use sp_core::{sr25519, Pair};
 
@@ -34,7 +37,7 @@ fn tc_set_user_shielding_key_works() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let event = api_client.wait_event_user_shielding_key_set();
+    let event = api_client.wait_event::<SetUserShieldingKeyHandlingFailedEvent>();
     assert!(event.is_ok());
 
     print_passed();
@@ -49,7 +52,7 @@ fn tc_set_user_shielding_key_faild() {
     let user_shielding_key = generate_incorrect_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let event = api_client.wait_event_set_user_shielding_key_handle_failed();
+    let event = api_client.wait_event::<SetUserShieldingKeyHandlingFailedEvent>();
     let expect_event = SetUserShieldingKeyHandlingFailedEvent;
 
     assert!(event.is_ok());
@@ -67,14 +70,14 @@ fn tc_add_delegatee_error() {
     let user_shielding_key = generate_user_shielding_key();
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
-    let event = api_client.wait_event_user_shielding_key_set();
+    let event = api_client.wait_event::<SetUserShieldingKeyHandlingFailedEvent>();
     assert!(event.is_ok());
 
     let bob_pair = sr25519::Pair::from_string("//Bob", None).unwrap();
     let bob: Address32 = bob_pair.public().0.into();
     api_client.add_delegatee(&bob);
 
-    let event = api_client.wait_event_delegatee_added();
+    let event = api_client.wait_event::<DelegateeAddedEvent>();
     assert!(event.is_err());
 }
 
@@ -99,7 +102,7 @@ fn tc_create_identity() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
@@ -123,12 +126,12 @@ fn tc_create_identity_then_remove_it() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
     api_client.remove_identity(&shard, &identity);
-    let event = api_client.wait_event_identity_removed();
+    let event = api_client.wait_event::<IdentityRemovedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
@@ -153,7 +156,7 @@ fn tc_create_identity_then_verify_it() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -168,7 +171,7 @@ fn tc_create_identity_then_verify_it() {
     let vdata =
         ValidationData::build_vdata_substrate(&alice_pair, &address, &identity, &challenge_code);
     api_client.verify_identity(&shard, &identity, &vdata);
-    let event = api_client.wait_event_identity_verified();
+    let event = api_client.wait_event::<IdentityVerifiedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     let id_graph = decrypt_id_graph_with_user_shielding_key(&user_shielding_key, event.id_graph);
@@ -206,7 +209,7 @@ fn tc_create_a_random_identity_then_verify_it() {
 
     api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.who, api_client.get_signer().unwrap());
@@ -220,7 +223,7 @@ fn tc_create_a_random_identity_then_verify_it() {
 
     let vdata = ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code);
     api_client.verify_identity(&shard, &identity, &vdata);
-    let event = api_client.wait_event_identity_verified();
+    let event = api_client.wait_event::<IdentityVerifiedEvent>();
     assert!(event.is_ok());
 
     print_passed()
@@ -256,7 +259,7 @@ fn tc_create_identity_with_all_substrate_network() {
             };
             api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-            let event = api_client.wait_event_identity_created();
+            let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
             assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
         })
@@ -283,7 +286,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 
@@ -294,7 +297,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
 
     let vdata = ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data));
     api_client.verify_identity(&shard, &identity, &vdata);
-    let event = api_client.wait_event_unexpected_message();
+    let event = api_client.wait_event::<UnexpectedMessageEvent>();
     assert!(event.is_ok());
 
     print_passed()
@@ -320,7 +323,7 @@ fn tc_create_identity_error_unauthorised_user() {
     };
     api_client.create_identity(&shard, &bob, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -352,7 +355,7 @@ fn tc_create_identity_then_decrypt_it() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.who, api_client.get_signer().unwrap());

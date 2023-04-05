@@ -4,7 +4,7 @@ use litentry_api_client::{
     utils::{crypto::generate_user_shielding_key, print_passed, vc::create_a_random_vc_index},
     vc_management::{
         events::{
-            RequestVCFailedEvent, VcManagementErrorApi, VcManagementEventApi, VcManagementEventApiX,
+            RequestVCFailedEvent, VCDisabledEvent, VCIssuedEvent, VCManagementError, VCRevokedEvent,
         },
         xtbuilder::VcManagementXtBuilder,
         VcManagementApi, VcManagementQueryApi,
@@ -52,7 +52,7 @@ fn tc_request_vc_works() {
     assertions.into_iter().for_each(|assertion| {
         api_client.request_vc(&shard, &assertion);
 
-        let event = api_client.wait_event_vc_issued();
+        let event = api_client.wait_event::<VCIssuedEvent>();
         assert!(event.is_ok());
         let event = event.unwrap();
         assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -129,7 +129,7 @@ pub fn tc_request_vc_then_disable_it_success() {
     api_client.request_vc(&shard, &a1);
 
     // Wait event
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index = event.unwrap().index;
@@ -137,7 +137,7 @@ pub fn tc_request_vc_then_disable_it_success() {
 
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_disabled();
+    let event = api_client.wait_event::<VCDisabledEvent>();
     assert!(event.is_ok());
 
     print_passed();
@@ -156,7 +156,7 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index_a1 = event.unwrap().index;
@@ -165,14 +165,14 @@ pub fn tc_request_2_vc_then_disable_second_success() {
     let a6 = Assertion::A6;
     api_client.request_vc(&shard, &a6);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index_a6 = event.unwrap().index;
     println!(" ✅ A6 VC Index : {:?}", vc_index_a6);
 
     api_client.disable_vc(&vc_index_a6);
-    let event = api_client.wait_event_vc_disabled();
+    let event = api_client.wait_event::<VCDisabledEvent>();
     assert!(event.is_ok());
 
     let a1_context = api_client.vc_registry(&vc_index_a1);
@@ -195,7 +195,7 @@ fn tc_request_vc_and_revoke_it_success() {
     api_client.request_vc(&shard, &a1);
 
     // Wait event
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
 
     let vc_index = event.unwrap().index;
@@ -203,7 +203,7 @@ fn tc_request_vc_and_revoke_it_success() {
 
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_event_vc_revoked();
+    let event = api_client.wait_event::<VCRevokedEvent>();
     assert!(event.is_ok());
 
     print_passed();
@@ -224,7 +224,7 @@ fn tc_request_vc_a1() {
     let now = SystemTime::now();
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -254,7 +254,7 @@ fn tc_request_vc_a4() {
     let now = SystemTime::now();
     api_client.request_vc(&shard, &a4);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -306,7 +306,7 @@ fn tc_request_vc_all_with_timestamp() {
 
         api_client.request_vc(&shard, &assertion);
 
-        let event = api_client.wait_event_vc_issued();
+        let event = api_client.wait_event::<VCIssuedEvent>();
         assert!(event.is_ok());
         assert_eq!(event.unwrap().account, api_client.get_signer().unwrap());
 
@@ -330,7 +330,7 @@ fn tc_disable_non_exists_vc_index() {
     let vc_index = create_a_random_vc_index();
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -356,7 +356,7 @@ fn tc_revoke_non_exists_vc_index() {
     let vc_index = create_a_random_vc_index();
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -382,7 +382,7 @@ fn tc_double_disabled_vc() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -391,7 +391,7 @@ fn tc_double_disabled_vc() {
     api_client.disable_vc(&vc_index);
     api_client.disable_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -417,7 +417,7 @@ fn tc_double_revoke_vc() {
     let a1 = Assertion::A1;
     api_client.request_vc(&shard, &a1);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -426,7 +426,7 @@ fn tc_double_revoke_vc() {
     api_client.revoke_vc(&vc_index);
     api_client.revoke_vc(&vc_index);
 
-    let event = api_client.wait_error();
+    let event = api_client.wait_error::<VCManagementError>();
     assert!(event.is_err());
     match event {
         Ok(_) => panic!("Exptected the call to fail."),
@@ -456,7 +456,7 @@ fn tc_double_revoke_vc() {
 //     let a1 = Assertion::A1;
 //     api_client.request_vc(&shard, &a1);
 
-//     let event = api_client.wait_event_vc_issued();
+//     let event = api_client.wait_event::<VCIssuedEvent>();
 //     assert!(event.is_ok());
 //     let event = event.unwrap();
 //     assert_eq!(event.account, api_client.get_signer().unwrap());
@@ -490,10 +490,10 @@ fn tc_request_vc_a5_invalid_input_works() {
     api_client.request_vc(&shard, &a5);
 
     {
-        let issued_events: Vec<RequestVCFailedEvent> = api_client.collect_events(1);
+        let issued_events: Vec<RequestVCFailedEvent> = api_client.wait_events(1);
         println!("event collect: {:?}", issued_events);
     }
-    let event = api_client.wait_event_vc::<RequestVCFailedEvent>();
+    let event = api_client.wait_event::<RequestVCFailedEvent>();
     println!("event: {:?}", event);
     assert!(event.is_ok());
     let event = event.unwrap();

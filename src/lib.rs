@@ -204,18 +204,32 @@ where
     }
 }
 
-pub trait SubscribeEventPatch<EventType: StaticEvent> {
-    fn collect_events(&self, target_num: usize) -> Vec<EventType>;
+pub trait SubscribeEventPatch {
+    // For subscribe specific event
+    fn wait_event<EventType: StaticEvent>(&self) -> ApiResult<EventType>;
+
+    // For subscribe batch call events
+    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> Vec<EventType>;
+
+    // For wait error
+    fn wait_error<EventType: StaticEvent>(&self) -> ApiResult<EventType>;
 }
 
-impl<P, EventType> SubscribeEventPatch<EventType> for ApiClient<P>
+impl<P> SubscribeEventPatch for ApiClient<P>
 where
     P: Pair,
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
-    EventType: StaticEvent,
 {
-    fn collect_events(&self, target_num: usize) -> Vec<EventType> {
+    fn wait_event<EventType: StaticEvent>(&self) -> ApiResult<EventType> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let event: ApiResult<EventType> = self.api.wait_for_event(&events_out);
+        event
+    }
+
+    fn wait_events<EventType: StaticEvent>(&self, target_num: usize) -> Vec<EventType> {
         let (events_in, events_out) = channel();
         self.api.subscribe_events(events_in).unwrap();
 
@@ -255,6 +269,14 @@ where
         }
 
         collected
+    }
+
+    fn wait_error<EventType: StaticEvent>(&self) -> ApiResult<EventType> {
+        let (events_in, events_out) = channel();
+        self.api.subscribe_events(events_in).unwrap();
+
+        let vc_disabled_event: ApiResult<EventType> = self.api.wait_for_event(&events_out);
+        vc_disabled_event
     }
 }
 

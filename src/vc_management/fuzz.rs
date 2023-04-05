@@ -6,8 +6,8 @@ use crate::{
     identity_management::IdentityManagementApi,
     primitives::assertion::{Assertion, ParameterString},
     utils::{crypto::generate_user_shielding_key, print_passed},
-    vc_management::{events::VcManagementEventApi, VcManagementApi},
-    ApiClient,
+    vc_management::{events::VCIssuedEvent, VcManagementApi},
+    ApiClient, SubscribeEventPatch,
 };
 
 /// The relevant documentation for the fuzzy interface is here
@@ -28,7 +28,7 @@ pub fn fuzz_request_vc_a4(_balance: u128) {
     let now = SystemTime::now();
     api_client.request_vc(&shard, &a4);
 
-    let event = api_client.wait_event_vc_issued();
+    let event = api_client.wait_event::<VCIssuedEvent>();
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());

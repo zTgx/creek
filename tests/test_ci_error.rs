@@ -8,8 +8,7 @@
  */
 use litentry_api_client::{
     identity_management::{
-        events::IdentityManagementEventApi, xtbuilder::IdentityManagementXtBuilder,
-        IdentityManagementApi,
+        events::IdentityCreatedEvent, xtbuilder::IdentityManagementXtBuilder, IdentityManagementApi,
     },
     primitives::{
         address::Address32,
@@ -17,7 +16,7 @@ use litentry_api_client::{
         MrEnclave,
     },
     utils::{address::public_to_address32, crypto::generate_user_shielding_key, print_passed},
-    ApiClient, ApiClientPatch,
+    ApiClient, ApiClientPatch, SubscribeEventPatch,
 };
 use sp_core::{sr25519, Pair};
 use sp_runtime::BoundedVec;
@@ -108,7 +107,7 @@ fn tc_ci_pr1475_7809442449() {
     });
     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 

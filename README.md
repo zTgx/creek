@@ -22,7 +22,7 @@ fn set_user_shielding_key() {
     api_client.set_user_shielding_key(&shard, &user_shielding_key);
 
     // 3. Wait event
-    let event = api_client.wait_event_user_shielding_key_set();
+    let event = api_client.wait_event::<SetUserShieldingKeyEvent>();
     assert!(event.is_ok());
 }
 ```

@@ -1,106 +1,8 @@
 use super::IDENTITY_PALLET_NAME;
-use crate::{
-    primitives::{crypto::AesOutput, AccountId},
-    ApiClient,
-};
+use crate::primitives::{crypto::AesOutput, vc::ErrorDetail, AccountId};
 use codec::Decode;
-use sp_core::{Pair, H256};
-use sp_runtime::{MultiSignature, MultiSigner};
-use std::sync::mpsc::channel;
-use substrate_api_client::{ApiResult, StaticEvent};
-
-pub trait IdentityManagementEventApi {
-    fn wait_event_user_shielding_key_set(&self) -> ApiResult<SetUserShieldingKeyEvent>;
-    fn wait_event_set_user_shielding_key_handle_failed(
-        &self,
-    ) -> ApiResult<SetUserShieldingKeyHandlingFailedEvent>;
-    fn wait_event_delegatee_added(&self) -> ApiResult<DelegateeAddedEvent>;
-    fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent>;
-    fn wait_event_identity_removed(&self) -> ApiResult<IdentityRemovedEvent>;
-    fn wait_event_identity_verified(&self) -> ApiResult<IdentityVerifiedEvent>;
-    fn wait_event_unexpected_message(&self) -> ApiResult<UnexpectedMessageEvent>;
-}
-
-pub trait IdentityManagementErrorApi {
-    fn wait_error(&self) -> ApiResult<IdentityManagementError>;
-}
-
-impl<P> IdentityManagementEventApi for ApiClient<P>
-where
-    P: Pair,
-    MultiSignature: From<P::Signature>,
-    MultiSigner: From<P::Public>,
-{
-    fn wait_event_user_shielding_key_set(&self) -> ApiResult<SetUserShieldingKeyEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-
-        let event: ApiResult<SetUserShieldingKeyEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_set_user_shielding_key_handle_failed(
-        &self,
-    ) -> ApiResult<SetUserShieldingKeyHandlingFailedEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-
-        let event: ApiResult<SetUserShieldingKeyHandlingFailedEvent> =
-            self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_delegatee_added(&self) -> ApiResult<DelegateeAddedEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-        let event: ApiResult<DelegateeAddedEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_identity_created(&self) -> ApiResult<IdentityCreatedEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-        let event: ApiResult<IdentityCreatedEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_identity_removed(&self) -> ApiResult<IdentityRemovedEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-        let event: ApiResult<IdentityRemovedEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_identity_verified(&self) -> ApiResult<IdentityVerifiedEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-        let event: ApiResult<IdentityVerifiedEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-
-    fn wait_event_unexpected_message(&self) -> ApiResult<UnexpectedMessageEvent> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-        let event: ApiResult<UnexpectedMessageEvent> = self.api.wait_for_event(&events_out);
-        event
-    }
-}
-
-impl<P> IdentityManagementErrorApi for ApiClient<P>
-where
-    P: Pair,
-    MultiSignature: From<P::Signature>,
-    MultiSigner: From<P::Public>,
-{
-    fn wait_error(&self) -> ApiResult<IdentityManagementError> {
-        let (events_in, events_out) = channel();
-        self.api.subscribe_events(events_in).unwrap();
-
-        let vc_disabled_event: ApiResult<IdentityManagementError> =
-            self.api.wait_for_event(&events_out);
-        vc_disabled_event
-    }
-}
+use sp_core::H256;
+use substrate_api_client::StaticEvent;
 
 /// UserShieldingKeySet
 #[derive(Decode, Debug, PartialEq, Eq)]
@@ -188,4 +90,17 @@ pub struct IdentityManagementError;
 impl StaticEvent for IdentityManagementError {
     const PALLET: &'static str = IDENTITY_PALLET_NAME;
     const EVENT: &'static str = "()";
+}
+
+/// IdentityCreated
+#[derive(Decode, Debug)]
+pub struct CreateIdentityFailedEvent {
+    pub account: Option<AccountId>,
+    pub detail: ErrorDetail,
+    pub req_ext_hash: H256,
+}
+
+impl StaticEvent for CreateIdentityFailedEvent {
+    const PALLET: &'static str = IDENTITY_PALLET_NAME;
+    const EVENT: &'static str = "IdentityCreated";
 }

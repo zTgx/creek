@@ -1,10 +1,10 @@
 use sp_core::{sr25519, Pair};
 
 use crate::{
-    identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
+    identity_management::{events::IdentityCreatedEvent, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     utils::{address::pubkey_to_address32, crypto::generate_user_shielding_key, print_passed},
-    ApiClient,
+    ApiClient, SubscribeEventPatch,
 };
 
 pub fn fuzz_create_identity_works() {
@@ -24,7 +24,7 @@ pub fn fuzz_create_identity_works() {
 
     api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-    let event = api_client.wait_event_identity_created();
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
     assert!(event.is_ok());
     assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
 

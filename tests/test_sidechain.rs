@@ -1,5 +1,5 @@
 use litentry_api_client::{
-    identity_management::{events::IdentityManagementEventApi, IdentityManagementApi},
+    identity_management::{events::IdentityCreatedEvent, IdentityManagementApi},
     primitives::identity::{Identity, SubstrateNetwork},
     sidechain::{storage_key_challenge_code, SidechainRpc},
     utils::{
@@ -8,7 +8,7 @@ use litentry_api_client::{
         enclave::mrenclave_to_bs58,
         print_passed,
     },
-    ApiClient,
+    ApiClient, SubscribeEventPatch,
 };
 use sp_core::{sr25519, Pair};
 
@@ -133,7 +133,7 @@ fn tc_sidechain_challenge_code_works() {
 
         api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
 
-        let event = api_client.wait_event_identity_created();
+        let event = api_client.wait_event::<IdentityCreatedEvent>();
         assert!(event.is_ok());
         let event = event.unwrap();
         assert_eq!(event.who, api_client.get_signer().unwrap());
