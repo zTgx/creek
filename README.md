@@ -1,4 +1,4 @@
-# litentry-api-client [![](https://img.shields.io/tokei/lines/github/zTgx/litentry-api-client?style=flat-square)](https://img.shields.io/tokei/lines/github/zTgx/litentry-api-client?style=for-the-badge)
+# litentry-api-client
 
 ### Features
 - [x] Rust nightly only
