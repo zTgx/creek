@@ -35,7 +35,7 @@ extern "C" {
     fn lib_c_sgx_report_att_status(platform_info: *const u8);
 }
 
-pub fn safe_sgx_report_att_status(platform_info: [u8; 101]) {
+pub fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
     unsafe {
         lib_c_sgx_report_att_status(platform_info.as_ptr());
     }
