@@ -22,6 +22,7 @@ use serde_json::Value;
 use std::ptr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::ra::sgx_types::sgx_platform_info_t;
 use crate::{
     primitives::{
         enclave::{Enclave, SgxBuildMode},
@@ -104,12 +105,13 @@ pub fn ra_attestation(enclave_registry: &Enclave<AccountId, String>) -> SgxResul
 
                     // ArrayVec .into_inner() requires that all elements are occupied by a value
                     // if that's not the case, the following error will occur
-                    let _platform_info = buf.into_inner().map_err(|e| {
+                    let platform_info = buf.into_inner().map_err(|e| {
 						println!("Failed to extract platform info from InfoBlob, result does not contain enough elements (require: {}, found: {})", e.capacity(), e.len());
 
 						sgx_status_t::SGX_ERROR_UNEXPECTED
 					})?;
 
+                    let _platform_info = sgx_platform_info_t { platform_info };
                 // attestation_ocall.get_update_info(sgx_platform_info_t { platform_info }, 1)?;
                 } else {
                     println!("Failed to fetch platformInfoBlob from attestation report");

@@ -44,12 +44,14 @@ where
     pub fn new_with_signer(signer: P) -> ApiResult<Self> {
         env_logger::init();
 
-        println!("[+] {} Connected", NODE_URL);
-
         let client = WsRpcClient::new(NODE_URL);
         let api = ApiType::new(client).map(|api| api.set_signer(signer))?;
 
         let sidechain = SidechainRpcClient::new(WORKER_URL);
+
+        println!("[+] Parachain rpc : {}", NODE_URL);
+        println!("[+] Sidechain rpc : {}", WORKER_URL);
+
         Ok(ApiClient { api, sidechain })
     }
 

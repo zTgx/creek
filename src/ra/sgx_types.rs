@@ -215,3 +215,7 @@ pub struct sgx_quote_t {
     pub signature_len: uint32_t,            /* 432 */
     pub signature: [uint8_t; 0],            /* 436 */
 }
+
+pub struct sgx_platform_info_t {
+    pub platform_info: [uint8_t; SGX_PLATFORM_INFO_SIZE],
+}
