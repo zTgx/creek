@@ -1,7 +1,7 @@
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
 use std::sync::mpsc::channel;
-use substrate_api_client::{ApiResult, Error, Events, FromHexString, StaticEvent};
+use substrate_api_client::{ApiClientError, ApiResult, Error, Events, FromHexString, StaticEvent};
 
 use crate::ApiClient;
 
@@ -44,10 +44,6 @@ where
             let event_bytes = Vec::from_hex(events_str)?;
             let events = Events::new(self.api.metadata.clone(), Default::default(), event_bytes);
 
-            // TODO:
-            // Should capture
-            // "System", "ExtrinsicSuccess"
-            // "System", "ExtrinsicFailed"
             for maybe_event_details in events.iter() {
                 let event_details = maybe_event_details?;
                 let event_metadata = event_details.event_metadata();
@@ -56,9 +52,17 @@ where
                     event_metadata.pallet(),
                     event_metadata.event()
                 );
-                if event_metadata.pallet() == EventType::PALLET
-                    && event_metadata.event() == EventType::EVENT
-                {
+
+                let pallet_name = event_metadata.pallet();
+                let pallet_event = event_metadata.event();
+
+                if pallet_name == "System" && pallet_event == "ExtrinsicFailed" {
+                    return Err(ApiClientError::Other(
+                        format!("System ExtrinsicFailed: {:?}", event_metadata).into(),
+                    ));
+                }
+
+                if pallet_name == EventType::PALLET && pallet_event == EventType::EVENT {
                     println!("meta: {:?}", event_metadata);
                     let event = event_details
                         .as_event::<EventType>()?
