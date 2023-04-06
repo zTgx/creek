@@ -35,7 +35,7 @@ fn tc_set_user_shielding_key_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -52,7 +52,7 @@ fn tc_set_user_shielding_key_faild() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_incorrect_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -72,7 +72,7 @@ fn tc_add_delegatee_error() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -94,7 +94,7 @@ fn tc_create_identity() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -124,7 +124,7 @@ fn tc_create_identity_then_remove_it() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -155,7 +155,7 @@ fn tc_create_identity_then_verify_it() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -204,7 +204,7 @@ fn tc_create_a_random_identity_then_verify_it() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -250,7 +250,7 @@ fn tc_create_identity_with_all_substrate_network() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -291,7 +291,7 @@ fn tc_verify_identity_with_unexpected_message_event() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -328,7 +328,7 @@ fn tc_create_identity_error_unauthorised_user() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -364,7 +364,7 @@ fn tc_create_identity_then_decrypt_it() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)

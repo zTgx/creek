@@ -9,16 +9,23 @@ use crate::{
     ApiClient,
 };
 use rsa::RsaPublicKey;
-use sp_core::{ed25519, hexdisplay::HexDisplay, Pair};
+use sp_core::{ed25519::Public as Ed25519Public, hexdisplay::HexDisplay, Pair};
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::{std::error::Error as ApiError, ApiResult};
+use substrate_api_client::{ApiClientError, ApiResult};
+
+pub const TEEREX_STORAGE_PREFIX_NAME: &str = "Teerex";
 
 pub trait ParachainPatch {
-    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey>;
-    fn get_vc_pubkey(&self) -> ed25519::Public;
-    fn get_shard(&self) -> MrEnclave;
-    fn vc_registry(&self, vc_index: &VCIndex) -> Option<VCContext>;
+    // IdentityManagement pallet
     fn delegatee(&self, account: Address32) -> ApiResult<Option<()>>;
+
+    // Teerex pallet
+    fn enclave_count(&self) -> ApiResult<Option<u64>>;
+    fn enclave(&self, enclave_count: u64) -> ApiResult<Option<Enclave<AccountId, String>>>;
+    fn get_shard(&self) -> ApiResult<MrEnclave>;
+    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey>;
+    fn get_vc_pubkey(&self) -> ApiResult<Ed25519Public>;
+    fn get_vc_context(&self, vc_index: &VCIndex) -> ApiResult<Option<VCContext>>;
 }
 
 impl<P> ParachainPatch for ApiClient<P>
@@ -27,43 +34,65 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
-    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey> {
-        let enclave_count: Option<u64> =
-            self.api.get_storage_value("Teerex", "EnclaveCount", None)?;
-
-        let enclave_count = enclave_count
-            .ok_or_else(|| ApiError::Other("[+] get enclave count error".to_string().into()))?;
-
-        let enclave: Option<Enclave<AccountId, String>> =
-            self.api
-                .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)?;
-
-        let enclave =
-            enclave.ok_or_else(|| ApiError::Other("[+] get enclave error".to_string().into()))?;
-
-        let shielding_key = enclave.shielding_key.ok_or_else(|| {
-            ApiError::Other("[+] get tee shielding pubkey error".to_string().into())
-        })?;
-
-        RsaPublicKey::new_with_rsa3072_pubkey(shielding_key)
-            .map_err(|e| ApiError::Other(format!("Generate Rsa pubkey error: {:?}", e).into()))
+    /**
+     * pallet IdentityManagement Apis
+     */
+    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>> {
+        self.api
+            .get_storage_map(IDENTITY_PALLET_NAME, "Delegatee", account, None)
     }
 
-    fn get_vc_pubkey(&self) -> ed25519::Public {
-        let enclave_count: u64 = self
-            .api
-            .get_storage_value("Teerex", "EnclaveCount", None)
-            .unwrap()
-            .unwrap();
+    /**
+     * pallet Teerex Apis
+     */
+    fn enclave_count(&self) -> ApiResult<Option<u64>> {
+        self.api
+            .get_storage_value(TEEREX_STORAGE_PREFIX_NAME, "EnclaveCount", None)
+    }
 
-        let enclave: Enclave<AccountId, Vec<u8>> = self
-            .api
-            .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
-            .unwrap()
-            .unwrap();
+    fn enclave(&self, enclave_count: u64) -> ApiResult<Option<Enclave<AccountId, String>>> {
+        self.api.get_storage_map(
+            TEEREX_STORAGE_PREFIX_NAME,
+            "EnclaveRegistry",
+            enclave_count,
+            None,
+        )
+    }
 
-        let vc_pubkey = enclave.vc_pubkey.expect("vc pubkey");
-        ed25519::Public(vec_to_u8_array::<32>(vc_pubkey))
+    fn get_tee_shielding_pubkey(&self) -> ApiResult<RsaPublicKey> {
+        let enclave_count: Option<u64> = self.enclave_count()?;
+        let enclave_count = enclave_count.ok_or_else(|| {
+            ApiClientError::Other("[+] get enclave count error".to_string().into())
+        })?;
+
+        let enclave: Option<Enclave<AccountId, String>> = self.enclave(enclave_count)?;
+        let enclave = enclave
+            .ok_or_else(|| ApiClientError::Other("[+] get enclave error".to_string().into()))?;
+
+        let shielding_key = enclave.shielding_key.ok_or_else(|| {
+            ApiClientError::Other("[+] get tee shielding pubkey error".to_string().into())
+        })?;
+
+        RsaPublicKey::new_with_rsa3072_pubkey(shielding_key).map_err(|e| {
+            ApiClientError::Other(format!("Generate Rsa pubkey error: {:?}", e).into())
+        })
+    }
+
+    fn get_vc_pubkey(&self) -> ApiResult<Ed25519Public> {
+        let enclave_count: Option<u64> = self.enclave_count()?;
+        let enclave_count = enclave_count.ok_or_else(|| {
+            ApiClientError::Other("[+] get enclave count error".to_string().into())
+        })?;
+
+        let enclave: Option<Enclave<AccountId, String>> = self.enclave(enclave_count)?;
+        let enclave = enclave
+            .ok_or_else(|| ApiClientError::Other("[+] get enclave error".to_string().into()))?;
+
+        let vc_pubkey = enclave
+            .vc_pubkey
+            .ok_or_else(|| ApiClientError::Other("[+] get vc_pubkey error".to_string().into()))?;
+
+        Ok(Ed25519Public(vec_to_u8_array::<32>(vc_pubkey)))
     }
 
     /// There're two methos to get the mrenclave
@@ -73,41 +102,26 @@ where
     ///
     /// TODO:
     /// But there's a question, what's the difference betwwen `mrenclave` and `shard`?
-    fn get_shard(&self) -> MrEnclave {
-        let enclave_count: u64 = self
-            .api
-            .get_storage_value("Teerex", "EnclaveCount", None)
-            .unwrap()
-            .unwrap();
+    fn get_shard(&self) -> ApiResult<MrEnclave> {
+        let enclave_count: Option<u64> = self.enclave_count()?;
+        let enclave_count = enclave_count.ok_or_else(|| {
+            ApiClientError::Other("[+] get enclave count error".to_string().into())
+        })?;
 
-        let enclave: Enclave<AccountId, Vec<u8>> = self
-            .api
-            .get_storage_map("Teerex", "EnclaveRegistry", enclave_count, None)
-            .unwrap()
-            .unwrap();
+        let enclave: Option<Enclave<AccountId, String>> = self.enclave(enclave_count)?;
+        let enclave = enclave
+            .ok_or_else(|| ApiClientError::Other("[+] get enclave error".to_string().into()))?;
 
         let shard = enclave.mr_enclave;
         let shard_in_hex = format!("0x{}", HexDisplay::from(&shard));
 
-        println!("\n ✅ New shard : {}", shard_in_hex);
+        println!("\n ✅ Get shard from parachain : {}", shard_in_hex);
 
-        shard
+        Ok(shard)
     }
 
-    fn vc_registry(&self, vc_index: &VCIndex) -> Option<VCContext> {
-        let vc_context: Option<VCContext> = self
-            .api
+    fn get_vc_context(&self, vc_index: &VCIndex) -> ApiResult<Option<VCContext>> {
+        self.api
             .get_storage_map(VC_PALLET_NAME, "VCRegistry", vc_index, None)
-            .unwrap();
-
-        vc_context
-    }
-
-    fn delegatee(&self, account: Address32) -> ApiResult<Option<()>> {
-        let ret: ApiResult<Option<()>> =
-            self.api
-                .get_storage_map(IDENTITY_PALLET_NAME, "Delegatee", account, None);
-
-        ret
     }
 }

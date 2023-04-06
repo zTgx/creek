@@ -51,7 +51,7 @@ fn tc_request_vc_with_20s_identities_or_more_one_single_thread() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -103,7 +103,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -178,7 +178,7 @@ fn tc_request_vc_based_on_more_than_30_identities() {
         let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
         let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-        let shard = api_client.get_shard();
+        let shard = api_client.get_shard().unwrap();
         let user_shielding_key = generate_user_shielding_key();
         api_client
             .set_user_shielding_key(&shard, &user_shielding_key)
@@ -230,7 +230,7 @@ fn tc_create_all_substrate_network_then_request_vc() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -314,7 +314,7 @@ fn tc_create_10s_verified_identities() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -386,7 +386,7 @@ fn tc_create_more_than_20_identities_and_check_idgraph_size() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -484,7 +484,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
@@ -628,7 +628,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
-    let shard = api_client.get_shard();
+    let shard = api_client.get_shard().unwrap();
     let user_shielding_key = generate_user_shielding_key();
     api_client
         .set_user_shielding_key(&shard, &user_shielding_key)
