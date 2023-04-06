@@ -22,7 +22,6 @@ use serde_json::Value;
 use std::ptr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::ra::sgx_types::sgx_platform_info_t;
 use crate::{
     primitives::{
         enclave::{Enclave, SgxBuildMode},
@@ -30,6 +29,17 @@ use crate::{
     },
     ra::sgx_types::{sgx_quote_t, sgx_status_t, SgxResult, SGX_PLATFORM_INFO_SIZE},
 };
+
+#[link(name = "sgx_epid_sim")]
+extern "C" {
+    fn lib_c_sgx_report_att_status(platform_info: *const u8);
+}
+
+pub fn safe_sgx_report_att_status(platform_info: [u8; 101]) {
+    unsafe {
+        lib_c_sgx_report_att_status(platform_info.as_ptr());
+    }
+}
 
 pub fn ra_attestation(enclave_registry: &Enclave<AccountId, String>) -> SgxResult<()> {
     println!("enclave registry: {:?}", enclave_registry);
@@ -111,8 +121,9 @@ pub fn ra_attestation(enclave_registry: &Enclave<AccountId, String>) -> SgxResul
 						sgx_status_t::SGX_ERROR_UNEXPECTED
 					})?;
 
-                    let _platform_info = sgx_platform_info_t { platform_info };
-                // attestation_ocall.get_update_info(sgx_platform_info_t { platform_info }, 1)?;
+                    println!("platform_info: {:?}", platform_info);
+
+                    safe_sgx_report_att_status(platform_info);
                 } else {
                     println!("Failed to fetch platformInfoBlob from attestation report");
                     return Err(sgx_status_t::SGX_ERROR_UNEXPECTED);

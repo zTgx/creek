@@ -1839,6 +1839,7 @@ dependencies = [
  "arrayvec 0.7.2",
  "base64 0.13.1",
  "basex-rs",
+ "cc",
  "chrono",
  "env_logger",
  "hex",
