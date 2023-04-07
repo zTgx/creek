@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{AccountId, ErrorString, ParentchainBlockNumber};
+use super::{assertion::Assertion, AccountId, ErrorString, ParentchainBlockNumber};
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
@@ -177,9 +177,7 @@ pub enum Status {
     // Revoked, // commented out for now, we can delete the VC entry when revoked
 }
 
-#[derive(
-    Serialize, Deserialize, Clone, Eq, PartialEq, Debug, Encode, Decode, TypeInfo, MaxEncodedLen,
-)]
+#[derive(Clone, Eq, PartialEq, Debug, Encode, Decode, TypeInfo, MaxEncodedLen)]
 #[scale_info(skip_type_params(T))]
 #[codec(mel_bound())]
 pub struct VCContext {
@@ -189,10 +187,23 @@ pub struct VCContext {
     // cons: this information is then public, everyone knows e.g. ALICE owns VC ID 1234 + 4321
     // It's not bad though as it helps to verify the ownership of VC
     pub subject: AccountId,
+    // requested assertion type
+    pub assertion: Assertion,
     // hash of the VC, computed via blake2_256
     pub hash: H256,
     // status of the VC
     pub status: Status,
+}
+
+impl VCContext {
+    pub fn new(subject: AccountId, assertion: Assertion, hash: H256) -> Self {
+        Self {
+            subject,
+            assertion,
+            hash,
+            status: Status::Active,
+        }
+    }
 }
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
