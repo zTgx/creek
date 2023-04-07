@@ -41,6 +41,9 @@ fn tc_request_vc_works() {
     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
     let a4 = Assertion::A4(balance.clone());
 
+    let original_tweet_id =
+        ParameterString::try_from("original_tweet_id".as_bytes().to_vec()).unwrap();
+    let a5 = Assertion::A5(original_tweet_id);
     let a6 = Assertion::A6;
 
     let a7 = Assertion::A7(balance.clone());
@@ -53,7 +56,7 @@ fn tc_request_vc_works() {
     let a10 = Assertion::A10(balance.clone());
     let a11 = Assertion::A11(balance);
 
-    let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
+    let assertions = vec![a1, a2, a3, a4, a5, a6, a7, a8, a10, a11];
     assertions.into_iter().for_each(|assertion| {
         api_client.request_vc(&shard, &assertion);
 
