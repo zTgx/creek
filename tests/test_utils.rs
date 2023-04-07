@@ -1,7 +1,7 @@
 use codec::Encode;
 use litentry_api_client::{
     primitives::{address::Address32, crypto::AesOutput},
-    ra::attestation::{SafeSgx, SafeSgxApi},
+    ra::{SafeSgx, SafeSgxApi},
     utils::{
         address::{
             create_n_random_sr25519_address, pubkey_to_address32, sr25519_public_from_ss58,

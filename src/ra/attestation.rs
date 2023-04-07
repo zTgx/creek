@@ -32,17 +32,11 @@ use crate::{
     ra::sgx_types::{sgx_quote_t, sgx_status_t, SgxResult, SGX_PLATFORM_INFO_SIZE},
 };
 
-extern "C" {
-    fn lib_c_sgx_report_att_status(platform_info: *const u8);
-    fn lib_c_sgx_check_update_status(platform_info: *const u8);
-}
+use super::{
+    lib_c_sgx_check_update_status, lib_c_sgx_report_att_status, RaAttestation,
+    RaAttestationExecutor, SafeSgx, SafeSgxApi,
+};
 
-pub trait SafeSgxApi {
-    fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]);
-    fn safe_sgx_check_update_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]);
-}
-
-pub struct SafeSgx;
 impl SafeSgxApi for SafeSgx {
     fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
         unsafe {
@@ -55,14 +49,6 @@ impl SafeSgxApi for SafeSgx {
             lib_c_sgx_check_update_status(platform_info.as_ptr());
         }
     }
-}
-
-pub trait RaAttestationExecutor {
-    fn execute(&self) -> SgxResult<()>;
-}
-
-pub struct RaAttestation {
-    pub enclave_registry: Enclave<AccountId, String>,
 }
 
 impl RaAttestation {

@@ -1,5 +1,5 @@
 use litentry_api_client::{
-    ra::attestation::{RaAttestation, RaAttestationExecutor},
+    ra::{RaAttestation, RaAttestationExecutor},
     vc_management::getter::VcManagementGetterApi,
     ApiClient,
 };
