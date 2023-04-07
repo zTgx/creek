@@ -1,7 +1,7 @@
 use codec::Encode;
 use litentry_api_client::{
     primitives::{address::Address32, crypto::AesOutput},
-    ra::attestation::safe_sgx_report_att_status,
+    ra::attestation::{SafeSgx, SafeSgxApi},
     utils::{
         address::{
             create_n_random_sr25519_address, pubkey_to_address32, sr25519_public_from_ss58,
@@ -173,6 +173,7 @@ fn tc_hex_decode_works() {
 
 #[test]
 fn tc_sgx_report_att_status_works() {
+    // from staging server
     let platform_info_blob = [
         4_u8, 0, 1, 0, 0, 10, 10, 2, 2, 255, 1, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 12, 0, 0,
         0, 2, 0, 0, 0, 0, 0, 0, 12, 43, 203, 17, 175, 217, 219, 123, 197, 214, 111, 131, 120, 182,
@@ -181,5 +182,18 @@ fn tc_sgx_report_att_status_works() {
         212, 232, 32, 135, 219, 150, 2, 163, 110, 40, 114, 163, 3,
     ];
 
-    safe_sgx_report_att_status(platform_info_blob);
+    SafeSgx::safe_sgx_report_att_status(platform_info_blob);
+}
+
+#[test]
+fn tc_sgx_check_update_status_works() {
+    let platform_info_blob = [
+        4_u8, 0, 1, 0, 0, 10, 10, 2, 2, 255, 1, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 12, 0, 0,
+        0, 2, 0, 0, 0, 0, 0, 0, 12, 43, 203, 17, 175, 217, 219, 123, 197, 214, 111, 131, 120, 182,
+        40, 242, 244, 174, 175, 26, 80, 212, 110, 171, 231, 243, 42, 34, 212, 237, 223, 25, 192,
+        151, 96, 9, 88, 251, 57, 153, 135, 80, 192, 125, 152, 142, 247, 140, 235, 42, 147, 93, 29,
+        212, 232, 32, 135, 219, 150, 2, 163, 110, 40, 114, 163, 3,
+    ];
+
+    SafeSgx::safe_sgx_check_update_status(platform_info_blob);
 }

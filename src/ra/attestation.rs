@@ -30,14 +30,28 @@ use crate::{
     ra::sgx_types::{sgx_quote_t, sgx_status_t, SgxResult, SGX_PLATFORM_INFO_SIZE},
 };
 
-#[link(name = "sgx_epid_sim")]
 extern "C" {
     fn lib_c_sgx_report_att_status(platform_info: *const u8);
+    fn lib_c_sgx_check_update_status(platform_info: *const u8);
 }
 
-pub fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
-    unsafe {
-        lib_c_sgx_report_att_status(platform_info.as_ptr());
+pub trait SafeSgxApi {
+    fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]);
+    fn safe_sgx_check_update_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]);
+}
+
+pub struct SafeSgx;
+impl SafeSgxApi for SafeSgx {
+    fn safe_sgx_report_att_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
+        unsafe {
+            lib_c_sgx_report_att_status(platform_info.as_ptr());
+        }
+    }
+
+    fn safe_sgx_check_update_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
+        unsafe {
+            lib_c_sgx_check_update_status(platform_info.as_ptr());
+        }
     }
 }
 
@@ -123,7 +137,8 @@ pub fn ra_attestation(enclave_registry: &Enclave<AccountId, String>) -> SgxResul
 
                     println!("platform_info: {:?}", platform_info);
 
-                    safe_sgx_report_att_status(platform_info);
+                    SafeSgx::safe_sgx_report_att_status(platform_info);
+                    SafeSgx::safe_sgx_check_update_status(platform_info);
                 } else {
                     println!("Failed to fetch platformInfoBlob from attestation report");
                     return Err(sgx_status_t::SGX_ERROR_UNEXPECTED);

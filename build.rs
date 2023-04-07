@@ -1,14 +1,15 @@
 extern crate cc;
 
 fn main() {
-    // gcc lib_sgx.c -I/opt/intel/sgxsdk/include -L/opt/intel/sgxsdk/lib64 -lsgx_epid_sim -o lib_sgx
+    let c_file = "src/ra/lib_sgx.c";
+    let header_dir = "/opt/intel/sgxsdk/include";
     let lib_dir = "/opt/intel/sgxsdk/lib64";
     println!("cargo:rustc-link-search={}", lib_dir);
     println!("cargo:rustc-link-lib=sgx_epid_sim");
 
     cc::Build::new()
-        .file("src/ra/lib_sgx.c")
-        .include("/opt/intel/sgxsdk/include")
+        .file(c_file)
+        .include(header_dir)
         .static_flag(true)
         .compile("lib_sgx");
 }
