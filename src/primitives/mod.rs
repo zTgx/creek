@@ -42,7 +42,8 @@ pub type ParentchainBlockNumber = u32;
 type MaxMetadataLength = ConstU32<128>;
 pub type MetadataOf = BoundedVec<u8, MaxMetadataLength>;
 
-pub type MrEnclave = [u8; 32];
+pub const SGX_MEASUREMENT_SIZE: usize = 32;
+pub type MrEnclave = [u8; SGX_MEASUREMENT_SIZE];
 
 pub type BlockHash = sp_core::H256;
 

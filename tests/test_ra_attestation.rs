@@ -1,5 +1,7 @@
 use litentry_api_client::{
-    ra::attestation::ra_attestation, vc_management::getter::VcManagementGetterApi, ApiClient,
+    ra::attestation::{RaAttestation, RaAttestationExecutor},
+    vc_management::getter::VcManagementGetterApi,
+    ApiClient,
 };
 use sp_core::{sr25519, Pair};
 
@@ -12,5 +14,7 @@ fn tc_ra_attestation_works() {
     assert!(enclave_registry.is_ok());
 
     let enclave_registry = enclave_registry.unwrap();
-    assert!(ra_attestation(&enclave_registry).is_ok());
+
+    let ra = RaAttestation::new(enclave_registry);
+    assert!(ra.execute().is_ok());
 }

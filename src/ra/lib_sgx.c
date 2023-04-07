@@ -81,6 +81,8 @@ int lib_c_sgx_check_update_status(unsigned char platform_info[]) {
 				2,
 				&p_status);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
 	switch (status) {
 		case SGX_SUCCESS:
 			printf("SGX_SUCCESS\n");
@@ -124,6 +126,7 @@ int lib_c_sgx_check_update_status(unsigned char platform_info[]) {
 		default:
 			break;
 	}
+#pragma GCC diagnostic pop
 
 	return 0;
 }
