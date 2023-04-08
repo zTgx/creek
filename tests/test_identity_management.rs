@@ -183,7 +183,8 @@ fn tc_create_identity_then_verify_it() {
     .unwrap();
 
     let vdata =
-        ValidationData::build_vdata_substrate(&alice_pair, &address, &identity, &challenge_code);
+        ValidationData::build_vdata_substrate(&alice_pair, &address, &identity, &challenge_code)
+            .unwrap();
     api_client.verify_identity(&shard, &identity, &vdata);
     let event = api_client.wait_event::<IdentityVerifiedEvent>();
     assert!(event.is_ok());
@@ -214,7 +215,7 @@ fn tc_create_a_random_identity_then_verify_it() {
     let alice = pubkey_to_address32(alice).unwrap();
 
     let network = SubstrateNetwork::Litentry;
-    let pair = create_n_random_sr25519_address(1)[0].clone();
+    let pair = create_n_random_sr25519_address(1).unwrap()[0].clone();
     let pubkey: Address32 = pair.public().0.into();
 
     let identity = Identity::Substrate {
@@ -237,7 +238,8 @@ fn tc_create_a_random_identity_then_verify_it() {
     )
     .unwrap();
 
-    let vdata = ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code);
+    let vdata =
+        ValidationData::build_vdata_substrate(&pair, &alice, &identity, &challenge_code).unwrap();
     api_client.verify_identity(&shard, &identity, &vdata);
     let event = api_client.wait_event::<IdentityVerifiedEvent>();
     assert!(event.is_ok());

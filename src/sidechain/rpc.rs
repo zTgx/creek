@@ -67,7 +67,9 @@ impl<MessageHandler: SidechainHandleMessage> Handler
 
     fn on_close(&mut self, code: CloseCode, reason: &str) {
         info!("Connection closing due to ({:?}) {}", code, reason);
-        self.out.shutdown().unwrap();
+        let _ = self.out.shutdown().map_err(|e| {
+            error!("shutdown error: {:?}", e);
+        });
     }
 
     fn on_message(&mut self, msg: ws::Message) -> ws::Result<()> {
@@ -92,7 +94,10 @@ impl<MessageHandler: SidechainHandleMessage> Handler
         let connector = builder.build();
         connector
             .configure()
-            .unwrap()
+            .map_err(|e| {
+                let details = format!("{:?}", e);
+                ws::Error::new(ws::ErrorKind::Internal, details)
+            })?
             .use_server_name_indication(false)
             .verify_hostname(false)
             .connect("", sock)

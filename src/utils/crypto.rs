@@ -75,10 +75,10 @@ pub fn decrypt_challage_code_with_user_shielding_key(
     let nonce = GenericArray::from_slice(&nonce);
     let code = cipher
         .decrypt(nonce, ciphertext.as_ref())
-        .map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e));
+        .map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e))?;
 
     let mut challenge_code: ChallengeCode = [0u8; CHALLENGE_CODE_SIZE];
-    challenge_code[..CHALLENGE_CODE_SIZE].clone_from_slice(&code.unwrap());
+    challenge_code[..CHALLENGE_CODE_SIZE].clone_from_slice(&code);
 
     Ok(challenge_code)
 }

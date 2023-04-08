@@ -66,7 +66,10 @@ impl RaAttestation {
         }
 
         // 1. Verify quote status (mandatory field)
-        let raw_quote = base64::decode(&self.enclave_registry.sgx_metadata.quote).unwrap();
+        let raw_quote = base64::decode(&self.enclave_registry.sgx_metadata.quote).map_err(|e| {
+            println!("base64 decode error: {:?}", e);
+            sgx_status_t::SGX_ERROR_UNEXPECTED
+        })?;
         let attn_report: Value = match serde_json::from_slice(&raw_quote) {
             Ok(report) => report,
             Err(_) => {

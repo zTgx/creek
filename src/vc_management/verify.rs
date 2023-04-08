@@ -17,26 +17,33 @@ const CONTEXT: [&str; 2] = [
     "https://w3id.org/security/suites/ed25519-2020/v1",
 ];
 
-pub fn verify_vc(vc_pubkey: &ed25519::Public, vc: &Credential) -> bool {
-    let verified_schema = verify_vc_schema(vc);
+pub fn verify_vc(vc_pubkey: &ed25519::Public, vc: &Credential) -> Result<bool, String> {
+    let verified_schema = verify_vc_schema(vc)?;
     let verified_vc_info = verify_vc_info(vc);
     let verified_subject = verify_vc_subject(vc);
     let verified_issuer = verify_vc_issuer(vc);
-    let verified_proof = verify_vc_proof(vc_pubkey, vc);
+    let verified_proof = verify_vc_proof(vc_pubkey, vc)?;
 
-    verified_schema && verified_vc_info && verified_subject && verified_issuer && verified_proof
+    Ok(
+        verified_schema
+            && verified_vc_info
+            && verified_subject
+            && verified_issuer
+            && verified_proof,
+    )
 }
 
-pub fn verify_vc_schema(vc: &Credential) -> bool {
-    let vc: serde_json::Value = serde_json::to_value(vc).unwrap();
+pub fn verify_vc_schema(vc: &Credential) -> Result<bool, String> {
+    let vc: serde_json::Value = serde_json::to_value(vc).map_err(|e| format!("{:?}", e))?;
     let schema = include_bytes!("../../docs/templates/vc_schema.json");
-    let schema: serde_json::Value = serde_json::from_slice(schema).unwrap();
+    let schema: serde_json::Value =
+        serde_json::from_slice(schema).map_err(|e| format!("{:?}", e))?;
     let compiled_schema = JSONSchema::options()
         .with_draft(Draft::Draft202012)
         .compile(&schema)
-        .unwrap();
+        .map_err(|e| format!("{:?}", e))?;
 
-    compiled_schema.is_valid(&vc)
+    Ok(compiled_schema.is_valid(&vc))
 }
 
 pub fn verify_vc_info(vc: &Credential) -> bool {
@@ -63,20 +70,19 @@ pub fn verify_vc_issuer(_vc: &Credential) -> bool {
     true
 }
 
-pub fn verify_vc_proof(vc_pubkey: &ed25519::Public, vc: &Credential) -> bool {
-    let mut value = serde_json::to_value(vc).expect("msg");
+pub fn verify_vc_proof(vc_pubkey: &ed25519::Public, vc: &Credential) -> Result<bool, String> {
+    let mut value = serde_json::to_value(vc).map_err(|e| format!("{:?}", e))?;
+    let proof = vc.proof.clone().expect("Proof");
+    let sig = proof.proof_value;
+    let sig = hex::decode(sig).map_err(|e| format!("{:?}", e))?;
 
-    let sig = vc.proof.clone().unwrap().proof_value;
-    let sig = hex::decode(sig).unwrap();
+    value["proof"] =
+        serde_json::to_value::<Option<String>>(None).map_err(|e| format!("{:?}", e))?;
 
-    value["proof"] = serde_json::to_value::<Option<String>>(None).unwrap();
+    let vc: Credential = serde_json::from_value(value).map_err(|e| format!("{:?}", e))?;
+    let message = serde_json::to_string(&vc).map_err(|e| format!("{:?}", e))?;
+    let signature =
+        ed25519::Signature::from_slice(&sig).ok_or_else(|| "signature error.".to_string())?;
 
-    let vc: Credential = serde_json::from_value(value).unwrap();
-    let message = serde_json::to_string(&vc).expect("msg");
-
-    Ed25519Pair::verify(
-        &ed25519::Signature::from_slice(&sig).unwrap(),
-        message,
-        vc_pubkey,
-    )
+    Ok(Ed25519Pair::verify(&signature, message, vc_pubkey))
 }

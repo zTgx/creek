@@ -10,11 +10,12 @@ use crate::{
     ApiClient,
 };
 use codec::Encode;
+use rsa::RsaPublicKey;
 use sp_core::Pair;
 use sp_core::H256;
 use sp_runtime::{MultiSignature, MultiSigner};
 use substrate_api_client::{
-    compose_call, compose_extrinsic, compose_extrinsic_offline, CallIndex, PlainTip,
+    compose_call, compose_extrinsic, compose_extrinsic_offline, ApiResult, CallIndex, PlainTip,
     SubstrateDefaultSignedExtra, UncheckedExtrinsicV4,
 };
 
@@ -71,6 +72,11 @@ pub trait IdentityManagementXtBuilder {
         identity: &Identity,
         validation_data: &ValidationData,
     ) -> VerifyIdentityXt<SubstrateDefaultSignedExtra<PlainTip>>;
+
+    fn encrypt_identity_with_tee_shielding_key(
+        tee_shielding_pubkey: RsaPublicKey,
+        identity: Identity,
+    ) -> ApiResult<Vec<u8>>;
 }
 
 impl<P> IdentityManagementXtBuilder for ApiClient<P>
@@ -79,6 +85,17 @@ where
     MultiSignature: From<P::Signature>,
     MultiSigner: From<P::Public>,
 {
+    fn encrypt_identity_with_tee_shielding_key(
+        tee_shielding_pubkey: RsaPublicKey,
+        identity: Identity,
+    ) -> ApiResult<Vec<u8>> {
+        let identity_encoded = identity.encode();
+        let encrypted_identity =
+            encrypt_with_tee_shielding_pubkey(&tee_shielding_pubkey, &identity_encoded);
+
+        Ok(encrypted_identity)
+    }
+
     fn build_extrinsic_set_user_shielding_key(
         &self,
         shard: &MrEnclave,

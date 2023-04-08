@@ -104,7 +104,7 @@ Random Address in Hex:
  */
 #[test]
 fn tc_test_create_n_random_sr25519_pair() {
-    let address = create_n_random_sr25519_address(10);
+    let address = create_n_random_sr25519_address(10).unwrap();
 
     let mut ret = String::new();
     address.iter().for_each(|pair| {
@@ -159,7 +159,7 @@ fn tc_pubkey_to_ss58_works() {
     let pubkey_source = pair.public();
 
     let address = sr25519_public_to_ss58(&pubkey_source);
-    let pubkey_end = sr25519_public_from_ss58(&address);
+    let pubkey_end = sr25519_public_from_ss58(&address).unwrap();
 
     assert_eq!(pubkey_source, pubkey_end);
 }

@@ -16,7 +16,7 @@ pub trait ValidationDataBuilder {
         who: &Address32,
         identity: &Identity,
         code: &ChallengeCode,
-    ) -> ValidationData;
+    ) -> Result<ValidationData, Vec<u8>>;
 }
 
 impl ValidationDataBuilder for ValidationData {
@@ -25,14 +25,16 @@ impl ValidationDataBuilder for ValidationData {
         who: &Address32,
         identity: &Identity,
         challenge_code: &ChallengeCode,
-    ) -> ValidationData {
+    ) -> Result<ValidationData, Vec<u8>> {
         let message = get_expected_raw_message(who, identity, challenge_code);
         let sr25519_sig = pair.sign(&message);
         let signature = IdentityMultiSignature::Sr25519(sr25519_sig);
-        let message = ValidationString::try_from(message).unwrap();
+        let message = ValidationString::try_from(message)?;
 
         let web3_common_validation_data = Web3CommonValidationData { message, signature };
-        ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data))
+        Ok(ValidationData::Web3(Web3ValidationData::Substrate(
+            web3_common_validation_data,
+        )))
     }
 }
 

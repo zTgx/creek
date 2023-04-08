@@ -62,7 +62,9 @@ fn alpha_request_vc_a1_works() {
     assert!(vc.is_ok());
     let vc = vc.unwrap();
     let vc_pubkey = api_client.get_vc_pubkey().unwrap();
-    assert!(verify_vc(&vc_pubkey, &vc));
+    let ret = verify_vc(&vc_pubkey, &vc);
+    assert!(ret.is_ok());
+    assert_eq!(ret.unwrap(), true)
 }
 
 #[test]
