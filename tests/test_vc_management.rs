@@ -99,7 +99,7 @@ pub fn tc_batch_request_vc() {
 }
 
 #[test]
-pub fn tc_batch_all_request_vc() {
+pub fn tc_batch_all_request_vc_a471011_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
@@ -259,7 +259,7 @@ fn tc_request_vc_a1() {
 }
 
 #[test]
-fn tc_request_vc_a4() {
+fn tc_request_vc_a4_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
