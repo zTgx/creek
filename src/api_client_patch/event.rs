@@ -66,7 +66,7 @@ where
                     println!("meta: {:?}", event_metadata);
                     let event = event_details
                         .as_event::<EventType>()?
-                        .ok_or(Error::Other("Could not find the specific event".into()))?;
+                        .ok_or_else(|| Error::Other("Could not find the specific event".into()))?;
                     collected_events.push(event);
                 }
             }
