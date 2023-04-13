@@ -18,7 +18,7 @@ use sp_core::{sr25519, Pair};
 use std::time::SystemTime;
 
 #[test]
-fn tc_request_vc_works() {
+fn tc_request_vc_all_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 

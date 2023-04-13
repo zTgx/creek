@@ -1,0 +1,56 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x3e3a5b2d2c91c50a9300f02b984194f581c1e8d7dcbe60d9605526d11c928b65",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"Since when has the user been consistently holding a min amount {x} of WBTC token",
+        "type":"WBTC Holding Assertion",
+        "tag":[
+            "Ethereum"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$minimum_amount",
+                        "op":"==",
+                        "dst":"1.001"
+                    },
+                    {
+                        "src":"$from_date",
+                        "op":"<",
+                        "dst":"2017-01-01"
+                    },
+                    {
+                        "src":"$to_date",
+                        "op":">=",
+                        "dst":"2023-04-13"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            false
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":180,
+    "proof":{
+        "createdBlockNumber":180,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"3307ecf090d298b255df6fdaae6649512e1ad59934c9768f6f7cabab64727b82b5b69d4206fc881632afe08b93ec15ae36f8c96a08a27d39dd404f629ba63b0b",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x008f0ba81076f9203995f107a208d07b850bf231d39bed3df45d28c21ae537a4",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"Since when has the user been consistently holding a min amount {x} of LIT token",
+        "type":"LIT Holding Assertion",
+        "tag":[
+            "Ethereum",
+            "Litmus",
+            "Litentry"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$minimum_amount",
+                        "op":"==",
+                        "dst":"1.001"
+                    },
+                    {
+                        "src":"$from_date",
+                        "op":"<",
+                        "dst":"2017-01-01"
+                    },
+                    {
+                        "src":"$to_date",
+                        "op":">=",
+                        "dst":"2023-04-13"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            false
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":120,
+    "proof":{
+        "createdBlockNumber":120,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"d13c4360d4b0a1d257fa7b0904bae2d61478687a55a2fabf7ca1431ec7e741f6708b6f5e2cbaecff150841d78711b0ecbe6420d7cb1abb68d514bf2340251b01",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

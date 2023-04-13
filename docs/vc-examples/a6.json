@@ -1,0 +1,51 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0xc100bab7159cfa6bba93ef5a9c61dd703ec27f8d7097ebe74a913801658a19e4",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"The range of the user's Twitter follower count",
+        "type":"Twitter Follower Amount",
+        "tag":[
+            "Twitter"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$total_followers",
+                        "op":">",
+                        "dst":"0"
+                    },
+                    {
+                        "src":"$total_followers",
+                        "op":"<=",
+                        "dst":"1"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            true
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":142,
+    "proof":{
+        "createdBlockNumber":142,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"936dcde3ba61850cd868e61cd7b35d2a240d419624b00c00253b706b60631e78f0e49f25fa39d292cfb5dd9651a62ad83b58e50d3de3b7f04a900e07f7937d09",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

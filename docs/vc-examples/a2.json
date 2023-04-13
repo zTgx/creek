@@ -1,0 +1,56 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x81fae71e805fe0b0cac818e3b5e36462ff885724937ebec7feb65e376d33d685",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"The user has obtained an ID-Hubber role in a Litentry Discord channel",
+        "type":"Discord ID-Hubber Role Verification",
+        "tag":[
+            "Discord"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$verified_discord_account",
+                        "op":">",
+                        "dst":"0"
+                    },
+                    {
+                        "src":"$has_joined",
+                        "op":"==",
+                        "dst":"true"
+                    },
+                    {
+                        "src":"$discord_guild_id",
+                        "op":"==",
+                        "dst":"guild_id"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            false
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":95,
+    "proof":{
+        "createdBlockNumber":95,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"5107265dd32a7f25f3fb223c3439d48fa8fe3b726d74dd3cf0b01d8e874375e5eeba7bb49341f79eba2c6ac2038bf44d0c3a8d0af787b8e2803f884cde183805",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

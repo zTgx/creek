@@ -1,0 +1,56 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x87610aca61f1635893c6d8e75238616e8f3b104313bf0b8b754d4899be6892fe",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"Since when has the user been consistently holding a min amount {x} of ETH token",
+        "type":"ETH Holding Assertion",
+        "tag":[
+            "Ethereum"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$minimum_amount",
+                        "op":"==",
+                        "dst":"1.001"
+                    },
+                    {
+                        "src":"$from_date",
+                        "op":"<",
+                        "dst":"2017-01-01"
+                    },
+                    {
+                        "src":"$to_date",
+                        "op":">=",
+                        "dst":"2023-04-13"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            false
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":191,
+    "proof":{
+        "createdBlockNumber":191,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"2dce4a29827005262aed7322cf9f43c5a28eecc3cba468e0ad42d80b597e9ae241cfece0583118edcfde7342e7d62ca4058ac0d32b31ca082775647da89e1b04",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

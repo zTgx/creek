@@ -1,0 +1,51 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x9cb4a7753e750819b0dd34946e3145bdd3d8d7cee718b463e8959e41359ec716",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"The user has verified one identity in Web 2 and one identity in Web 3",
+        "type":"Basic Identity Verification",
+        "tag":[
+            "Litentry Network"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$has_web2_account",
+                        "op":"==",
+                        "dst":"true"
+                    },
+                    {
+                        "src":"$has_web3_account",
+                        "op":"==",
+                        "dst":"true"
+                    }
+                ]
+            }
+        ],
+        "values":[
+            false
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":84,
+    "proof":{
+        "createdBlockNumber":84,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"560706e03cbf5187195014f1755abd13d4ec7a0d18162865c8a9179c09728e3d1f0528cc7585affb40a5d799bf252d3925ed20b6f7bc909b4db3f03e13905f0f",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}

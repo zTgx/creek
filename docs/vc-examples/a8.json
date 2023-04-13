@@ -1,0 +1,65 @@
+{
+    "@context":[
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id":"0x1c0226300630de5df6d2cbde8572fa21cf551e5f0f9a56de21132dabf7558fa1",
+    "type":[
+        "VerifiableCredential"
+    ],
+    "credentialSubject":{
+        "id":"d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+        "description":"The total amount of transaction the user has ever made in each of the available  networks (including invalid transactions)",
+        "type":"EVM/Substrate Transaction Count on Networks",
+        "tag":[
+            "Litentry",
+            "Litmus",
+            "Polkadot",
+            "Kusama",
+            "Ethereum",
+            "Khala"
+        ],
+        "assertions":[
+            {
+                "and":[
+                    {
+                        "src":"$total_txs",
+                        "op":">=",
+                        "dst":"0"
+                    },
+                    {
+                        "src":"$total_txs",
+                        "op":"<",
+                        "dst":"1"
+                    },
+                    {
+                        "or":[
+                            {
+                                "src":"$network",
+                                "op":"==",
+                                "dst":"Litentry"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "values":[
+            true
+        ],
+        "endpoint":"http://localhost:9933"
+    },
+    "issuer":{
+        "id":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465",
+        "name":"Litentry TEE Worker",
+        "mrenclave":"9oAAhk4LSpMXoy5UJWVeAp5rjMKswnSzD23ZQYymAxJL"
+    },
+    "issuanceBlockNumber":167,
+    "proof":{
+        "createdBlockNumber":167,
+        "type":"Ed25519Signature2020",
+        "proofPurpose":"assertionMethod",
+        "proofValue":"59cf166649571ffda1a59c2bc8e32ba684033f9755f9186d3e778ee96bac983474035e3a794c13931eafe51b64cae6dbbd0177ec6d0b336770c2e73b27cba409",
+        "verificationMethod":"431ac089318b6c344a8d06b420664881b04f1834ce3b39da659c9bcf31746465"
+    }
+}
