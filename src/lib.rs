@@ -42,7 +42,7 @@ where
     MultiSigner: From<P::Public>,
 {
     pub fn new_with_signer(signer: P) -> ApiResult<Self> {
-        env_logger::init();
+        // env_logger::init();
 
         let client = WsRpcClient::new(NODE_URL);
         let api = ApiType::new(client).map(|api| api.set_signer(signer))?;

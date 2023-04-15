@@ -555,7 +555,7 @@ fn tc_request_vc_a8_with_empty_networks_works() {
 
     let networks = IndexingNetworks::with_bounded_capacity(0);
     let a8 = Assertion::A8(networks);
-    
+
     println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A8. <<<<<<<<<<<<<<<<<<<<<<<< ");
     let now = SystemTime::now();
     api_client.request_vc(&shard, &a8);

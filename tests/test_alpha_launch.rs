@@ -18,9 +18,13 @@ use litentry_api_client::{
     api_client_patch::{
         batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
     },
-    identity_management::IdentityManagementApi,
-    primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
+    identity_management::{events::SetUserShieldingKeyEvent, IdentityManagementApi},
+    primitives::{
+        assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
+        MrEnclave,
+    },
     utils::{
+        address::create_n_random_sr25519_address,
         crypto::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key},
         vc::create_a_random_vc_index,
     },
@@ -114,51 +118,7 @@ fn alpha_request_vc_a3_works() {
 }
 
 #[test]
-fn alpha_request_vc_a4_10_u128_works() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice).unwrap();
-
-    let shard = api_client.get_shard().unwrap();
-    let user_shielding_key = generate_user_shielding_key();
-    api_client
-        .set_user_shielding_key(&shard, &user_shielding_key)
-        .unwrap();
-
-    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
-    let a4 = Assertion::A4(balance);
-
-    api_client.request_vc(&shard, &a4);
-
-    let event = api_client.wait_event::<VCIssuedEvent>();
-    assert!(event.is_ok());
-    let event = event.unwrap();
-    assert_eq!(event.account, api_client.get_signer().unwrap());
-}
-
-#[test]
-fn alpha_request_vc_a4_min_u128_works() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice).unwrap();
-
-    let shard = api_client.get_shard().unwrap();
-    let user_shielding_key = generate_user_shielding_key();
-    api_client
-        .set_user_shielding_key(&shard, &user_shielding_key)
-        .unwrap();
-
-    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
-    let a4 = Assertion::A4(balance);
-
-    api_client.request_vc(&shard, &a4);
-
-    let event = api_client.wait_event::<VCIssuedEvent>();
-    assert!(event.is_ok());
-    let event = event.unwrap();
-    assert_eq!(event.account, api_client.get_signer().unwrap());
-}
-
-#[test]
-fn alpha_request_vc_a4_max_u128_works() {
+fn alpha_request_vc_a4_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
@@ -934,4 +894,69 @@ fn alpha_query_vc_registry_non_exists_works() {
     let non_exists_vc_index = create_a_random_vc_index();
     let vc_context = api_client.get_vc_context(&non_exists_vc_index).ok();
     assert!(vc_context.flatten().is_some());
+}
+
+/// Not Done yet
+/// https://github.com/litentry/litentry-parachain/issues/1520
+/// multiple-account request api simultaneously
+/// 1. set_user_shielding_key
+/// 2. request_vc
+/// ...
+///
+// #[test]
+fn alpha_too_many_request_to_parachain_at_same_time_works() {
+    use std::thread;
+
+    const NTHREADS: usize = 10;
+
+    // create multi accounts
+    let pair = create_n_random_sr25519_address(NTHREADS).unwrap();
+    let amount = 10;
+
+    // sudo transfer balance 10 to those accounts
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
+    let shard = api_client.get_shard().unwrap();
+    {
+        pair.iter().for_each(|pair| {
+            let account = pair.public();
+            let xt = api_client
+                .api
+                .balance_transfer(sp_runtime::MultiAddress::Id(account.into()), amount);
+
+            api_client.send_extrinsic(xt.hex_encode());
+
+            println!("Send {} amounts to {:?} Done", amount, account);
+        });
+
+        println!("Send all balance Done.")
+    }
+
+    // 1.
+    fn set_user_shielding_key(account: &sr25519::Pair, shard: MrEnclave) {
+        println!("New account: {:?}", account.public());
+        let api_client = ApiClient::new_with_signer(account.clone()).unwrap();
+
+        let user_shielding_key = generate_user_shielding_key();
+        api_client
+            .set_user_shielding_key(&shard, &user_shielding_key)
+            .unwrap();
+    }
+
+    std::thread::sleep(std::time::Duration::from_secs(3));
+
+    let mut children = vec![];
+
+    pair.iter().for_each(|pair| {
+        let pair = pair.clone();
+        children.push(thread::spawn(move || set_user_shielding_key(&pair, shard)));
+    });
+
+    for child in children {
+        // Wait for the thread to finish. Returns a result.
+        let _ = child.join();
+    }
+
+    let events: Vec<SetUserShieldingKeyEvent> = api_client.wait_events(NTHREADS).unwrap();
+    println!("events: {:?}", events)
 }
