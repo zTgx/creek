@@ -21,3 +21,9 @@ pub fn mock_a_shard() -> MrEnclave {
     let shard: MrEnclave = rand::random();
     shard
 }
+
+pub fn storage_value_key(module_prefix: &str, storage_prefix: &str) -> Vec<u8> {
+    let mut bytes = sp_core::twox_128(module_prefix.as_bytes()).to_vec();
+    bytes.extend(&sp_core::twox_128(storage_prefix.as_bytes())[..]);
+    bytes
+}

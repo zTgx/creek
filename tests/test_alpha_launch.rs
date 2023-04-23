@@ -14,17 +14,15 @@ Priority:
 * P2 -> cover corner cases -> 60%
 */
 
+use std::str::FromStr;
+
 use litentry_api_client::{
     api_client_patch::{
         batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
     },
-    identity_management::{events::SetUserShieldingKeyEvent, IdentityManagementApi},
-    primitives::{
-        assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
-        MrEnclave,
-    },
+    identity_management::IdentityManagementApi,
+    primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
     utils::{
-        address::create_n_random_sr25519_address,
         crypto::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key},
         vc::create_a_random_vc_index,
     },
@@ -36,7 +34,7 @@ use litentry_api_client::{
     },
     ApiClient,
 };
-use sp_core::{sr25519, Pair};
+use sp_core::{sr25519, Pair, H256};
 
 #[test]
 fn alpha_function_name_should_be_descriptive_and_clear_works() {
@@ -904,59 +902,89 @@ fn alpha_query_vc_registry_non_exists_works() {
 /// ...
 ///
 // #[test]
-fn alpha_too_many_request_to_parachain_at_same_time_works() {
-    use std::thread;
+// fn alpha_too_many_request_to_parachain_at_same_time_works() {
+//     use std::thread;
 
-    const NTHREADS: usize = 10;
+//     const NTHREADS: usize = 10;
 
-    // create multi accounts
-    let pair = create_n_random_sr25519_address(NTHREADS).unwrap();
-    let amount = 10;
+//     // create multi accounts
+//     let pair = create_n_random_sr25519_address(NTHREADS).unwrap();
+//     let amount = 10;
 
-    // sudo transfer balance 10 to those accounts
+//     // sudo transfer balance 10 to those accounts
+//     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+//     let api_client = ApiClient::new_with_signer(alice).unwrap();
+//     let shard = api_client.get_shard().unwrap();
+//     {
+//         pair.iter().for_each(|pair| {
+//             let account = pair.public();
+//             let xt = api_client
+//                 .api
+//                 .balance_transfer(sp_runtime::MultiAddress::Id(account.into()), amount);
+
+//             api_client.send_extrinsic(xt.hex_encode());
+
+//             println!("Send {} amounts to {:?} Done", amount, account);
+//         });
+
+//         println!("Send all balance Done.")
+//     }
+
+//     // 1.
+//     fn set_user_shielding_key(account: &sr25519::Pair, shard: MrEnclave) {
+//         println!("New account: {:?}", account.public());
+//         let api_client = ApiClient::new_with_signer(account.clone()).unwrap();
+
+//         let user_shielding_key = generate_user_shielding_key();
+//         api_client
+//             .set_user_shielding_key(&shard, &user_shielding_key)
+//             .unwrap();
+//     }
+
+//     std::thread::sleep(std::time::Duration::from_secs(3));
+
+//     let mut children = vec![];
+
+//     pair.iter().for_each(|pair| {
+//         let pair = pair.clone();
+//         children.push(thread::spawn(move || set_user_shielding_key(&pair, shard)));
+//     });
+
+//     for child in children {
+//         // Wait for the thread to finish. Returns a result.
+//         let _ = child.join();
+//     }
+
+//     let events: Vec<SetUserShieldingKeyEvent> = api_client.wait_events(NTHREADS).unwrap();
+//     println!("events: {:?}", events)
+// }
+
+#[test]
+fn alpha_query_enclave_count_storage_works() {
+    use sp_core::storage::StorageKey;
+
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
+
     let shard = api_client.get_shard().unwrap();
-    {
-        pair.iter().for_each(|pair| {
-            let account = pair.public();
-            let xt = api_client
-                .api
-                .balance_transfer(sp_runtime::MultiAddress::Id(account.into()), amount);
+    let user_shielding_key = generate_user_shielding_key();
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
 
-            api_client.send_extrinsic(xt.hex_encode());
+    let key = [
+        212, 144, 122, 173, 74, 14, 160, 178, 189, 172, 196, 32, 211, 107, 233, 120, 54, 87, 4,
+        174, 78, 139, 245, 224, 241, 123, 140, 4, 177, 67, 119, 2,
+    ];
 
-            println!("Send {} amounts to {:?} Done", amount, account);
-        });
+    // let storage_key = storage_value_key("Teerex", "EnclaveCount");
+    let storage_key = StorageKey(key.to_vec());
 
-        println!("Send all balance Done.")
-    }
+    let hash = "0x1ae23916d72fe9153ffe25b1e9df6c380d7555b6fb0fe68e0ccf86e6d1fe07bc";
+    let block_hash = H256::from_str(hash).unwrap();
+    let x = api_client
+        .api
+        .get_storage_proof_by_keys(vec![storage_key], Some(block_hash));
 
-    // 1.
-    fn set_user_shielding_key(account: &sr25519::Pair, shard: MrEnclave) {
-        println!("New account: {:?}", account.public());
-        let api_client = ApiClient::new_with_signer(account.clone()).unwrap();
-
-        let user_shielding_key = generate_user_shielding_key();
-        api_client
-            .set_user_shielding_key(&shard, &user_shielding_key)
-            .unwrap();
-    }
-
-    std::thread::sleep(std::time::Duration::from_secs(3));
-
-    let mut children = vec![];
-
-    pair.iter().for_each(|pair| {
-        let pair = pair.clone();
-        children.push(thread::spawn(move || set_user_shielding_key(&pair, shard)));
-    });
-
-    for child in children {
-        // Wait for the thread to finish. Returns a result.
-        let _ = child.join();
-    }
-
-    let events: Vec<SetUserShieldingKeyEvent> = api_client.wait_events(NTHREADS).unwrap();
-    println!("events: {:?}", events)
+    println!("teerex enclave count proof: {:?}", x)
 }
