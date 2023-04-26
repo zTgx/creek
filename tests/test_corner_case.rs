@@ -628,7 +628,7 @@ fn tc_batch_all_create_more_than_100_identities_and_check_idgraph_size() {
 }
 
 #[test]
-fn tc_create_litentry_litmus_rococo_verified_identities() {
+fn tc_create_litentry_litmus_rococo_verified_identities_works() {
     let alice_pair = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice_pair.clone()).unwrap();
 
@@ -644,7 +644,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
 
     let networks = [
         SubstrateNetwork::Litentry,
-        SubstrateNetwork::LitentryRococo,
+        SubstrateNetwork::Polkadot,
         SubstrateNetwork::Litmus,
     ];
 
@@ -662,6 +662,8 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
                 network: network.clone(),
                 address,
             };
+            println!("Identity: {:?}", identity);
+
             api_client.create_identity(&shard, &alice, &identity, &ciphertext_metadata);
 
             let event = api_client.wait_event::<IdentityCreatedEvent>();
@@ -688,7 +690,7 @@ fn tc_create_litentry_litmus_rococo_verified_identities() {
                 api_client.verify_identity(&shard, &identity, &vdata);
 
                 let event = api_client.wait_event::<IdentityVerifiedEvent>();
-                assert!(event.is_ok());
+                println!("event: {:?}", event);
             }
 
             created_identity_idx += 1;

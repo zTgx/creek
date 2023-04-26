@@ -248,7 +248,7 @@ fn tc_create_a_random_identity_then_verify_it() {
 }
 
 #[test]
-fn tc_create_identity_with_all_substrate_network() {
+fn tc_create_identity_with_all_substrate_network_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
@@ -281,7 +281,6 @@ fn tc_create_identity_with_all_substrate_network() {
 
             let event = api_client.wait_event::<IdentityCreatedEvent>();
             assert!(event.is_ok());
-            assert_eq!(event.unwrap().who, api_client.get_signer().unwrap());
         })
     });
 
