@@ -1,11 +1,12 @@
 # litentry-api-client
+**WIP**  
+[Litentry Parachain](https://github.com/litentry/litentry-parachain) Rust version SDK.
 
 ### Features
 - [x] Rust nightly only
 - [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client)
-- [x] Support [Multi-ApiClientPatch](./src/api_client_patch/)
-- [x] Support `IdentityManagement` & `VCManagement` & `Sidechain` Api
-- [x] Support `VC verify` & `RA Attestation`
+- [x] Support `IdentityManagement` & `VCManagement` & `Sidechain` pallets
+- [x] Support `VC verification` & `RA`
 
 ```rust
 fn set_user_shielding_key() {
