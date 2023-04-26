@@ -236,7 +236,7 @@ fn alpha_request_vc_a8_works() {
         .set_user_shielding_key(&shard, &user_shielding_key)
         .unwrap();
 
-    let litentry = IndexingNetwork::Litentry;
+    let litentry = IndexingNetwork::Polkadot;
     let mut networks = IndexingNetworks::with_bounded_capacity(1);
     networks.try_push(litentry).unwrap();
     let a8 = Assertion::A8(networks);
