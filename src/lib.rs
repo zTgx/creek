@@ -25,9 +25,9 @@ const NODE_URL: &str = "wss://tee-staging.litentry.io:443";
 const WORKER_URL: &str = "wss://tee-staging.litentry.io:2000";
 
 #[cfg(feature = "prod2")]
-const NODE_URL: &str = "wss://tee-staging.litentry.io:443";
+const NODE_URL: &str = "wss://tee-internal.litentry.io:443";
 #[cfg(feature = "prod2")]
-const WORKER_URL: &str = "wss://tee-staging.litentry.io:2000";
+const WORKER_URL: &str = "wss://tee-internal.litentry.io:2000";
 
 // Default to `local` worker mode when no cargo features are set.
 #[cfg(not(any(feature = "local", feature = "staging", feature = "prod2")))]

@@ -33,8 +33,8 @@ use crate::{
 };
 
 use super::{
-    lib_c_sgx_check_update_status, lib_c_sgx_report_att_status, RaAttestation,
-    RaAttestationExecutor, SafeSgx, SafeSgxApi,
+    lib_c_sgx_check_update_status, lib_c_sgx_report_att_status, lib_c_sgx_verify_report,
+    RaAttestation, RaAttestationExecutor, SafeSgx, SafeSgxApi,
 };
 
 impl SafeSgxApi for SafeSgx {
@@ -47,6 +47,12 @@ impl SafeSgxApi for SafeSgx {
     fn safe_sgx_check_update_status(platform_info: [u8; SGX_PLATFORM_INFO_SIZE]) {
         unsafe {
             lib_c_sgx_check_update_status(platform_info.as_ptr());
+        }
+    }
+
+    fn safe_sgx_verify_report(report: Vec<u8>) {
+        unsafe {
+            lib_c_sgx_verify_report(report.as_ptr());
         }
     }
 }
