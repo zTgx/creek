@@ -228,7 +228,7 @@ fn tc_request_vc_and_revoke_it_success() {
 }
 
 #[test]
-fn tc_request_vc_a1() {
+fn tc_request_vc_a1_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
