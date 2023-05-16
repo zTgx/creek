@@ -12,7 +12,7 @@ use litentry_api_client::{
         address::Address32,
         assertion::ParameterString,
         identity::{
-            Identity, IdentityMultiSignature, SubstrateNetwork, ValidationData,
+            Identity, IdentityMultiSignature, SubstrateNetwork, ValidationData, Web2Network,
             Web3CommonValidationData, Web3ValidationData,
         },
     },
@@ -23,7 +23,7 @@ use litentry_api_client::{
             decrypt_id_graph_with_user_shielding_key, decrypt_identity_with_user_shielding_key,
             generate_incorrect_user_shielding_key, generate_user_shielding_key,
         },
-        identity::ValidationDataBuilder,
+        identity::{build_msg_web2, ValidationDataBuilder},
         print_passed,
     },
     ApiClient,
@@ -392,4 +392,52 @@ fn tc_create_identity_then_decrypt_it() {
     assert_eq!(identity, decrypted_identity.unwrap());
 
     print_passed()
+}
+
+#[test]
+fn tc_create_identity_twitter() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
+
+    let shard = api_client.get_shard().unwrap();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
+
+    let alice = "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+    let address = pubkey_to_address32(alice).unwrap();
+
+    let twitter_name = ParameterString::try_from("twitter".as_bytes().to_vec()).unwrap();
+    let identity = Identity::Web2 {
+        network: Web2Network::Twitter,
+        address: twitter_name.clone(),
+    };
+    let ciphertext_metadata: Option<Vec<u8>> = None;
+
+    api_client.create_identity(&shard, &address, &identity, &ciphertext_metadata);
+
+    let event = api_client.wait_event::<IdentityCreatedEvent>();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.who, api_client.get_signer().unwrap());
+
+    let encrypted_challenge_code = event.code;
+    let challenge_code = decrypt_challage_code_with_user_shielding_key(
+        &user_shielding_key,
+        encrypted_challenge_code,
+    )
+    .unwrap();
+
+    // let vdata =
+    //     ValidationData::build_vdata_twitter(&twitter_name)
+    //         .unwrap();
+    // api_client.verify_identity(&shard, &identity, &vdata);
+    // let event = api_client.wait_event::<IdentityVerifiedEvent>();
+    // assert!(event.is_ok());
+
+    let msg = build_msg_web2(&address, &identity, &challenge_code);
+    println!("post msg to twitter: {}", msg);
+
+    print_passed();
 }

@@ -22,7 +22,7 @@ const WORKER_URL: &str = "ws://127.0.0.1:2000";
 #[cfg(feature = "staging")]
 const NODE_URL: &str = "wss://tee-staging.litentry.io:443";
 #[cfg(feature = "staging")]
-const WORKER_URL: &str = "wss://tee-staging.litentry.io:2000";
+const WORKER_URL: &str = "ws://127.0.0.1:2000";
 
 #[cfg(feature = "prod2")]
 const NODE_URL: &str = "wss://tee-internal.litentry.io:443";
