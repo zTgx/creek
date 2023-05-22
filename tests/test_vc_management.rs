@@ -653,3 +653,25 @@ fn tc_request_vc_a10_works() {
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
 }
+
+#[test]
+fn tc_request_vc_a11_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
+
+    let shard = api_client.get_shard().unwrap();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
+
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a10 = Assertion::A11(balance);
+
+    api_client.request_vc(&shard, &a10);
+
+    let event = api_client.wait_event::<VCIssuedEvent>();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
+}
