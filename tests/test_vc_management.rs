@@ -567,7 +567,7 @@ fn tc_request_vc_a8_with_empty_networks_works() {
 
     let elapsed_secs = now.elapsed().unwrap().as_secs();
     println!(
-        " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue A5 took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
+        " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue A8 took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
         elapsed_secs
     );
 
@@ -594,4 +594,62 @@ fn tc_request_vc_a5_works() {
     assert!(event.is_ok());
 
     print_passed();
+}
+
+#[test]
+fn tc_request_vc_a8_with_3_networks_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
+
+    let shard = api_client.get_shard().unwrap();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
+
+    let mut networks = IndexingNetworks::with_bounded_capacity(3);
+    networks.try_push(IndexingNetwork::Ethereum).unwrap();
+    networks.try_push(IndexingNetwork::Litentry).unwrap();
+    networks.try_push(IndexingNetwork::LitentryRococo).unwrap();
+
+    let a8 = Assertion::A8(networks);
+
+    println!("\n\n\n 🚧 >>>>>>>>>>>>>>>>>>>>>>> Starting Request Assertion A8. <<<<<<<<<<<<<<<<<<<<<<<< ");
+    let now = SystemTime::now();
+    api_client.request_vc(&shard, &a8);
+
+    let event = api_client.wait_event::<VCIssuedEvent>();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.assertion, a8);
+
+    let elapsed_secs = now.elapsed().unwrap().as_secs();
+    println!(
+        " 🚩 >>>>>>>>>>>>>>>>>>>>>>> Issue A8 took {} secs <<<<<<<<<<<<<<<<<<<<<<<< ",
+        elapsed_secs
+    );
+
+    print_passed();
+}
+
+#[test]
+fn tc_request_vc_a10_works() {
+    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+    let api_client = ApiClient::new_with_signer(alice).unwrap();
+
+    let shard = api_client.get_shard().unwrap();
+    let user_shielding_key = generate_user_shielding_key();
+    api_client
+        .set_user_shielding_key(&shard, &user_shielding_key)
+        .unwrap();
+
+    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+    let a10 = Assertion::A10(balance);
+
+    api_client.request_vc(&shard, &a10);
+
+    let event = api_client.wait_event::<VCIssuedEvent>();
+    assert!(event.is_ok());
+    let event = event.unwrap();
+    assert_eq!(event.account, api_client.get_signer().unwrap());
 }

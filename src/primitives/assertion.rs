@@ -25,12 +25,20 @@ pub type IndexingNetworks = BoundedVec<IndexingNetwork, MaxStringLength>;
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
 pub enum IndexingNetwork {
+    // Litentry,
+    // Litmus,
+    // Polkadot,
+    // Kusama,
+    // Khala,
+    // Ethereum,
     Litentry,
     Litmus,
+    LitentryRococo,
     Polkadot,
     Kusama,
     Khala,
     Ethereum,
+    TestNet,
 }
 
 #[rustfmt::skip]
