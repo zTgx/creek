@@ -6,6 +6,7 @@ fn main() {
     let lib_dir = "/opt/intel/sgxsdk/lib64";
     println!("cargo:rustc-link-search={}", lib_dir);
     println!("cargo:rustc-link-lib=sgx_epid_sim");
+    println!("cargo:rustc-link-lib=sgx_utls"); // sgx_verify_report
 
     cc::Build::new()
         .file(c_file)
