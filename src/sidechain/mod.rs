@@ -12,6 +12,7 @@ use crate::{
 };
 
 pub mod api;
+pub mod di;
 pub mod rpc;
 
 pub trait SidechainRpc {
