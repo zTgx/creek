@@ -19,10 +19,22 @@ const CONTEXT: [&str; 2] = [
 
 pub fn verify_vc(vc_pubkey: &ed25519::Public, vc: &Credential) -> Result<bool, String> {
     let verified_schema = verify_vc_schema(vc)?;
+    println!("Verify scheme: {verified_schema}");
+    if !verified_schema {
+        return Ok(verified_schema);
+    }
+
     let verified_vc_info = verify_vc_info(vc);
+    println!("Verify scheme: {verified_vc_info}");
+
     let verified_subject = verify_vc_subject(vc);
+    println!("Verify scheme: {verified_subject}");
+
     let verified_issuer = verify_vc_issuer(vc);
+    println!("Verify scheme: {verified_issuer}");
+
     let verified_proof = verify_vc_proof(vc_pubkey, vc)?;
+    println!("Verify scheme: {verified_proof}");
 
     Ok(
         verified_schema

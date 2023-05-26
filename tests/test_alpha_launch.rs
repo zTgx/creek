@@ -65,6 +65,7 @@ fn alpha_request_vc_a1_works() {
     let vc = vc.unwrap();
     let vc_pubkey = api_client.get_vc_pubkey().unwrap();
     let ret = verify_vc(&vc_pubkey, &vc);
+    println!("ret: {:?}", ret);
     assert!(ret.is_ok());
     assert_eq!(ret.unwrap(), true)
 }

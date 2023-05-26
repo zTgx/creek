@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{assertion::Assertion, AccountId, ErrorString, ParentchainBlockNumber};
+use super::{assertion::Assertion, AccountId, ErrorString};
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
@@ -124,7 +124,7 @@ pub struct CredentialSchema {
 #[serde(rename_all = "camelCase")]
 pub struct Proof {
     /// The block number when the signature was created
-    pub created_block_number: ParentchainBlockNumber,
+    pub created_timestamp: u64,
     /// The cryptographic signature suite that used to generate signature
     #[serde(rename = "type")]
     pub proof_type: ProofType,
@@ -151,11 +151,11 @@ pub struct Credential {
     pub credential_subject: CredentialSubject,
     /// The TEE enclave who issued the credential
     pub issuer: Issuer,
-    pub issuance_block_number: ParentchainBlockNumber,
+    pub issuance_timestamp: u64,
     /// (Optional)
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(skip_serializing)]
-    pub expiration_block_number: Option<ParentchainBlockNumber>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    // #[serde(skip_serializing)]
+    pub expiration_timestamp: Option<u64>,
 
     /// Digital proof with the signature of Issuer
     #[serde(skip_serializing_if = "Option::is_none")]

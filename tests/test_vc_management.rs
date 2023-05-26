@@ -652,6 +652,8 @@ fn tc_request_vc_a10_works() {
     assert!(event.is_ok());
     let event = event.unwrap();
     assert_eq!(event.account, api_client.get_signer().unwrap());
+
+    println!("VC Issued: {:?}", event);
 }
 
 #[test]

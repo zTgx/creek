@@ -55,10 +55,12 @@ pub fn decrypt_vc_with_user_shielding_key(
     let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
     let nonce = GenericArray::from_slice(&nonce);
     let cipher = Aes256Gcm::new(key);
+
     match cipher.decrypt(nonce, ciphertext.as_ref()) {
-        Ok(plaintext) => {
-            serde_json::from_slice(&plaintext).map_err(|e| format!("Deserialize VC error: {:?}", e))
-        }
+        Ok(plaintext) => serde_json::from_slice(&plaintext).map_err(|e| {
+            println!("Deserialize VC error.");
+            format!("Deserialize VC error: {:?}", e)
+        }),
         Err(e) => Err(format!("Deserialize VC error: {:?}", e)),
     }
 }
