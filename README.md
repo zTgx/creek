@@ -5,8 +5,8 @@
 ### Features
 - [x] Rust nightly only
 - [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client)
-- [x] Support `IdentityManagement` & `VCManagement` & `Sidechain` pallets
-- [x] Support `VC verification` & `RA`
+- [x] Support `II` & `DI`
+- [x] Support `RA`
 
 ```rust
 /// Set User Shielding Key And Wait Event
