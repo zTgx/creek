@@ -21,7 +21,7 @@ use substrate_api_client::{rpc::WsRpcClient, Api, ApiResult, PlainTipExtrinsicPa
 #[cfg(feature = "local")]
 const NODE_URL: &str = "ws://127.0.0.1:9944";
 #[cfg(feature = "local")]
-const WORKER_URL: &str = "ws://127.0.0.1:2000";
+const WORKER_URL: &str = "wss://localhost:2000";
 
 #[cfg(feature = "staging")]
 const NODE_URL: &str = "wss://tee-staging.litentry.io:443";
@@ -37,7 +37,7 @@ const WORKER_URL: &str = "wss://tee-internal.litentry.io:2000";
 #[cfg(not(any(feature = "local", feature = "staging", feature = "prod2")))]
 const NODE_URL: &str = "ws://127.0.0.1:9944";
 #[cfg(not(any(feature = "local", feature = "staging", feature = "prod2")))]
-const WORKER_URL: &str = "ws://127.0.0.1:2000";
+const WORKER_URL: &str = "wss://localhost:2000";
 
 pub type ApiType<P> = Api<P, WsRpcClient, PlainTipExtrinsicParams>;
 

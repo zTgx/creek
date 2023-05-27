@@ -6,10 +6,13 @@ use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
 
+use crate::direct_call::primitives::UserShieldingKeyType;
 use crate::primitives::crypto::AesOutput;
 use crate::primitives::identity::{Identity, IdentityContext};
 use crate::primitives::vc::Credential;
-use crate::primitives::{ChallengeCode, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_NONCE_LEN};
+use crate::primitives::{
+    ChallengeCode, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,
+};
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
     let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
@@ -18,6 +21,13 @@ pub fn generate_user_shielding_key() -> Vec<u8> {
 
 pub fn generate_incorrect_user_shielding_key() -> Vec<u8> {
     [0, 1].to_vec()
+}
+
+pub fn to_user_shielding_key_type(user_shielding_key: &[u8]) -> UserShieldingKeyType {
+    let mut key: UserShieldingKeyType = [0u8; USER_SHIELDING_KEY_LEN];
+    key[..USER_SHIELDING_KEY_LEN].clone_from_slice(user_shielding_key);
+
+    key
 }
 
 pub fn encrypt_with_tee_shielding_pubkey(
