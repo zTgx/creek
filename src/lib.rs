@@ -2,6 +2,7 @@
 #![feature(string_remove_matches)]
 
 pub mod api_client_patch;
+pub mod direct_call;
 pub mod identity_management;
 pub mod primitives;
 

@@ -20,7 +20,6 @@
 use codec::{Decode, Encode};
 use std::boxed::Box;
 use std::{string::String, vec::Vec};
-
 pub type Result<T> = core::result::Result<T, Error>;
 
 /// extrinsics factory error

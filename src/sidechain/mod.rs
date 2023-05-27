@@ -68,7 +68,7 @@ pub struct RpcResponse {
     pub id: u32,
 }
 
-fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
+pub fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
     json!({
         "method": method,
         "params": params,
@@ -77,7 +77,7 @@ fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
     })
 }
 
-fn json_resp(resp: String) -> ApiResult<SidechainResp> {
+pub fn json_resp(resp: String) -> ApiResult<SidechainResp> {
     let resp: SidechainResp = serde_json::from_str(&resp)?;
     Ok(resp)
 }
