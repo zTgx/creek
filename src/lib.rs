@@ -4,7 +4,10 @@
 pub mod api_client_patch;
 pub mod identity_management;
 pub mod primitives;
+
+#[cfg(target_arch = "x86_64")]
 pub mod ra;
+
 pub mod sidechain;
 pub mod utils;
 pub mod vc_management;

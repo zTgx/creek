@@ -1,5 +1,7 @@
+#[cfg(target_arch = "x86_64")]
 extern crate cc;
 
+#[cfg(target_arch = "x86_64")]
 fn main() {
     let c_file = "src/ra/lib_sgx.c";
     let header_dir = "/opt/intel/sgxsdk/include";
@@ -14,3 +16,6 @@ fn main() {
         .static_flag(true)
         .compile("lib_sgx");
 }
+
+#[cfg(target_os = "macos")]
+fn main() {}

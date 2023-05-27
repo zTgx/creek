@@ -48,10 +48,8 @@ arrayvec = "0.7.2"
 itertools = "0.10.5"
 env_logger = "0.10.0"
 
-[dev-dependencies]
-reqwest = { version = "0.11", features = ["blocking", "json"] }
-
-[build-dependencies]
+# [build-dependencies]
+[target.'cfg(unix)'.build-dependencies]
 cc = "1.0"
 
 [features]
