@@ -1,4 +1,4 @@
-use codec::Encode;
+use codec::{Decode, Encode};
 use litentry_api_client::{
     primitives::{address::Address32, crypto::AesOutput},
     ra::{SafeSgx, SafeSgxApi},
@@ -196,4 +196,32 @@ fn tc_sgx_check_update_status_works() {
     ];
 
     SafeSgx::safe_sgx_check_update_status(platform_info_blob);
+}
+
+/**
+ * 
+ * Need to move decode nonce to di mode
+ * 
+ */
+#[test]
+fn tc_decode_nonce_works() {
+    // RpcReturnValue.value
+    // 0x011002000000
+    let hex = "011002000000".to_string();
+    println!("hex: {:?}", hex);
+
+    let decode_hex = hex::decode(hex).unwrap();
+    println!("decode_hex: {:?}", decode_hex);
+    let x: Option<Vec<u8>> = Option::decode(&mut decode_hex.as_slice())
+        .map_err(|e| {
+            println!("Failed to decode return value: {:?}", e);
+            e
+        })
+        .ok()
+        .unwrap();
+
+    if let Some(x) = x {
+        let nonce = u32::decode(&mut x.as_slice()).unwrap();
+        println!("nonce: {:?}", nonce);
+    }
 }
