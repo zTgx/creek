@@ -1,24 +1,26 @@
 use codec::{Decode, Encode};
 use litentry_api_client::{
-    primitives::{address::Address32, crypto::AesOutput},
-    ra::{SafeSgx, SafeSgxApi},
+    primitives::address::Address32,
     utils::{
         address::{
             create_n_random_sr25519_address, pubkey_to_address32, sr25519_public_from_ss58,
             sr25519_public_to_ss58,
         },
-        crypto::{
-            decrypt_vc_with_user_shielding_key, encrypt_with_user_shielding_key,
-            generate_user_shielding_key,
-        },
+        crypto::{encrypt_with_user_shielding_key, generate_user_shielding_key},
         enclave::mock_a_shard,
-        print_passed,
     },
 };
 use sp_core::{sr25519, Pair};
 
-#[test]
+#[cfg(target_arch = "x86_64")]
+use litentry_api_client::ra::{SafeSgx, SafeSgxApi};
+
+#[cfg(not(test))]
 fn tc_decrypt_vc_works() {
+    use litentry_api_client::utils::{
+        crypto::decrypt_vc_with_user_shielding_key, primitives::crypto::AesOutput, print_passed,
+    };
+
     let ciphertext = [
         51_u8, 182, 3, 28, 178, 61, 104, 214, 132, 255, 156, 249, 131, 25, 58, 63, 199, 46, 219,
         45, 43, 119, 168, 50, 158, 143, 49, 172, 127, 8, 27, 34, 62, 166, 126, 31, 87, 247, 42, 89,
@@ -172,6 +174,7 @@ fn tc_hex_decode_works() {
 }
 
 #[test]
+#[cfg(target_arch = "x86_64")]
 fn tc_sgx_report_att_status_works() {
     // from staging server
     let platform_info_blob = [
@@ -186,6 +189,7 @@ fn tc_sgx_report_att_status_works() {
 }
 
 #[test]
+#[cfg(target_arch = "x86_64")]
 fn tc_sgx_check_update_status_works() {
     let platform_info_blob = [
         4_u8, 0, 1, 0, 0, 10, 10, 2, 2, 255, 1, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 12, 0, 0,
