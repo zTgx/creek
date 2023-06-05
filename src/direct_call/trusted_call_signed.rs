@@ -16,8 +16,7 @@ use crate::primitives::ChallengeCode;
 use crate::primitives::MetadataOf;
 use crate::primitives::MrEnclave;
 use crate::primitives::ParentchainBlockNumber;
-use sp_core::H256;
-use sp_core::{Decode, Encode};
+use sp_core::{Decode, Encode, H256};
 use sp_runtime::traits::Verify;
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
