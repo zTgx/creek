@@ -11,12 +11,15 @@ use crate::Pair;
 use sp_core::{Decode, Encode};
 use substrate_api_client::AccountId;
 
+use super::primitives::Getter;
+use super::primitives::PublicGetter;
+
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
 pub enum TrustedOperation {
     // indirect_call(TrustedCallSigned),
     direct_call(TrustedCallSigned),
-    // get(Getter),
+    get(Getter),
 }
 
 impl From<TrustedCallSigned> for TrustedOperation {
@@ -25,11 +28,11 @@ impl From<TrustedCallSigned> for TrustedOperation {
     }
 }
 
-// impl From<Getter> for TrustedOperation {
-// 	fn from(item: Getter) -> Self {
-// 		TrustedOperation::get(item)
-// 	}
-// }
+impl From<Getter> for TrustedOperation {
+    fn from(item: Getter) -> Self {
+        TrustedOperation::get(item)
+    }
+}
 
 // impl From<TrustedGetterSigned> for TrustedOperation {
 // 	fn from(item: TrustedGetterSigned) -> Self {
@@ -37,18 +40,18 @@ impl From<TrustedCallSigned> for TrustedOperation {
 // 	}
 // }
 
-// impl From<PublicGetter> for TrustedOperation {
-// 	fn from(item: PublicGetter) -> Self {
-// 		TrustedOperation::get(item.into())
-// 	}
-// }
+impl From<PublicGetter> for TrustedOperation {
+    fn from(item: PublicGetter) -> Self {
+        TrustedOperation::get(item.into())
+    }
+}
 
 impl TrustedOperation {
     pub fn to_call(&self) -> Option<&TrustedCallSigned> {
         match self {
             TrustedOperation::direct_call(c) => Some(c),
             // TrustedOperation::indirect_call(c) => Some(c),
-            // _ => None,
+            _ => None,
         }
     }
 
@@ -56,7 +59,7 @@ impl TrustedOperation {
         match self {
             TrustedOperation::direct_call(c) => Some(c.call.sender_account()),
             // TrustedOperation::indirect_call(c) => Some(c.call.sender_account()),
-            // _ => None,
+            _ => None,
         }
     }
 }
