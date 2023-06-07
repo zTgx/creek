@@ -1,4 +1,4 @@
-use crate::direct_call::primitives::Index;
+use crate::direct_call::primitives::{Index, UserShieldingKeyType};
 use codec::Decode;
 
 #[derive(Debug)]
@@ -29,7 +29,7 @@ pub fn decode_user_shielding_key(encode_key_in_hex: &str) -> Result<String, DIEr
     match hex::decode(encode_key_in_hex) {
         Ok(decoded) => {
             if let Ok(Some(x)) = Option::<Vec<u8>>::decode(&mut decoded.as_slice()) {
-                if let Ok(decoded) = Vec::<u8>::decode(&mut x.as_slice()) {
+                if let Ok(decoded) = UserShieldingKeyType::decode(&mut x.as_slice()) {
                     let user_shielding_key = hex::encode(decoded);
                     println!("use shielding key: {}", user_shielding_key);
 
