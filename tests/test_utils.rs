@@ -1,4 +1,4 @@
-use codec::{Decode, Encode};
+use codec::Encode;
 use litentry_api_client::{
     primitives::address::Address32,
     utils::{
@@ -200,60 +200,4 @@ fn tc_sgx_check_update_status_works() {
     ];
 
     SafeSgx::safe_sgx_check_update_status(platform_info_blob);
-}
-
-/**
- * 
- * Need to move decode nonce to di mode
- * 
- */
-#[test]
-fn tc_decode_nonce_works() {
-    {
-        let u = hex::decode("22fc82db5b606998ad45099b7978b5b4f9dd4ea6017e57370ac56141caaabd12").unwrap();
-        let u = u.encode();
-        let u = Some(u).encode();
-        let u = hex::encode(u);
-        println!("u>>>:{}", u);
-
-        // return;
-
-        let u = hex::decode("01848022fc82db5b606998ad45099b7978b5b4f9dd4ea6017e57370ac56141caaabd12").unwrap();
-        let u: Option<Vec<u8>> = Option::decode(&mut u.as_slice()).ok().unwrap();
-        if let Some(u) = u {
-            let u = Vec::<u8>::decode(&mut u.as_slice()).unwrap();
-            let u = hex::encode(u);
-            println!("use shielding key: {}", u);
-        }
-
-        return;
-    }
-    {
-        let nonce = 2u32.encode();
-        let nonce = Some(nonce);
-        let x = nonce.encode();
-        let y = hex::encode(x);
-        println!("y: {}", y);
-
-        return;
-    }
-    // RpcReturnValue.value
-    // 0x011002000000
-    let hex = "011002000000".to_string();
-    println!("hex: {:?}", hex);
-
-    let decode_hex = hex::decode(hex).unwrap();
-    println!("decode_hex: {:?}", decode_hex);
-    let x: Option<Vec<u8>> = Option::decode(&mut decode_hex.as_slice())
-        .map_err(|e| {
-            println!("Failed to decode return value: {:?}", e);
-            e
-        })
-        .ok()
-        .unwrap();
-
-    if let Some(x) = x {
-        let nonce = u32::decode(&mut x.as_slice()).unwrap();
-        println!("nonce: {:?}", nonce);
-    }
 }
