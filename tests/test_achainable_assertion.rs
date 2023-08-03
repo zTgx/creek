@@ -47,7 +47,7 @@ fn tc_achainable_class_of_year_works() {
     print_passed();
 }
 
-// #[test]
+#[test]
 fn tc_achainable_eth_holder_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
@@ -80,7 +80,7 @@ fn tc_achainable_eth_holder_works() {
     print_passed();
 }
 
-// #[test]
+#[test]
 fn tc_achainable_lit_holder_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
@@ -113,7 +113,7 @@ fn tc_achainable_lit_holder_works() {
     print_passed();
 }
 
-// #[test]
+#[test]
 fn tc_achainable_dot_holder_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
@@ -146,7 +146,7 @@ fn tc_achainable_dot_holder_works() {
     print_passed();
 }
 
-// #[test]
+#[test]
 fn tc_achainable_contract_creator_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
@@ -179,7 +179,7 @@ fn tc_achainable_contract_creator_works() {
     print_passed();
 }
 
-// #[test]
+#[test]
 fn tc_achainable_nniswap_v2_v3_user_works() {
     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
     let api_client = ApiClient::new_with_signer(alice).unwrap();
