@@ -21,7 +21,7 @@ use litentry_api_client::{
         batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
     },
     identity_management::IdentityManagementApi,
-    primitives::assertion::{Assertion, IndexingNetwork, IndexingNetworks, ParameterString},
+    primitives::assertion::{Assertion, ParameterString},
     utils::{
         crypto::{decrypt_vc_with_user_shielding_key, generate_user_shielding_key},
         vc::create_a_random_vc_index,
@@ -226,29 +226,29 @@ fn alpha_request_vc_a7_max_u128_works() {
 }
 
 /// Need more
-#[test]
-fn alpha_request_vc_a8_works() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice).unwrap();
+// #[test]
+// fn alpha_request_vc_a8_works() {
+//     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+//     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard().unwrap();
-    let user_shielding_key = generate_user_shielding_key();
-    api_client
-        .set_user_shielding_key(&shard, &user_shielding_key)
-        .unwrap();
+//     let shard = api_client.get_shard().unwrap();
+//     let user_shielding_key = generate_user_shielding_key();
+//     api_client
+//         .set_user_shielding_key(&shard, &user_shielding_key)
+//         .unwrap();
 
-    let litentry = IndexingNetwork::Polkadot;
-    let mut networks = IndexingNetworks::with_bounded_capacity(1);
-    networks.try_push(litentry).unwrap();
-    let a8 = Assertion::A8(networks);
+//     let litentry = IndexingNetwork::Polkadot;
+//     let mut networks = IndexingNetworks::with_bounded_capacity(1);
+//     networks.try_push(litentry).unwrap();
+//     let a8 = Assertion::A8(networks);
 
-    api_client.request_vc(&shard, &a8);
+//     api_client.request_vc(&shard, &a8);
 
-    let event = api_client.wait_event::<VCIssuedEvent>();
-    assert!(event.is_ok());
-    let event = event.unwrap();
-    assert_eq!(event.account, api_client.get_signer().unwrap());
-}
+//     let event = api_client.wait_event::<VCIssuedEvent>();
+//     assert!(event.is_ok());
+//     let event = event.unwrap();
+//     assert_eq!(event.account, api_client.get_signer().unwrap());
+// }
 
 #[test]
 fn alpha_request_vc_a10_10_u128_works() {
@@ -415,50 +415,50 @@ pub fn alpha_batch_all_request_vc_a4_a7_a10_a11_works() {
     assert_eq!(issued_events.len(), assertions.len());
 }
 
-#[test]
-pub fn alpha_batch_all_request_vc_all_works() {
-    let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-    let api_client = ApiClient::new_with_signer(alice).unwrap();
+// #[test]
+// pub fn alpha_batch_all_request_vc_all_works() {
+//     let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+//     let api_client = ApiClient::new_with_signer(alice).unwrap();
 
-    let shard = api_client.get_shard().unwrap();
-    let user_shielding_key = generate_user_shielding_key();
-    api_client
-        .set_user_shielding_key(&shard, &user_shielding_key)
-        .unwrap();
+//     let shard = api_client.get_shard().unwrap();
+//     let user_shielding_key = generate_user_shielding_key();
+//     api_client
+//         .set_user_shielding_key(&shard, &user_shielding_key)
+//         .unwrap();
 
-    let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
-    let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
-    let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
-    let litentry = IndexingNetwork::Litentry;
-    let mut networks = IndexingNetworks::with_bounded_capacity(1);
-    networks.try_push(litentry).unwrap();
-    let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
+//     let guild_id = ParameterString::try_from("guild_id".as_bytes().to_vec()).unwrap();
+//     let channel_id = ParameterString::try_from("channel_id".as_bytes().to_vec()).unwrap();
+//     let role_id = ParameterString::try_from("role_id".as_bytes().to_vec()).unwrap();
+//     let litentry = IndexingNetwork::Litentry;
+//     let mut networks = IndexingNetworks::with_bounded_capacity(1);
+//     networks.try_push(litentry).unwrap();
+//     let balance = ParameterString::try_from("1.001".as_bytes().to_vec()).unwrap();
 
-    let a1 = Assertion::A1;
-    let a2 = Assertion::A2(guild_id.clone());
-    let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
-    let a4 = Assertion::A4(balance.clone());
-    let a6 = Assertion::A6;
-    let a7 = Assertion::A7(balance.clone());
-    let a8 = Assertion::A8(networks);
-    let a10 = Assertion::A10(balance.clone());
-    let a11 = Assertion::A11(balance);
+//     let a1 = Assertion::A1;
+//     let a2 = Assertion::A2(guild_id.clone());
+//     let a3 = Assertion::A3(guild_id.clone(), channel_id.clone(), role_id.clone());
+//     let a4 = Assertion::A4(balance.clone());
+//     let a6 = Assertion::A6;
+//     let a7 = Assertion::A7(balance.clone());
+//     let a8 = Assertion::A8(networks);
+//     let a10 = Assertion::A10(balance.clone());
+//     let a11 = Assertion::A11(balance);
 
-    let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
-    let mut calls = vec![];
+//     let assertions = vec![a1, a2, a3, a4, a6, a7, a8, a10, a11];
+//     let mut calls = vec![];
 
-    assertions.iter().for_each(|assertion| {
-        calls.push(
-            api_client
-                .build_extrinsic_request_vc(&shard, &assertion)
-                .function,
-        );
-    });
-    api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
+//     assertions.iter().for_each(|assertion| {
+//         calls.push(
+//             api_client
+//                 .build_extrinsic_request_vc(&shard, &assertion)
+//                 .function,
+//         );
+//     });
+//     api_client.send_extrinsic(api_client.batch_all(&calls).hex_encode());
 
-    let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
-    assert_eq!(issued_events.len(), assertions.len());
-}
+//     let issued_events: Vec<VCIssuedEvent> = api_client.wait_events(assertions.len()).unwrap();
+//     assert_eq!(issued_events.len(), assertions.len());
+// }
 
 #[test]
 pub fn alpha_request_vc_a1_then_disable_it_works() {

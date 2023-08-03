@@ -20,6 +20,7 @@ pub mod crypto;
 pub mod enclave;
 pub mod ethereum;
 pub mod identity;
+pub mod network;
 pub mod vc;
 
 use sp_core::{ConstU32, H256};
