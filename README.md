@@ -1,4 +1,4 @@
-# litentry-api-client ![](https://img.shields.io/tokei/lines/github/zTgx/litentry-api-client?style=flat-square) ![](https://img.shields.io/github/commit-activity/m/zTgx/litentry-api-client/main?style=flat-square)
+# litentry-api-client ![](https://img.shields.io/github/commit-activity/m/zTgx/litentry-api-client/main?style=flat-square)
 **WIP**  
 [Litentry Parachain](https://github.com/litentry/litentry-parachain) Rust version SDK.
 
