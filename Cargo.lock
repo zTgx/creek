@@ -1717,7 +1717,7 @@ checksum = "36eb31c1778188ae1e64398743890d0877fef36d11521ac60406b42016e8c2cf"
 
 [[package]]
 name = "litentry-api-client"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aes-gcm",
  "arrayvec 0.7.2",
