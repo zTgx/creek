@@ -1,4 +1,4 @@
-use litentry_api_client::{
+use vc_sdk::{
     api_client_patch::{event::SubscribeEventPatch, parachain::ParachainPatch},
     identity_management::{
         events::{

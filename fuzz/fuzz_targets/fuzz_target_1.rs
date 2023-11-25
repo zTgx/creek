@@ -1,7 +1,7 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use litentry_api_client::vc_management::fuzz::fuzz_request_vc_a4;
+use vc_sdk::vc_management::fuzz::fuzz_request_vc_a4;
 
 fuzz_target!(|_data: &[u8]| {
     // fuzzed code goes here

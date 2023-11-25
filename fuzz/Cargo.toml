@@ -1,5 +1,5 @@
 [package]
-name = "litentry-api-client-fuzz"
+name = "vc-sdk-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -10,7 +10,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.litentry-api-client]
+[dependencies.vc-sdk]
 path = ".."
 
 # Prevent this from interfering with workspaces

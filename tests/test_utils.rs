@@ -1,5 +1,5 @@
 use codec::Encode;
-use litentry_api_client::{
+use vc_sdk::{
     primitives::address::Address32,
     utils::{
         address::{
@@ -13,11 +13,11 @@ use litentry_api_client::{
 use sp_core::{sr25519, Pair};
 
 #[cfg(target_arch = "x86_64")]
-use litentry_api_client::ra::{SafeSgx, SafeSgxApi};
+use vc_sdk::ra::{SafeSgx, SafeSgxApi};
 
 #[cfg(not(test))]
 fn tc_decrypt_vc_works() {
-    use litentry_api_client::utils::{
+    use vc_sdk::utils::{
         crypto::decrypt_vc_with_user_shielding_key, primitives::crypto::AesOutput, print_passed,
     };
 

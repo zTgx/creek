@@ -1,4 +1,4 @@
-use litentry_api_client::utils::di::{decode_nonce, decode_user_shielding_key};
+use vc_sdk::utils::di::{decode_nonce, decode_user_shielding_key};
 
 #[test]
 fn tc_decode_nonce_works() {

@@ -1,26 +1,9 @@
-# litentry-api-client
+# vc-sdk
 **WIP**  
-[Litentry Parachain](https://github.com/litentry/litentry-parachain) API SDK Rust version.
+[Litentry Parachain](https://github.com/litentry/litentry-parachain) VC(Verified Credentials) SDK Rust version.
 
 ### Features
 - [x] Rust nightly only
 - [x] Based on [substrate-api-client](https://github.com/scs/substrate-api-client)
 - [x] Support `II` & `DI`
 - [x] Support `RA`
-
-```rust
-/// Set User Shielding Key And Wait Event
-
-// 1. Create Api client with signer
-let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
-let api_client = ApiClient::new_with_signer(alice);
-
-// 2. Setting user shielding key
-let shard = api_client.get_shard().unwrap();
-let user_shielding_key = generate_user_shielding_key();
-api_client.set_user_shielding_key(&shard, &user_shielding_key);
-
-// 3. Wait event
-let event = api_client.wait_event::<SetUserShieldingKeyEvent>();
-assert!(event.is_ok());
-```

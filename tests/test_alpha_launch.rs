@@ -16,7 +16,7 @@ Priority:
 
 use std::str::FromStr;
 
-use litentry_api_client::{
+use vc_sdk::{
     api_client_patch::{
         batch_all::BatchPatch, event::SubscribeEventPatch, parachain::ParachainPatch,
     },

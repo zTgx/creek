@@ -1716,39 +1716,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "36eb31c1778188ae1e64398743890d0877fef36d11521ac60406b42016e8c2cf"
 
 [[package]]
-name = "litentry-api-client"
-version = "0.1.1"
-dependencies = [
- "aes-gcm",
- "arrayvec 0.7.2",
- "base64",
- "basex-rs",
- "cc",
- "chrono",
- "env_logger",
- "hex",
- "itertools",
- "jsonschema",
- "log",
- "openssl",
- "parity-scale-codec",
- "rand 0.8.5",
- "rsa",
- "scale-info",
- "serde",
- "serde_json",
- "sha2 0.10.6",
- "sp-core",
- "sp-runtime",
- "strum",
- "strum_macros",
- "substrate-api-client",
- "thiserror",
- "url",
- "ws",
-]
-
-[[package]]
 name = "lock_api"
 version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3778,6 +3745,39 @@ name = "valuable"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830b7e5d4d90034032940e4ace0d9a9a057e7a45cd94e6c007832e39edb82f6d"
+
+[[package]]
+name = "vc-sdk"
+version = "0.1.1"
+dependencies = [
+ "aes-gcm",
+ "arrayvec 0.7.2",
+ "base64",
+ "basex-rs",
+ "cc",
+ "chrono",
+ "env_logger",
+ "hex",
+ "itertools",
+ "jsonschema",
+ "log",
+ "openssl",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "rsa",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sha2 0.10.6",
+ "sp-core",
+ "sp-runtime",
+ "strum",
+ "strum_macros",
+ "substrate-api-client",
+ "thiserror",
+ "url",
+ "ws",
+]
 
 [[package]]
 name = "vcpkg"
