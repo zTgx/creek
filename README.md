@@ -1,6 +1,6 @@
-# litentry-api-client ![](https://img.shields.io/github/commit-activity/m/zTgx/litentry-api-client/main?style=flat-square)
+# litentry-api-client
 **WIP**  
-[Litentry Parachain](https://github.com/litentry/litentry-parachain) Rust version SDK.
+[Litentry Parachain](https://github.com/litentry/litentry-parachain) API SDK Rust version.
 
 ### Features
 - [x] Rust nightly only
