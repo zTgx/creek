@@ -32,116 +32,113 @@ pub type BoundedWeb3Network = BoundedVec<Web3Network, ConstU32<MAX_WEB3NETWORK_L
 /// }
 /// TODO: theoretically this should the the union of the supported networks of all data providers
 #[derive(
-    Encode,
-    Decode,
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Hash,
-    TypeInfo,
-    MaxEncodedLen,
-    EnumIter,
+	Encode,
+	Decode,
+	Copy,
+	Clone,
+	Debug,
+	PartialEq,
+	Eq,
+	PartialOrd,
+	Ord,
+	Hash,
+	TypeInfo,
+	MaxEncodedLen,
+	EnumIter,
 )]
 pub enum Web3Network {
-    // substrate
-    Polkadot,
-    Kusama,
-    Litentry,
-    Litmus,
-    LitentryRococo,
-    Khala,
-    SubstrateTestnet, // when launched it with standalone (integritee-)node
+	// substrate
+	Polkadot,
+	Kusama,
+	Litentry,
+	Litmus,
+	LitentryRococo,
+	Khala,
+	SubstrateTestnet, // when launched it with standalone (integritee-)node
 
-    // evm
-    Ethereum,
-    Polygon,
-    BSC,
+	// evm
+	Ethereum,
+	Polygon,
+	BSC,
 }
 
 impl Web3Network {
-    pub fn is_substrate(&self) -> bool {
-        matches!(
-            self,
-            Self::Polkadot
-                | Self::Kusama
-                | Self::Litentry
-                | Self::Litmus
-                | Self::LitentryRococo
-                | Self::Khala
-                | Self::SubstrateTestnet
-        )
-    }
+	pub fn is_substrate(&self) -> bool {
+		matches!(
+			self,
+			Self::Polkadot |
+				Self::Kusama | Self::Litentry |
+				Self::Litmus | Self::LitentryRococo |
+				Self::Khala | Self::SubstrateTestnet
+		)
+	}
 
-    pub fn is_evm(&self) -> bool {
-        matches!(self, Self::Ethereum | Self::Polygon | Self::BSC)
-    }
+	pub fn is_evm(&self) -> bool {
+		matches!(self, Self::Ethereum | Self::Polygon | Self::BSC)
+	}
 }
 
 pub fn all_web3networks() -> Vec<Web3Network> {
-    Web3Network::iter().collect()
+	Web3Network::iter().collect()
 }
 
 pub fn all_substrate_web3networks() -> Vec<Web3Network> {
-    Web3Network::iter().filter(|n| n.is_substrate()).collect()
+	Web3Network::iter().filter(|n| n.is_substrate()).collect()
 }
 
 pub fn all_evm_web3networks() -> Vec<Web3Network> {
-    Web3Network::iter().filter(|n| n.is_evm()).collect()
+	Web3Network::iter().filter(|n| n.is_evm()).collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+	use super::*;
 
-    #[test]
-    fn web3network_length_ok() {
-        let networks: Vec<Web3Network> = Web3Network::iter().collect();
-        assert!(networks.len() < MAX_WEB3NETWORK_LEN.try_into().unwrap());
-    }
+	#[test]
+	fn web3network_length_ok() {
+		let networks: Vec<Web3Network> = Web3Network::iter().collect();
+		assert!(networks.len() < MAX_WEB3NETWORK_LEN.try_into().unwrap());
+	}
 
-    #[test]
-    fn is_evm_works() {
-        Web3Network::iter().for_each(|network| {
-            assert_eq!(
-                network.is_evm(),
-                match network {
-                    Web3Network::Polkadot => false,
-                    Web3Network::Kusama => false,
-                    Web3Network::Litentry => false,
-                    Web3Network::Litmus => false,
-                    Web3Network::LitentryRococo => false,
-                    Web3Network::Khala => false,
-                    Web3Network::SubstrateTestnet => false,
-                    Web3Network::Ethereum => true,
-                    Web3Network::Polygon => true,
-                    Web3Network::BSC => true,
-                }
-            )
-        })
-    }
+	#[test]
+	fn is_evm_works() {
+		Web3Network::iter().for_each(|network| {
+			assert_eq!(
+				network.is_evm(),
+				match network {
+					Web3Network::Polkadot => false,
+					Web3Network::Kusama => false,
+					Web3Network::Litentry => false,
+					Web3Network::Litmus => false,
+					Web3Network::LitentryRococo => false,
+					Web3Network::Khala => false,
+					Web3Network::SubstrateTestnet => false,
+					Web3Network::Ethereum => true,
+					Web3Network::Polygon => true,
+					Web3Network::BSC => true,
+				}
+			)
+		})
+	}
 
-    #[test]
-    fn is_substrate_works() {
-        Web3Network::iter().for_each(|network| {
-            assert_eq!(
-                network.is_substrate(),
-                match network {
-                    Web3Network::Polkadot => true,
-                    Web3Network::Kusama => true,
-                    Web3Network::Litentry => true,
-                    Web3Network::Litmus => true,
-                    Web3Network::LitentryRococo => true,
-                    Web3Network::Khala => true,
-                    Web3Network::SubstrateTestnet => true,
-                    Web3Network::Ethereum => false,
-                    Web3Network::Polygon => false,
-                    Web3Network::BSC => false,
-                }
-            )
-        })
-    }
+	#[test]
+	fn is_substrate_works() {
+		Web3Network::iter().for_each(|network| {
+			assert_eq!(
+				network.is_substrate(),
+				match network {
+					Web3Network::Polkadot => true,
+					Web3Network::Kusama => true,
+					Web3Network::Litentry => true,
+					Web3Network::Litmus => true,
+					Web3Network::LitentryRococo => true,
+					Web3Network::Khala => true,
+					Web3Network::SubstrateTestnet => true,
+					Web3Network::Ethereum => false,
+					Web3Network::Polygon => false,
+					Web3Network::BSC => false,
+				}
+			)
+		})
+	}
 }

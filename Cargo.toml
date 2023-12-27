@@ -11,6 +11,7 @@ description = "Litentry parachain VC SDK"
 substrate-api-client = { default-features = false, features = [
   "std",
   "sync-api",
+  "jsonrpsee-client", "staking-xt", "contracts-xt"
 ], git = "https://github.com/scs/substrate-api-client.git", branch = "polkadot-v0.9.42-tag-v0.14.0" }
 sp-core = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false, features = [
@@ -51,6 +52,7 @@ env_logger = "0.10.0"
 strum = { version = "0.25.0", default-features = false }
 strum_macros = { version = "0.25.0", default-features = false }
 bitcoin = { version = "0.31.0" }
+sp-keyring = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
 
 # [build-dependencies]
 [target.'cfg(unix)'.build-dependencies]
