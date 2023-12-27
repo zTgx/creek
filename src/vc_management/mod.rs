@@ -4,7 +4,6 @@ use crate::primitives::{assertion::Assertion, MrEnclave};
 
 pub mod api;
 pub mod events;
-pub mod fuzz;
 pub mod verify;
 pub mod xtbuilder;
 
