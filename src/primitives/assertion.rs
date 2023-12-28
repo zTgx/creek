@@ -16,10 +16,7 @@
 
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
-use sp_runtime::BoundedVec;
-
-use crate::direct_call::types::AccountId;
-
+use sp_runtime::{BoundedVec, AccountId32};
 use super::{
 	network::{BoundedWeb3Network, Web3Network},
 	MaxStringLength,
@@ -158,7 +155,7 @@ pub enum Assertion {
 	A11(ParameterString),                                   // (minimum_amount)
 
 	// ----- begin polkadot decoded 2023 -----
-	A13(AccountId),                                         // (participant_account), can only be requested by delegatee
+	A13(AccountId32),                                         // (participant_account), can only be requested by delegatee
 	A14,
 	// for Holder assertions we'll reuse A4/A7
 	// ----- end polkadot decoded 2023 -----

@@ -7,15 +7,12 @@ use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
 
-use crate::{
-	direct_call::primitives::UserShieldingKeyType,
-	primitives::{
+use crate::primitives::{
 		crypto::AesOutput,
 		identity::{Identity, IdentityContext},
 		vc::Credential,
-		ChallengeCode, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,
-	},
-};
+		ChallengeCode, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN, UserShieldingKeyType,
+	};
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
 	let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);

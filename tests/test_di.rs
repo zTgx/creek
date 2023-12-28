@@ -20,7 +20,7 @@
 // 	);
 // }
 
-use Creek::Creek;
+use creek::Creek;
 use sp_core::H256;
 
 #[test]

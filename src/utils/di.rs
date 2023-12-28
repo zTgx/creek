@@ -1,5 +1,6 @@
-use crate::direct_call::primitives::{Index, UserShieldingKeyType};
 use codec::Decode;
+
+use crate::primitives::{Index, UserShieldingKeyType};
 
 #[derive(Debug)]
 pub enum DIError {

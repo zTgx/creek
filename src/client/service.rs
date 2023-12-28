@@ -12,6 +12,8 @@ use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
 
+use crate::{utils::hex::{JsonResponse, json_resp}, CResult};
+
 pub type BlockHash = sp_core::H256;
 
 #[derive(Debug, Clone, PartialEq, Encode, Decode, Eq)]
@@ -219,13 +221,15 @@ impl SidechainRpcClient {
 }
 
 pub trait SidechainRpcClientTrait {
-	fn request(&self, jsonreq: serde_json::Value) -> ApiResult<String>;
+	fn request(&self, jsonreq: serde_json::Value) -> CResult<JsonResponse>;
 }
 impl SidechainRpcClientTrait for SidechainRpcClient {
-	fn request(&self, jsonreq: Value) -> ApiResult<String> {
-		Ok(self
+	fn request(&self, jsonreq: Value) -> CResult<JsonResponse> {
+		let message = self
 			.direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())
-			.unwrap()
-			.to_string())
+			.unwrap();
+
+		let json_response: JsonResponse = json_resp(message.to_string());
+		Ok(json_response)
 	}
 }

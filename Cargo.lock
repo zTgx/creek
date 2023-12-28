@@ -3,41 +3,6 @@
 version = 3
 
 [[package]]
-name = "Creek"
-version = "0.1.1"
-dependencies = [
- "aes-gcm",
- "arrayvec 0.7.4",
- "base64",
- "basex-rs",
- "bitcoin",
- "cc",
- "chrono",
- "env_logger",
- "hex",
- "itertools",
- "jsonschema",
- "log",
- "openssl",
- "parity-scale-codec",
- "rand 0.8.5",
- "rsa",
- "scale-info",
- "serde",
- "serde_json",
- "sha2 0.10.8",
- "sp-core",
- "sp-runtime",
- "strum",
- "strum_macros",
- "substrate-api-client",
- "thiserror",
- "tokio",
- "url",
- "ws",
-]
-
-[[package]]
 name = "Inflector"
 version = "0.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -647,6 +612,41 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b540bd8bc810d3885c6ea91e2018302f68baba2129ab3e88f32389ee9370880d"
 dependencies = [
  "cfg-if 1.0.0",
+]
+
+[[package]]
+name = "creek"
+version = "0.1.1"
+dependencies = [
+ "aes-gcm",
+ "arrayvec 0.7.4",
+ "base64",
+ "basex-rs",
+ "bitcoin",
+ "cc",
+ "chrono",
+ "env_logger",
+ "hex",
+ "itertools",
+ "jsonschema",
+ "log",
+ "openssl",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "rsa",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sha2 0.10.8",
+ "sp-core",
+ "sp-runtime",
+ "strum",
+ "strum_macros",
+ "substrate-api-client",
+ "thiserror",
+ "tokio",
+ "url",
+ "ws",
 ]
 
 [[package]]

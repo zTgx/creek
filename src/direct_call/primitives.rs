@@ -10,7 +10,6 @@ pub type SidechainBlockNumber = u64;
 use crate::primitives::{assertion::Assertion, identity::Identity, USER_SHIELDING_KEY_LEN};
 
 use super::types::{AccountId, KeyPair};
-pub type UserShieldingKeyType = [u8; USER_SHIELDING_KEY_LEN];
 use sp_runtime::{traits::Verify, MultiSignature};
 pub type Signature = MultiSignature;
 

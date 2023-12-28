@@ -22,14 +22,22 @@ pub mod ethereum;
 pub mod identity;
 pub mod network;
 pub mod vc;
+pub mod error;
 
 use sp_core::{ConstU32, H256};
 use sp_runtime::BoundedVec;
 
 pub use sp_core::crypto::AccountId32 as AccountId;
 
+use self::error::CError;
+pub type CResult<T> = std::result::Result<T, CError>;
+
 pub type VCIndex = H256;
 pub type Balance = u128;
+pub type UserShieldingKeyType = [u8; USER_SHIELDING_KEY_LEN];
+pub type Index = u32;
+pub type ShardIdentifier = H256;
+pub type SidechainBlockNumber = u64;
 
 pub const CHALLENGE_CODE_SIZE: usize = 16;
 pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];

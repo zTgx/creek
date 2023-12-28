@@ -1,9 +1,6 @@
-use ::Creek::WorkerPublicApi;
-use Creek::Creek;
+use creek::{Creek, WorkerPublicApis};
 
 fn main() {
-	// let creek = Creek::new().unwrap();
-	// creek.get_metadata();
-
-	Creek::x();
+	let creek = Creek::new();
+	let _ = creek.author_get_shard();
 }

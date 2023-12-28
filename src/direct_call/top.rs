@@ -4,7 +4,7 @@ use super::{
 };
 use crate::{
 	direct_call::{primitives::Request, trusted_call_signed::TrustedCallSigned},
-	sidechain::{rpc::SidechainRpcClientTrait, SidechainResp},
+	sidechain::{rpc::SidechainRpcClientTrait, JsonResponse},
 	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	ApiClient, MultiSignature, MultiSigner, Pair,
 };
@@ -62,23 +62,23 @@ impl TrustedOperation {
 }
 
 pub trait DirectCall {
-	fn send_request_di(&self, operation_call: &TrustedOperation) -> ApiResult<SidechainResp>;
-	fn getter_request(&self, top: &Getter) -> ApiResult<SidechainResp>;
-	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<SidechainResp>;
+	fn send_request_di(&self, operation_call: &TrustedOperation) -> ApiResult<JsonResponse>;
+	fn getter_request(&self, top: &Getter) -> ApiResult<JsonResponse>;
+	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<JsonResponse>;
 }
 
 impl<T> DirectCall for ApiClient<T>
 where
 	T: Config,
 {
-	fn send_request_di(&self, top: &TrustedOperation) -> ApiResult<SidechainResp> {
+	fn send_request_di(&self, top: &TrustedOperation) -> ApiResult<JsonResponse> {
 		match top {
 			TrustedOperation::get(getter) => self.getter_request(getter),
 			_ => self.di_request(top),
 		}
 	}
 
-	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<SidechainResp> {
+	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<JsonResponse> {
 		// let shard = self.get_shard().unwrap();
 		// let tee_shielding_key = self.get_tee_shielding_pubkey().unwrap();
 		// let operation_call_encrypted =
@@ -101,7 +101,7 @@ where
 		todo!()
 	}
 
-	fn getter_request(&self, getter: &Getter) -> ApiResult<SidechainResp> {
+	fn getter_request(&self, getter: &Getter) -> ApiResult<JsonResponse> {
 		// let shard = self.get_shard().unwrap();
 		// let request = Request { shard: sp_core::H256(shard), cyphertext: getter.encode() };
 		// use crate::sidechain::json_req;
