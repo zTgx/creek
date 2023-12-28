@@ -1,5 +1,5 @@
 [package]
-name = "vc-sdk"
+name = "Creek"
 version = "0.1.1"
 edition = "2021"
 authors = ["zTgx <beautifularea@gmail.com>"]
@@ -11,7 +11,7 @@ description = "Litentry parachain VC SDK"
 substrate-api-client = { default-features = false, features = [
   "std",
   "sync-api",
-  "jsonrpsee-client", "staking-xt", "contracts-xt"
+  "tungstenite-client",
 ], git = "https://github.com/scs/substrate-api-client.git", branch = "polkadot-v0.9.42-tag-v0.14.0" }
 sp-core = { default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false, features = [
@@ -46,17 +46,21 @@ thiserror = { version = "1.0" }
 basex-rs = "0.2.0"
 base64 = { version = "0.13", default-features = false, features = ["alloc"] }
 chrono = "0.4.24"
-arrayvec = "0.7.2"
+arrayvec = "0.7.4"
 itertools = "0.10.5"
 env_logger = "0.10.0"
 strum = { version = "0.25.0", default-features = false }
 strum_macros = { version = "0.25.0", default-features = false }
 bitcoin = { version = "0.31.0" }
-sp-keyring = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
+tokio = { version = "1.24", features = ["rt-multi-thread", "macros", "time"] }
 
 # [build-dependencies]
 [target.'cfg(unix)'.build-dependencies]
 cc = "1.0"
+
+[[bin]]
+name = "demo"
+path = "bin/main.rs"
 
 [features]
 local = []

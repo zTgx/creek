@@ -265,6 +265,7 @@ pub struct sgx_report_body_t {
 }
 
 #[derive(Decode, Debug)]
+#[rustfmt::skip]
 pub struct sgx_quote_t {
 	pub version: uint16_t,                  /* 0 */
 	pub sign_type: uint16_t,                /* 2 */
@@ -273,9 +274,9 @@ pub struct sgx_quote_t {
 	pub pce_svn: sgx_isv_svn_t,             /* 10 */
 	pub xeid: uint32_t,                     /* 12 */
 	pub basename: sgx_basename_t,           /* 16  */
-	                                         * pub report_body: sgx_report_body_t,     /* 48  */
-	                                         * pub signature_len: uint32_t,            /* 432 */
-	                                         * pub signature: [uint8_t; 0],            /* 436 */ */
+	                                        //  * pub report_body: sgx_report_body_t,     /* 48  */
+	                                        //  * pub signature_len: uint32_t,            /* 432 */
+	                                        //  * pub signature: [uint8_t; 0],            /* 436 */ */
 }
 
 pub struct sgx_platform_info_t {

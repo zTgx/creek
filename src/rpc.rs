@@ -1,17 +1,93 @@
+use codec::{Encode, Decode};
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
 use serde_json::Value;
+use sp_core::H256;
 use std::{
 	fmt::Debug,
 	sync::mpsc::{channel, Sender as ThreadOut},
 };
-use substrate_api_client::{
-	rpc::{ws_client::RpcMessage, RpcClientError},
-	ApiResult,
-};
+use substrate_api_client::Result as ApiResult;
 use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
+
+pub type BlockHash = sp_core::H256;
+
+#[derive(Debug, Clone, PartialEq, Encode, Decode, Eq)]
+pub enum DirectRequestStatus {
+	/// Direct request was successfully executed
+	#[codec(index = 0)]
+	Ok,
+	/// Trusted Call Status
+	/// Litentry: embed the top hash here - TODO - use generic type?
+	#[codec(index = 1)]
+	TrustedOperationStatus(TrustedOperationStatus, H256),
+	/// Direct request could not be executed
+	#[codec(index = 2)]
+	Error,
+}
+
+#[derive(Debug, Clone, PartialEq, Encode, Decode, Eq)]
+pub enum TrustedOperationStatus {
+	/// TrustedOperation is submitted to the top pool.
+	#[codec(index = 0)]
+	Submitted,
+	/// TrustedOperation is part of the future queue.
+	#[codec(index = 1)]
+	Future,
+	/// TrustedOperation is part of the ready queue.
+	#[codec(index = 2)]
+	Ready,
+	/// The operation has been broadcast to the given peers.
+	#[codec(index = 3)]
+	Broadcast,
+	/// TrustedOperation has been included in block with given hash.
+	#[codec(index = 4)]
+	InSidechainBlock(BlockHash),
+	/// The block this operation was included in has been retracted.
+	#[codec(index = 5)]
+	Retracted,
+	/// Maximum number of finality watchers has been reached,
+	/// old watchers are being removed.
+	#[codec(index = 6)]
+	FinalityTimeout,
+	/// TrustedOperation has been finalized by a finality-gadget, e.g GRANDPA
+	#[codec(index = 7)]
+	Finalized,
+	/// TrustedOperation has been replaced in the pool, by another operation
+	/// that provides the same tags. (e.g. same (sender, nonce)).
+	#[codec(index = 8)]
+	Usurped,
+	/// TrustedOperation has been dropped from the pool because of the limit.
+	#[codec(index = 9)]
+	Dropped,
+	/// TrustedOperation is no longer valid in the current state.
+	#[codec(index = 10)]
+	Invalid,
+	/// TrustedOperation has been executed.
+	TopExecuted(Vec<u8>, bool),
+}
+
+#[derive(Encode, Decode, Debug, Eq, PartialEq)]
+pub struct RpcReturnValue {
+	pub value: Vec<u8>,
+	pub do_watch: bool,
+	pub status: DirectRequestStatus,
+}
+impl RpcReturnValue {
+	pub fn new(val: Vec<u8>, watch: bool, status: DirectRequestStatus) -> Self {
+		Self { value: val, do_watch: watch, status }
+	}
+
+	pub fn from_error_message(error_msg: &str) -> Self {
+		RpcReturnValue {
+			value: error_msg.encode(),
+			do_watch: false,
+			status: DirectRequestStatus::Error,
+		}
+	}
+}
 
 #[allow(clippy::result_large_err)]
 pub trait SidechainHandleMessage {
@@ -28,7 +104,7 @@ pub trait SidechainHandleMessage {
 #[derive(Default, Debug, PartialEq, Eq, Clone)]
 pub struct GetSidechainRequestHandler;
 impl SidechainHandleMessage for GetSidechainRequestHandler {
-	type ThreadMessage = RpcMessage;
+	type ThreadMessage = Message;
 
 	fn handle_message(
 		&self,
@@ -45,11 +121,14 @@ impl SidechainHandleMessage for GetSidechainRequestHandler {
 		// 	.map_err(RpcClientError::Serde);
 		let result_str = serde_json::from_str(msg.as_text()?)
 			.map(|v: serde_json::Value| Some(v.to_string()))
-			.map_err(RpcClientError::Serde);
+			.unwrap().unwrap();
+		println!("Got get_request_msg {:?}", result_str);
 
 		result
-			.send(result_str)
-			.map_err(|e| Box::new(RpcClientError::Send(format!("{:?}", e))).into())
+			.send(Message::from(result_str))
+			.unwrap();
+
+		Ok(())
 	}
 }
 
@@ -133,8 +212,9 @@ impl SidechainRpcClient {
 			request: jsonreq.clone(),
 			result: result_in.clone(),
 			message_handler: message_handler.clone(),
-		})?;
-		Ok(result_out.recv()?)
+		})
+		.unwrap();
+		Ok(result_out.recv().unwrap())
 	}
 }
 
@@ -144,7 +224,8 @@ pub trait SidechainRpcClientTrait {
 impl SidechainRpcClientTrait for SidechainRpcClient {
 	fn request(&self, jsonreq: Value) -> ApiResult<String> {
 		Ok(self
-			.direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())??
-			.unwrap_or_default())
+			.direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())
+			.unwrap()
+			.to_string())
 	}
 }

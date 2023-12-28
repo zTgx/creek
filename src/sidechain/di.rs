@@ -1,5 +1,4 @@
 /// Direct invocation (DI)
-///
 
 pub trait DirectInvocation {
 	/// User shielding key

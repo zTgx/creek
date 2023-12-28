@@ -199,24 +199,24 @@ impl RaAttestation {
 			// temporary: https://github.com/rust-lang/rust/issues/82523
 			println!("sgx quote version = {}", { sgx_quote.version });
 			println!("sgx quote signature type = {}", { sgx_quote.sign_type });
-			// println!(
-			//     "sgx quote report_data = {:02x}",
-			//     sgx_quote.report_body.report_data.d.iter().format("")
-			// );
-			// println!(
-			//     "sgx quote mr_enclave = {:02x}",
-			//     sgx_quote.report_body.mr_enclave.m.iter().format("")
-			// );
-			// println!(
-			//     "sgx quote mr_signer = {:02x}",
-			//     sgx_quote.report_body.mr_signer.m.iter().format("")
-			// );
+		// println!(
+		//     "sgx quote report_data = {:02x}",
+		//     sgx_quote.report_body.report_data.d.iter().format("")
+		// );
+		// println!(
+		//     "sgx quote mr_enclave = {:02x}",
+		//     sgx_quote.report_body.mr_enclave.m.iter().format("")
+		// );
+		// println!(
+		//     "sgx quote mr_signer = {:02x}",
+		//     sgx_quote.report_body.mr_signer.m.iter().format("")
+		// );
 
-			// TODO: pubkey???
-			// println!("Anticipated public key = {:02x}", pub_k.iter().format(""));
-			// if sgx_quote.report_body.report_data.d.to_vec() == pub_k.to_vec() {
-			// 	println!("Mutual RA done!");
-			// }
+		// TODO: pubkey???
+		// println!("Anticipated public key = {:02x}", pub_k.iter().format(""));
+		// if sgx_quote.report_body.report_data.d.to_vec() == pub_k.to_vec() {
+		// 	println!("Mutual RA done!");
+		// }
 		} else {
 			println!("Failed to fetch isvEnclaveQuoteBody from attestation report");
 			return Err(sgx_status_t::SGX_ERROR_UNEXPECTED)

@@ -1,14 +1,15 @@
+use super::{
+	primitives::{Getter, PublicGetter, TrustedGetterSigned},
+	types::AccountId,
+};
 use crate::{
-	api_client_patch::parachain::ParachainPatch,
 	direct_call::{primitives::Request, trusted_call_signed::TrustedCallSigned},
 	sidechain::{rpc::SidechainRpcClientTrait, SidechainResp},
 	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	ApiClient, MultiSignature, MultiSigner, Pair,
 };
 use sp_core::{Decode, Encode};
-use substrate_api_client::{AccountId, ApiResult};
-
-use super::primitives::{Getter, PublicGetter, TrustedGetterSigned};
+use substrate_api_client::{ac_primitives::Config, Result as ApiResult};
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
@@ -66,11 +67,9 @@ pub trait DirectCall {
 	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<SidechainResp>;
 }
 
-impl<P> DirectCall for ApiClient<P>
+impl<T> DirectCall for ApiClient<T>
 where
-	P: Pair,
-	MultiSignature: From<P::Signature>,
-	MultiSigner: From<P::Public>,
+	T: Config,
 {
 	fn send_request_di(&self, top: &TrustedOperation) -> ApiResult<SidechainResp> {
 		match top {
@@ -80,35 +79,40 @@ where
 	}
 
 	fn di_request(&self, operation_call: &TrustedOperation) -> ApiResult<SidechainResp> {
-		let shard = self.get_shard().unwrap();
-		let tee_shielding_key = self.get_tee_shielding_pubkey().unwrap();
-		let operation_call_encrypted =
-			encrypt_with_tee_shielding_pubkey(&tee_shielding_key, &operation_call.encode());
+		// let shard = self.get_shard().unwrap();
+		// let tee_shielding_key = self.get_tee_shielding_pubkey().unwrap();
+		// let operation_call_encrypted =
+		// 	encrypt_with_tee_shielding_pubkey(&tee_shielding_key, &operation_call.encode());
 
-		// compose jsonrpc call
-		let request = Request { shard: sp_core::H256(shard), cyphertext: operation_call_encrypted };
+		// // compose jsonrpc call
+		// let request = Request { shard: sp_core::H256(shard), cyphertext: operation_call_encrypted
+		// };
 
-		use crate::sidechain::json_req;
-		let jsonreq = json_req("author_submitAndWatchExtrinsic", vec![request.to_hex()], 1);
+		// use crate::sidechain::json_req;
+		// let jsonreq = json_req("author_submitAndWatchExtrinsic", vec![request.to_hex()], 1);
 
-		use crate::sidechain::json_resp;
-		let res = self.sidechain.request(jsonreq).unwrap();
-		let x = json_resp(res).unwrap();
-		println!("x: {:?}", x);
+		// use crate::sidechain::json_resp;
+		// let res = self.sidechain.request(jsonreq).unwrap();
+		// let x = json_resp(res).unwrap();
+		// println!("x: {:?}", x);
 
-		Ok(x)
+		// Ok(x)
+
+		todo!()
 	}
 
 	fn getter_request(&self, getter: &Getter) -> ApiResult<SidechainResp> {
-		let shard = self.get_shard().unwrap();
-		let request = Request { shard: sp_core::H256(shard), cyphertext: getter.encode() };
-		use crate::sidechain::json_req;
-		let jsonreq = json_req("state_executeGetter", vec![request.to_hex()], 1);
-		use crate::sidechain::json_resp;
-		let res = self.sidechain.request(jsonreq).unwrap();
-		let x = json_resp(res).unwrap();
-		println!("x: {:?}", x);
+		// let shard = self.get_shard().unwrap();
+		// let request = Request { shard: sp_core::H256(shard), cyphertext: getter.encode() };
+		// use crate::sidechain::json_req;
+		// let jsonreq = json_req("state_executeGetter", vec![request.to_hex()], 1);
+		// use crate::sidechain::json_resp;
+		// let res = self.sidechain.request(jsonreq).unwrap();
+		// let x = json_resp(res).unwrap();
+		// println!("x: {:?}", x);
 
-		Ok(x)
+		// Ok(x)
+
+		todo!()
 	}
 }

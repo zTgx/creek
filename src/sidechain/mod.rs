@@ -2,7 +2,7 @@ use codec::{Decode, Encode, Error as CodecError};
 use rsa::RsaPublicKey;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use substrate_api_client::{std::error::Error as ApiError, ApiResult, RuntimeMetadataPrefixed};
+use substrate_api_client::{Error as ApiError, Result as ApiResult};
 
 use crate::{
 	primitives::{
@@ -13,7 +13,7 @@ use crate::{
 	utils::hex::FromHexPrefixed,
 };
 
-pub mod api;
+// pub mod api;
 pub mod di;
 pub mod rpc;
 
@@ -23,7 +23,7 @@ pub trait SidechainRpc {
 	fn system_name(&self) -> ApiResult<String>;
 	fn system_health(&self) -> ApiResult<String>;
 	fn state_get_runtime_version(&self) -> ApiResult<String>;
-	fn state_get_metadata(&self) -> ApiResult<RuntimeMetadataPrefixed>;
+	// fn state_get_metadata(&self) -> ApiResult<RuntimeMetadataPrefixed>;
 
 	fn author_get_mu_ra_url(&self) -> ApiResult<String>;
 	fn author_get_shielding_key(&self) -> ApiResult<RsaPublicKey>;
@@ -80,7 +80,7 @@ pub fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
 }
 
 pub fn json_resp(resp: String) -> ApiResult<SidechainResp> {
-	let resp: SidechainResp = serde_json::from_str(&resp)?;
+	let resp: SidechainResp = serde_json::from_str(&resp).unwrap();
 	Ok(resp)
 }
 
@@ -106,18 +106,16 @@ impl RpcRequest {
 }
 
 fn decode_from_rpc_response(json_rpc_response: &str) -> ApiResult<String> {
-	let rpc_response: SidechainResp = serde_json::from_str(json_rpc_response)?;
-	let rpc_return_value = RpcReturnValue::from_hex(&rpc_response.result).map_err(|_| {
-		let x = hex::FromHexError::OddLength;
-		ApiError::InvalidHexString(x)
-	})?;
+	let rpc_response: SidechainResp = serde_json::from_str(json_rpc_response).unwrap();
+	let rpc_return_value =
+		RpcReturnValue::from_hex(&rpc_response.result).map_err(|_| ApiError::ExtrinsicNotFound)?;
 
 	let response_message = String::decode(&mut rpc_return_value.value.as_slice())?;
 	match rpc_return_value.status {
 		DirectRequestStatus::Ok => Ok(response_message),
 		_ => {
 			let error = CodecError::from("Decode error.");
-			Err(ApiError::NodeApi(substrate_api_client::Error::Codec(error)))
+			Err(ApiError::ExtrinsicNotFound)
 		},
 	}
 }

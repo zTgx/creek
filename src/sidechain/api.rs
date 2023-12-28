@@ -12,7 +12,7 @@ use codec::{Decode, Error as CodecError};
 use rsa::RsaPublicKey;
 use sp_core::Pair;
 use sp_runtime::{MultiSignature, MultiSigner};
-use substrate_api_client::{ApiResult, DecodeError, Error as ApiError, RuntimeMetadataPrefixed};
+use substrate_api_client::{DecodeError, RuntimeMetadataPrefixed};
 
 impl<P> SidechainRpc for ApiClient<P>
 where

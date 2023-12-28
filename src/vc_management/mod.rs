@@ -3,7 +3,7 @@ use sp_core::H256;
 use crate::primitives::{assertion::Assertion, MrEnclave};
 
 pub mod api;
-pub mod events;
+// pub mod events;
 pub mod verify;
 pub mod xtbuilder;
 
