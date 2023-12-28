@@ -24,6 +24,7 @@ pub mod network;
 pub mod vc;
 pub mod error;
 
+use rsa::RsaPublicKey;
 use sp_core::{ConstU32, H256};
 use sp_runtime::BoundedVec;
 
@@ -38,6 +39,7 @@ pub type UserShieldingKeyType = [u8; USER_SHIELDING_KEY_LEN];
 pub type Index = u32;
 pub type ShardIdentifier = H256;
 pub type SidechainBlockNumber = u64;
+pub type EnclaveShieldingPubKey = RsaPublicKey;
 
 pub const CHALLENGE_CODE_SIZE: usize = 16;
 pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];

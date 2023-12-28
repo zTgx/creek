@@ -8,7 +8,7 @@ pub mod utils;
 pub mod primitives;
 
 use client::service::SidechainRpcClient;
-use primitives::{ShardIdentifier, CResult};
+use primitives::{ShardIdentifier, EnclaveShieldingPubKey, CResult};
 
 pub struct Creek {
 	client: SidechainRpcClient,
@@ -55,7 +55,7 @@ pub trait WorkerPublicApis {
 	// fn author_get_shard_vault(&self);
 	// fn author_get_next_nonce(&self);
 	// fn author_get_enclave_signer_account(&self);
-	// fn author_get_shielding_key(&self);
+	fn author_get_shielding_key(&self) -> CResult<EnclaveShieldingPubKey>;
 
 	// fn attesteer_forward_ias_attestation_report(&self);
 	// fn attesteer_forward_dcap_quote(&self);

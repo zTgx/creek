@@ -1,7 +1,8 @@
 use codec::Decode;
+use rsa::RsaPublicKey;
 use sp_core::H256;
 
-use crate::{WorkerPublicApis, Creek, client::service::{RpcReturnValue, SidechainRpcClientTrait}, utils::hex::{json_req, remove_whitespace, FromHexPrefixed}, CResult, primitives::ShardIdentifier};
+use crate::{WorkerPublicApis, Creek, client::service::{RpcReturnValue, SidechainRpcClientTrait}, utils::hex::{json_req, remove_whitespace, FromHexPrefixed}, CResult, primitives::{ShardIdentifier, crypto::RsaPublicKeyGenerator, EnclaveShieldingPubKey}};
 
 impl WorkerPublicApis for Creek {
     fn rpc_methods(&self) {
@@ -28,5 +29,15 @@ impl WorkerPublicApis for Creek {
 		let shard = H256::decode(&mut rpc_return_value.value.as_slice()).unwrap();
         println!("[MRENCLAVE]: {:?}", shard);
         Ok(shard)
+    }
+
+    fn author_get_shielding_key(&self) -> CResult<EnclaveShieldingPubKey> {
+        let jsonreq = json_req("author_getShieldingKey", [0_u8; 0], 1);
+		let resp = self.client().request(jsonreq)?;
+		let shielding_pubkey_string = decode_from_rpc_response(&resp)?;
+		let key = RsaPublicKey::new_with_rsa3072_pubkey(shielding_pubkey_string.as_bytes().to_vec())
+			.unwrap();
+
+        Ok(key)
     }
 }
