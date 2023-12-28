@@ -8,7 +8,8 @@ pub mod utils;
 pub mod primitives;
 
 use client::service::SidechainRpcClient;
-use primitives::{ShardIdentifier, EnclaveShieldingPubKey, CResult};
+use frame_metadata::RuntimeMetadataPrefixed;
+use primitives::{ShardIdentifier, EnclaveShieldingPubKey, CResult, MrEnclave};
 
 pub struct Creek {
 	client: SidechainRpcClient,
@@ -38,15 +39,15 @@ pub trait WorkerHeartBeat {
 }
 
 pub trait WorkerPublicApis {
-	fn rpc_methods(&self);
-	// fn system_version(&self);
-	// fn system_name(&self);
-	// fn system_health(&self);
+	fn rpc_methods(&self) -> CResult<Vec<String>> ;
+	fn system_version(&self) -> CResult<String>;
+	fn system_name(&self) -> CResult<String>;
+	fn system_health(&self) -> CResult<String>;
 
-	// fn state_get_mrenclave(&self);
+	fn state_get_mrenclave(&self) -> CResult<MrEnclave>;
 	// fn state_execute_getter(&self);
-	// fn state_get_runtime_version(&self);
-	// fn state_get_metadata(&self);
+	fn state_get_runtime_version(&self) -> CResult<String>;
+	fn state_get_metadata(&self) -> CResult<RuntimeMetadataPrefixed>;
 	// fn state_get_storage(&self, mrenclave_in_base58: String, storage_key_in_hex: String);
 
 	// fn author_get_untrusted_url(&self);

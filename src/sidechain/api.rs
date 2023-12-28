@@ -43,68 +43,6 @@ where
 		✅ "system_version"
 	]
 	 */
-	fn rpc_methods(&self) -> ApiResult<Vec<String>> {
-		let jsonreq = json_req("rpc_methods", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let resp = json_resp(resp)?;
-		let mut sresult = remove_whitespace(&resp.result);
-		sresult.remove_matches("methods:[");
-		sresult.remove_matches("]");
-
-		let mut supported_methods = vec![];
-		let methods: Vec<&str> = sresult.split(',').collect();
-		methods.iter().for_each(|m| {
-			supported_methods.push(m.to_string());
-		});
-
-		Ok(supported_methods)
-	}
-
-	/*
-	{ id: "1", jsonrpc: "2.0", result: "hello, world" }
-	 */
-	fn system_version(&self) -> ApiResult<String> {
-		let jsonreq = json_req("system_version", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let resp = json_resp(resp)?;
-		Ok(resp.result)
-	}
-
-	fn system_name(&self) -> ApiResult<String> {
-		let jsonreq = json_req("system_name", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let resp = json_resp(resp)?;
-		Ok(resp.result)
-	}
-
-	fn system_health(&self) -> ApiResult<String> {
-		let jsonreq = json_req("system_health", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let resp = json_resp(resp)?;
-		Ok(resp.result)
-	}
-
-	fn state_get_runtime_version(&self) -> ApiResult<String> {
-		let jsonreq = json_req("state_getRuntimeVersion", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let resp = json_resp(resp)?;
-		Ok(resp.result)
-	}
-
-	fn state_get_metadata(&self) -> ApiResult<RuntimeMetadataPrefixed> {
-		let jsonreq = json_req("state_getMetadata", [0_u8; 0], 1);
-		let resp = self.sidechain.request(jsonreq)?;
-		let rpc_response = json_resp(resp)?;
-		let rpc_return_value = RpcReturnValue::from_hex(&rpc_response.result)
-			.map_err(|e| ApiError::Other(format!("{:?}", e)))?;
-
-		Ok(RuntimeMetadataPrefixed::decode(&mut rpc_return_value.value.as_slice()).map_err(
-			|_| {
-				let error = CodecError::from("Decode RuntimeMetadataPrefixed error");
-				ApiError::DecodeValue(DecodeError::CodecError(error))
-			},
-		)?)
-	}
 
 	/// {"id":"1","jsonrpc":"2.0","result":"0x3c386c6f63616c686f73743a333434330000"}
 	/// "localhost:3443"

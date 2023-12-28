@@ -52,7 +52,7 @@ env_logger = "0.10.0"
 strum = { version = "0.25.0", default-features = false }
 strum_macros = { version = "0.25.0", default-features = false }
 bitcoin = { version = "0.31.0" }
-tokio = { version = "1.24", features = ["rt-multi-thread", "macros", "time"] }
+frame-metadata = { version = "15.1", default-features = false, features = ["v14", "v15-unstable", "serde_full", "decode"] }
 
 # [build-dependencies]
 [target.'cfg(unix)'.build-dependencies]

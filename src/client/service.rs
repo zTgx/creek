@@ -7,7 +7,6 @@ use std::{
 	fmt::Debug,
 	sync::mpsc::{channel, Sender as ThreadOut},
 };
-use substrate_api_client::Result as ApiResult;
 use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
@@ -203,7 +202,7 @@ impl SidechainRpcClient {
 		&self,
 		jsonreq: String,
 		message_handler: MessageHandler,
-	) -> ApiResult<MessageHandler::ThreadMessage>
+	) -> CResult<MessageHandler::ThreadMessage>
 	where
 		MessageHandler: SidechainHandleMessage + Clone + Send + 'static,
 		MessageHandler::ThreadMessage: Send + Sync + Debug,
