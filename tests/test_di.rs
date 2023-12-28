@@ -19,10 +19,3 @@
 // 		"22fc82db5b606998ad45099b7978b5b4f9dd4ea6017e57370ac56141caaabd12".to_string()
 // 	);
 // }
-
-use creek::Creek;
-use sp_core::H256;
-
-#[test]
-fn get_mrenclave_works() {
-}

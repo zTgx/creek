@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use codec::{Decode, Encode, MaxEncodedLen};
-use scale_info::TypeInfo;
-use sp_runtime::{BoundedVec, AccountId32};
 use super::{
 	network::{BoundedWeb3Network, Web3Network},
 	MaxStringLength,
 };
+use codec::{Decode, Encode, MaxEncodedLen};
+use scale_info::TypeInfo;
+use sp_runtime::{AccountId32, BoundedVec};
 
 pub type ParameterString = BoundedVec<u8, MaxStringLength>;
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]

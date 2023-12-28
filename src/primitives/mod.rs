@@ -18,11 +18,11 @@ pub mod address;
 pub mod assertion;
 pub mod crypto;
 pub mod enclave;
+pub mod error;
 pub mod ethereum;
 pub mod identity;
 pub mod network;
 pub mod vc;
-pub mod error;
 
 use rsa::RsaPublicKey;
 use sp_core::{ConstU32, H256};

@@ -2,4 +2,3 @@
 pub enum CError {
 	APIError,
 }
-

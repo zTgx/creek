@@ -1,4 +1,4 @@
-use codec::{Encode, Decode};
+use codec::{Decode, Encode};
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
 use serde_json::Value;
@@ -11,7 +11,10 @@ use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
 
-use crate::{utils::hex::{JsonResponse, json_resp}, CResult};
+use crate::{
+	utils::hex::{json_resp, JsonResponse},
+	CResult,
+};
 
 pub type BlockHash = sp_core::H256;
 
@@ -122,12 +125,11 @@ impl SidechainHandleMessage for GetSidechainRequestHandler {
 		// 	.map_err(RpcClientError::Serde);
 		let result_str = serde_json::from_str(msg.as_text()?)
 			.map(|v: serde_json::Value| Some(v.to_string()))
-			.unwrap().unwrap();
+			.unwrap()
+			.unwrap();
 		println!("Got get_request_msg {:?}", result_str);
 
-		result
-			.send(Message::from(result_str))
-			.unwrap();
+		result.send(Message::from(result_str)).unwrap();
 
 		Ok(())
 	}
@@ -188,7 +190,7 @@ impl<MessageHandler: SidechainHandleMessage> Handler
 	}
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SidechainRpcClient {
 	url: String,
 }

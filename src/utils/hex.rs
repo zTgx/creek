@@ -80,7 +80,6 @@ pub fn decode_hex<T: AsRef<[u8]>>(message: T) -> Result<Vec<u8>> {
 	Ok(decoded_message)
 }
 
-
 /// storage key in hex
 // pub fn storage_key_challenge_code(account: &Address32, identity: &Identity) -> String {
 // 	let mut entry_bytes = sp_core::twox_128("IdentityManagement".as_bytes()).to_vec();

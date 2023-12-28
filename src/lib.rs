@@ -4,13 +4,14 @@
 // #[cfg(target_arch = "x86_64")]
 // pub mod ra;
 pub mod client;
-pub mod utils;
 pub mod primitives;
+pub mod utils;
 
 use client::service::SidechainRpcClient;
 use frame_metadata::RuntimeMetadataPrefixed;
-use primitives::{ShardIdentifier, EnclaveShieldingPubKey, CResult, MrEnclave};
+use primitives::{CResult, EnclaveShieldingPubKey, MrEnclave, ShardIdentifier};
 
+#[derive(Debug, Clone, Default)]
 pub struct Creek {
 	client: SidechainRpcClient,
 }
@@ -20,9 +21,7 @@ impl Creek {
 		let url: &str = "wss://localhost:2600";
 		let client = SidechainRpcClient::new(url);
 
-		Self {
-			client
-		}
+		Self { client }
 	}
 
 	/// Get the rpc client.
@@ -39,7 +38,7 @@ pub trait WorkerHeartBeat {
 }
 
 pub trait WorkerPublicApis {
-	fn rpc_methods(&self) -> CResult<Vec<String>> ;
+	fn rpc_methods(&self) -> CResult<Vec<String>>;
 	fn system_version(&self) -> CResult<String>;
 	fn system_name(&self) -> CResult<String>;
 	fn system_health(&self) -> CResult<String>;
@@ -60,6 +59,6 @@ pub trait WorkerPublicApis {
 
 	// fn attesteer_forward_ias_attestation_report(&self);
 	// fn attesteer_forward_dcap_quote(&self);
-	
+
 	// fn chain_subscribe_all_heads(&self);
 }
