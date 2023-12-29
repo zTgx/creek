@@ -9,7 +9,9 @@ pub mod utils;
 
 use client::service::SidechainRpcClient;
 use frame_metadata::RuntimeMetadataPrefixed;
-use primitives::{CResult, EnclaveShieldingPubKey, MrEnclave, ShardIdentifier};
+use primitives::{
+	AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, MrEnclave, ShardIdentifier,
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct Creek {
@@ -47,14 +49,18 @@ pub trait WorkerPublicApis {
 	// fn state_execute_getter(&self);
 	fn state_get_runtime_version(&self) -> CResult<String>;
 	fn state_get_metadata(&self) -> CResult<RuntimeMetadataPrefixed>;
-	// fn state_get_storage(&self, mrenclave_in_base58: String, storage_key_in_hex: String);
+	fn state_get_storage(
+		&self,
+		mrenclave_in_base58: String,
+		storage_key_in_hex: String,
+	) -> CResult<Vec<u8>>;
 
-	// fn author_get_untrusted_url(&self);
-	// fn author_get_mu_ra_url(&self);
+	fn author_get_untrusted_url(&self) -> CResult<String>;
+	fn author_get_mu_ra_url(&self) -> CResult<String>;
 	fn author_get_shard(&self) -> CResult<ShardIdentifier>;
-	// fn author_get_shard_vault(&self);
+	fn author_get_shard_vault(&self) -> CResult<AccountId>;
 	// fn author_get_next_nonce(&self);
-	// fn author_get_enclave_signer_account(&self);
+	fn author_get_enclave_signer_account(&self) -> CResult<Ed25519Pubkey>;
 	fn author_get_shielding_key(&self) -> CResult<EnclaveShieldingPubKey>;
 
 	// fn attesteer_forward_ias_attestation_report(&self);

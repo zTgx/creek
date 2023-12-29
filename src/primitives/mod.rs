@@ -28,7 +28,12 @@ use rsa::RsaPublicKey;
 use sp_core::{ConstU32, H256};
 use sp_runtime::BoundedVec;
 
-pub use sp_core::crypto::AccountId32 as AccountId;
+pub use sp_core::{
+	blake2_256,
+	crypto::AccountId32 as AccountId,
+	ed25519::{Pair as Ed25519Pair, Public as Ed25519Pubkey},
+	Pair,
+};
 
 use self::error::CError;
 pub type CResult<T> = std::result::Result<T, CError>;
