@@ -2,11 +2,9 @@ use self::hex::{remove_whitespace, JsonResponse};
 
 pub mod address;
 pub mod crypto;
-pub mod di;
 pub mod enclave;
 pub mod hex;
 pub mod identity;
-pub mod vc;
 
 pub fn decode_rpc_methods(jsonreponse: &JsonResponse) -> Vec<String> {
 	let mut sresult = remove_whitespace(&jsonreponse.result);
