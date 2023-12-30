@@ -15,8 +15,9 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::{
+	core::trusted_call::LitentryMultiSignature,
 	if_production_or,
-	utils::hex::{decode_hex, hex_encode}, core::trusted_call::LitentryMultiSignature,
+	utils::hex::{decode_hex, hex_encode},
 };
 use codec::{Decode, Encode, MaxEncodedLen};
 use pallet_evm::{AddressMapping, HashedAddressMapping as GenericHashedAddressMapping};

@@ -11,8 +11,7 @@ use crate::primitives::{
 	crypto::AesOutput,
 	identity::{Identity, IdentityContext},
 	vc::Credential,
-	ChallengeCode, UserShieldingKeyType, CHALLENGE_CODE_SIZE, USER_SHIELDING_KEY_LEN,
-	USER_SHIELDING_KEY_NONCE_LEN,
+	UserShieldingKeyType, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,
 };
 
 pub fn generate_user_shielding_key() -> Vec<u8> {
@@ -74,26 +73,6 @@ pub fn decrypt_vc_with_user_shielding_key(
 		}),
 		Err(e) => Err(format!("Deserialize VC error: {:?}", e)),
 	}
-}
-
-pub fn decrypt_challage_code_with_user_shielding_key(
-	user_shielding_key: &[u8],
-	encrypted_challenge_code: AesOutput,
-) -> Result<ChallengeCode, String> {
-	let key = Key::<Aes256Gcm>::from_slice(user_shielding_key);
-	let cipher = Aes256Gcm::new(key);
-
-	let ciphertext = encrypted_challenge_code.ciphertext;
-	let nonce = encrypted_challenge_code.nonce;
-	let nonce = GenericArray::from_slice(&nonce);
-	let code = cipher
-		.decrypt(nonce, ciphertext.as_ref())
-		.map_err(|e| format!("Decrypt ChallengeCode Error: {:?}", e))?;
-
-	let mut challenge_code: ChallengeCode = [0u8; CHALLENGE_CODE_SIZE];
-	challenge_code[..CHALLENGE_CODE_SIZE].clone_from_slice(&code);
-
-	Ok(challenge_code)
 }
 
 pub fn decrypt_identity_with_user_shielding_key(

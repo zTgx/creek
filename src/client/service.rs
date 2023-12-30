@@ -1,6 +1,16 @@
+use crate::{
+	core::{getter::Getter, trusted_call::TrustedCallSigned},
+	primitives::{types::TrustedOperation, Id, RpcRequest, RsaRequest, ShardIdentifier},
+	utils::{
+		crypto::encrypt_with_tee_shielding_pubkey,
+		hex::{json_resp, JsonResponse, ToHexPrefixed},
+	},
+	CResult,
+};
 use codec::{Decode, Encode};
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
+use rsa::RsaPublicKey;
 use serde_json::Value;
 use sp_core::H256;
 use std::{
@@ -9,11 +19,6 @@ use std::{
 };
 use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
-};
-
-use crate::{
-	utils::hex::{json_resp, JsonResponse},
-	CResult,
 };
 
 pub type BlockHash = sp_core::H256;
@@ -233,4 +238,45 @@ impl SidechainRpcClientTrait for SidechainRpcClient {
 		let json_response: JsonResponse = json_resp(message.to_string());
 		Ok(json_response)
 	}
+}
+
+pub trait DiRequest {
+	fn di_request(
+		&self,
+		shard: ShardIdentifier,
+		tee_shielding_key: RsaPublicKey,
+		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+	) -> CResult<JsonResponse>;
+}
+
+impl DiRequest for SidechainRpcClient {
+	fn di_request(
+		&self,
+		shard: ShardIdentifier,
+		shielding_pubkey: RsaPublicKey,
+		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+	) -> CResult<JsonResponse> {
+		let jsonreq = get_json_request(shard, operation_call, shielding_pubkey);
+		let jsonresp = self.request(serde_json::to_value(jsonreq).unwrap()).unwrap();
+
+		Ok(jsonresp)
+	}
+}
+
+pub(crate) fn get_json_request(
+	shard: ShardIdentifier,
+	operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+	shielding_pubkey: RsaPublicKey,
+) -> String {
+	let operation_call_encrypted =
+		encrypt_with_tee_shielding_pubkey(&shielding_pubkey, &operation_call.encode());
+
+	// compose jsonrpc call
+	let request = RsaRequest::new(shard, operation_call_encrypted);
+	RpcRequest::compose_jsonrpc_call(
+		Id::Text("1".to_string()),
+		"author_submitAndWatchRsaRequest".to_string(),
+		vec![request.to_hex()],
+	)
+	.unwrap()
 }

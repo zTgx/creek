@@ -29,7 +29,8 @@ pub mod vc;
 
 use rsa::RsaPublicKey;
 use scale_info::TypeInfo;
-use sp_core::{ConstU32, H256, RuntimeDebug};
+use serde::{Deserialize, Serialize};
+use sp_core::{ConstU32, RuntimeDebug, H256};
 use sp_runtime::BoundedVec;
 
 pub use sp_core::{
@@ -49,9 +50,6 @@ pub type Index = u32;
 pub type ShardIdentifier = H256;
 pub type SidechainBlockNumber = u64;
 pub type EnclaveShieldingPubKey = RsaPublicKey;
-
-pub const CHALLENGE_CODE_SIZE: usize = 16;
-pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];
 
 type MaxStringLength = ConstU32<64>;
 pub type IdentityInnerString = BoundedVec<u8, MaxStringLength>;
@@ -99,3 +97,30 @@ macro_rules! decl_rsa_request {
 }
 
 decl_rsa_request!(TypeInfo, RuntimeDebug);
+
+#[derive(Clone, Encode, Decode, Debug, Serialize, Deserialize, Eq, PartialEq, Hash)]
+#[serde(untagged)]
+pub enum Id {
+	#[codec(index = 0)]
+	Number(u32),
+	#[codec(index = 1)]
+	Text(String),
+}
+
+#[derive(Clone, Encode, Decode, Serialize, Deserialize)]
+pub struct RpcRequest {
+	pub jsonrpc: String,
+	pub method: String,
+	pub params: Vec<String>,
+	pub id: Id,
+}
+
+impl RpcRequest {
+	pub fn compose_jsonrpc_call(
+		id: Id,
+		method: String,
+		params: Vec<String>,
+	) -> Result<String, serde_json::Error> {
+		serde_json::to_string(&RpcRequest { jsonrpc: "2.0".to_owned(), method, params, id })
+	}
+}

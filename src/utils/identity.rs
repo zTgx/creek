@@ -1,14 +1,16 @@
 use codec::Encode;
 use sp_core::{blake2_256, sr25519::Pair as SubstratePair, Pair};
 
-use crate::{primitives::{
-	address::Address32,
-	identity::{
-		Identity, IdentityMultiSignature, TwitterValidationData, ValidationData, ValidationString,
-		Web2ValidationData, Web3CommonValidationData, Web3ValidationData,
+use crate::{
+	core::trusted_call::LitentryMultiSignature,
+	primitives::{
+		identity::{
+			Identity, TwitterValidationData, ValidationData, ValidationString, Web2ValidationData,
+			Web3CommonValidationData, Web3ValidationData,
+		},
+		Index,
 	},
-	ChallengeCode, Index,
-}, core::trusted_call::LitentryMultiSignature};
+};
 
 use super::hex::hex_encode;
 
@@ -63,11 +65,7 @@ pub fn get_expected_raw_message(
 	blake2_256(payload.as_slice()).to_vec()
 }
 
-pub fn build_msg_web2(
-	who: &Identity,
-	identity: &Identity,
-	sidechain_nonce: Index,
-) -> String {
+pub fn build_msg_web2(who: &Identity, identity: &Identity, sidechain_nonce: Index) -> String {
 	let message = get_expected_raw_message(who, identity, sidechain_nonce);
 	let msg = hex_encode(message.as_slice());
 	msg

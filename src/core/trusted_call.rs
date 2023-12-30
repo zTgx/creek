@@ -6,7 +6,8 @@ use crate::{
 		ethereum::EthereumSignature,
 		identity::{Identity, ValidationData},
 		network::Web3Network,
-		types::{KeyPair, TrustedOperation, TrustedCallVerification}, Index, ShardIdentifier,
+		types::{KeyPair, TrustedCallVerification, TrustedOperation},
+		Index, ShardIdentifier,
 	},
 	utils::hex::hex_encode,
 };
