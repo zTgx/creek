@@ -4,9 +4,9 @@ use crate::{
 		address::Address32,
 		identity::{Identity, ValidationData, IdentityString, ValidationString},
 		network::Web3Network,
-		types::KeyPair,
+		types::KeyPair, crypto::RpcReturnValue,
 	},
-	utils::{enclave::mrenclave_to_bs58, hex::ToHexPrefixed, identity::ValidationDataBuilder},
+	utils::{enclave::mrenclave_to_bs58, hex::{ToHexPrefixed, FromHexPrefixed}, identity::ValidationDataBuilder},
 	Creek, WorkerPublicApis, WorkerTxApi,
 };
 use sp_core::{sr25519, Pair};
@@ -38,7 +38,7 @@ impl WorkerTxApi for Creek {
 			.unwrap();
 
 		let vdata = ValidationData::build_vdata_substrate(
-			&alice,
+			&bob,
 			&alice_identity,
 			&bob_identity,
 			sidechain_nonce,
@@ -47,7 +47,7 @@ impl WorkerTxApi for Creek {
 
 		let call = TrustedCall::link_identity(
 			alice_identity.clone(),
-			alice_identity,
+			alice_identity.clone(),
 			bob_identity,
 			vdata,
 			networks,
@@ -59,10 +59,9 @@ impl WorkerTxApi for Creek {
 		let operation_call = call_signed.into_trusted_operation(true);
 
 		let tee_shielding_key = self.author_get_shielding_key().unwrap();
-		println!(">>> 准备发起请求");
-
 		let jsonresp = self.client().di_request(shard, tee_shielding_key, &operation_call).unwrap();
-		println!("[LINK IDENTITY]: {:?}", jsonresp);
+		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
+		println!("[LINK IDENTITY]: {:#?}", rpc_return_value);
 	}
 
 	fn link_web2(&self) {

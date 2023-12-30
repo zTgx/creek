@@ -41,7 +41,7 @@ impl ValidationDataBuilder for ValidationData {
 		let web3_common_validation_data = Web3CommonValidationData { message: message.clone(), signature };
 		let web3_v_data = Web3ValidationData::Substrate(web3_common_validation_data);
 
-		verify_web3_identity(&primary, &message_raw, &web3_v_data).expect("VerifyWeb3SignatureFailed");
+		verify_web3_identity(&identity, &message_raw, &web3_v_data).expect("VerifyWeb3SignatureFailed");
 
 		let vdata = ValidationData::Web3(web3_v_data);
 		Ok(vdata)

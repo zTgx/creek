@@ -3,7 +3,7 @@ use crate::{
 	primitives::{types::TrustedOperation, RsaRequest, ShardIdentifier},
 	utils::{
 		crypto::encrypt_with_tee_shielding_pubkey,
-		hex::{json_resp, JsonResponse, ToHexPrefixed, json_req, FromHexPrefixed},
+		hex::{json_resp, JsonResponse, ToHexPrefixed, json_req},
 	},
 	CResult,
 };
@@ -262,10 +262,6 @@ impl DiRequest for SidechainRpcClient {
 		println!("jsonreq: {}", jsonreq);
 
 		let jsonresp = self.request(serde_json::to_value(jsonreq).unwrap()).unwrap();
-		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
-		let erros = String::decode(&mut rpc_return_value.value.as_slice()).unwrap();
-		println!("erros: {}", erros);
-
 		Ok(jsonresp)
 	}
 }
