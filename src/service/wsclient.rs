@@ -1,18 +1,15 @@
 use crate::{
 	core::{getter::Getter, trusted_call::TrustedCallSigned},
 	primitives::{types::TrustedOperation, RsaRequest, ShardIdentifier},
-	utils::{
-		crypto::encrypt_with_tee_shielding_pubkey,
-		hex::{json_req, json_resp, JsonResponse, ToHexPrefixed},
-	},
+	service::json::{json_req, json_resp, JsonResponse},
+	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	CResult,
 };
-use codec::{Decode, Encode};
+use codec::Encode;
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
 use rsa::RsaPublicKey;
 use serde_json::Value;
-use sp_core::H256;
 use std::{
 	fmt::Debug,
 	sync::mpsc::{channel, Sender as ThreadOut},
@@ -20,83 +17,6 @@ use std::{
 use ws::{
 	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
 };
-
-pub type BlockHash = sp_core::H256;
-
-#[derive(Debug, Clone, PartialEq, Encode, Decode, Eq)]
-pub enum DirectRequestStatus {
-	/// Direct request was successfully executed
-	#[codec(index = 0)]
-	Ok,
-	/// Trusted Call Status
-	/// Litentry: embed the top hash here - TODO - use generic type?
-	#[codec(index = 1)]
-	TrustedOperationStatus(TrustedOperationStatus, H256),
-	/// Direct request could not be executed
-	#[codec(index = 2)]
-	Error,
-}
-
-#[derive(Debug, Clone, PartialEq, Encode, Decode, Eq)]
-pub enum TrustedOperationStatus {
-	/// TrustedOperation is submitted to the top pool.
-	#[codec(index = 0)]
-	Submitted,
-	/// TrustedOperation is part of the future queue.
-	#[codec(index = 1)]
-	Future,
-	/// TrustedOperation is part of the ready queue.
-	#[codec(index = 2)]
-	Ready,
-	/// The operation has been broadcast to the given peers.
-	#[codec(index = 3)]
-	Broadcast,
-	/// TrustedOperation has been included in block with given hash.
-	#[codec(index = 4)]
-	InSidechainBlock(BlockHash),
-	/// The block this operation was included in has been retracted.
-	#[codec(index = 5)]
-	Retracted,
-	/// Maximum number of finality watchers has been reached,
-	/// old watchers are being removed.
-	#[codec(index = 6)]
-	FinalityTimeout,
-	/// TrustedOperation has been finalized by a finality-gadget, e.g GRANDPA
-	#[codec(index = 7)]
-	Finalized,
-	/// TrustedOperation has been replaced in the pool, by another operation
-	/// that provides the same tags. (e.g. same (sender, nonce)).
-	#[codec(index = 8)]
-	Usurped,
-	/// TrustedOperation has been dropped from the pool because of the limit.
-	#[codec(index = 9)]
-	Dropped,
-	/// TrustedOperation is no longer valid in the current state.
-	#[codec(index = 10)]
-	Invalid,
-	/// TrustedOperation has been executed.
-	TopExecuted(Vec<u8>, bool),
-}
-
-#[derive(Encode, Decode, Debug, Eq, PartialEq)]
-pub struct RpcReturnValue {
-	pub value: Vec<u8>,
-	pub do_watch: bool,
-	pub status: DirectRequestStatus,
-}
-impl RpcReturnValue {
-	pub fn new(val: Vec<u8>, watch: bool, status: DirectRequestStatus) -> Self {
-		Self { value: val, do_watch: watch, status }
-	}
-
-	pub fn from_error_message(error_msg: &str) -> Self {
-		RpcReturnValue {
-			value: error_msg.encode(),
-			do_watch: false,
-			status: DirectRequestStatus::Error,
-		}
-	}
-}
 
 #[allow(clippy::result_large_err)]
 pub trait SidechainHandleMessage {

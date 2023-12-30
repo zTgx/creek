@@ -3,16 +3,16 @@
 #![allow(clippy::large_enum_variant)] //StfError: The `Err`-variant returned from this function is very large
 #![allow(clippy::result_large_err)]
 
-pub mod client;
 pub mod core;
 pub mod primitives;
+pub mod service;
 pub mod utils;
 
-use client::service::SidechainRpcClient;
 use frame_metadata::RuntimeMetadataPrefixed;
 use primitives::{
 	AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 };
+use service::wsclient::SidechainRpcClient;
 
 #[derive(Debug, Clone, Default)]
 pub struct Creek {

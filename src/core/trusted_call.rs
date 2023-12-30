@@ -3,9 +3,9 @@ use crate::{
 		address::{Address20, Address32, Address33},
 		aes::RequestAesKey,
 		assertion::Assertion,
-		ethereum::EthereumSignature,
 		identity::{Identity, ValidationData},
 		network::Web3Network,
+		signature::{bitcoin::BitcoinSignature, ethereum::EthereumSignature},
 		types::{KeyPair, TrustedCallVerification, TrustedOperation},
 		Index, ShardIdentifier,
 	},
@@ -20,7 +20,7 @@ use scale_info::TypeInfo;
 use sp_core::{blake2_256, ecdsa, ed25519, keccak_256, sr25519, ByteArray, Decode, Encode, H256};
 use sp_runtime::traits::Verify;
 
-use super::{bitcoin_signature::BitcoinSignature, getter::Getter};
+use super::getter::Getter;
 
 /// Error verifying ECDSA signature
 #[derive(Encode, Decode)]

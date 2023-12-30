@@ -1,6 +1,6 @@
 use creek::{
-	primitives::crypto::RpcReturnValue,
-	utils::{hex::FromHexPrefixed, worker_public_api_utils::decode_nonce},
+	service::json::RpcReturnValue,
+	utils::{hex::FromHexPrefixed, public_api::decode_nonce},
 };
 
 #[test]

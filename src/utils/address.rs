@@ -1,13 +1,53 @@
 use crate::primitives::address::{Address20, Address32};
 use aes_gcm::aead::OsRng;
+use bitcoin::{
+	address::Address, key::PublicKey, network::Network, secp256k1::Secp256k1, XOnlyPublicKey,
+};
+use core::str::FromStr;
 use rand::{Rng, RngCore};
 use sp_core::{
 	crypto::{PublicError, Ss58Codec},
 	sr25519, Pair,
 };
+use std::string::{String, ToString};
 
 const ACCOUNT_SEED_CHARSET: &[u8] =
 	b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+// Some dependency conflict of bitcoin crate with enclave building
+// when putting these functions into core-premitives/utils.
+pub fn p2wpkh_address(pubkey_string: &str) -> String {
+	let pubkey = PublicKey::from_str(pubkey_string).expect("pubkey");
+	let address = Address::p2wpkh(&pubkey, Network::Bitcoin);
+	if let Ok(address) = address {
+		return address.to_string()
+	}
+	"".to_string()
+}
+
+pub fn p2sh_address(pubkey_string: &str) -> String {
+	let pubkey = PublicKey::from_str(pubkey_string).expect("pubkey");
+	let address = Address::p2shwpkh(&pubkey, Network::Bitcoin);
+	if let Ok(address) = address {
+		return address.to_string()
+	}
+	"".to_string()
+}
+
+pub fn p2tr_address(pubkey_string: &str) -> String {
+	let pubkey = PublicKey::from_str(pubkey_string).expect("pubkey");
+	let xonly_pubkey = XOnlyPublicKey::from(pubkey.inner);
+	// unisat wallet uses is this way
+	let secp = Secp256k1::verification_only();
+	let address = Address::p2tr(&secp, xonly_pubkey, None, Network::Bitcoin);
+	address.to_string()
+}
+
+pub fn p2pkh_address(pubkey_string: &str) -> String {
+	let pubkey = PublicKey::from_str(pubkey_string).expect("pubkey");
+	let address = Address::p2pkh(&pubkey, Network::Bitcoin);
+	address.to_string()
+}
 
 /// How public key transimit>>>
 /// [u8; 32] -> Pair::Public

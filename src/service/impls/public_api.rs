@@ -1,12 +1,12 @@
 use crate::{
-	client::service::SidechainRpcClientTrait,
 	primitives::{
 		crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
 		MrEnclave, ShardIdentifier,
 	},
+	service::{json::json_req, wsclient::SidechainRpcClientTrait},
 	utils::{
-		hex::{json_req, FromHexPrefixed},
-		worker_public_api_utils::{
+		hex::FromHexPrefixed,
+		public_api::{
 			decode_accountid, decode_mr_enclave, decode_nonce, decode_rpc_methods,
 			decode_rpc_return_value, decode_runtime_metadata, decode_shard_identifier,
 			decode_string,

@@ -1,6 +1,4 @@
-use codec::Encode;
-use sp_core::{blake2_256, sr25519::Pair as SubstratePair, Pair};
-
+use super::hex::hex_encode;
 use crate::{
 	core::trusted_call::LitentryMultiSignature,
 	primitives::{
@@ -13,8 +11,10 @@ use crate::{
 		Index,
 	},
 };
-
-use super::hex::hex_encode;
+use codec::Encode;
+use frame_support::ensure;
+use sp_core::{blake2_256, sr25519::Pair as SubstratePair, Pair};
+pub type StfResult<T> = Result<T, StfError>;
 
 pub trait ValidationDataBuilder {
 	fn build_vdata_substrate(
@@ -79,9 +79,6 @@ pub fn build_msg_web2(who: &Identity, identity: &Identity, sidechain_nonce: Inde
 	let msg = hex_encode(message.as_slice());
 	msg
 }
-
-use frame_support::ensure;
-pub type StfResult<T> = Result<T, StfError>;
 
 pub fn verify_web3_identity(
 	identity: &Identity,

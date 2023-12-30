@@ -1,4 +1,4 @@
-// Copyright 2020-2023 Litentry Technologies GmbH.
+// Copyright 2020-2023 Trust Computing GmbH.
 // This file is part of Litentry.
 //
 // Litentry is free software: you can redistribute it and/or modify
@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
+#[cfg(feature = "std")]
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Encode, Decode, MaxEncodedLen, TypeInfo, PartialEq, Eq, Clone, Debug)]
 pub struct EthereumSignature(pub [u8; 65]);
@@ -35,6 +36,7 @@ impl TryFrom<&[u8]> for EthereumSignature {
 	}
 }
 
+#[cfg(feature = "std")]
 impl Serialize for EthereumSignature {
 	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
 	where
@@ -44,12 +46,13 @@ impl Serialize for EthereumSignature {
 	}
 }
 
+#[cfg(feature = "std")]
 impl<'de> Deserialize<'de> for EthereumSignature {
 	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
 	where
 		D: Deserializer<'de>,
 	{
-		let signature_hex = hex::decode(String::deserialize(deserializer)?)
+		let signature_hex = hex::decode(&String::deserialize(deserializer)?)
 			.map_err(|e| de::Error::custom(format!("{:?}", e)))?;
 		EthereumSignature::try_from(signature_hex.as_ref())
 			.map_err(|e| de::Error::custom(format!("{:?}", e)))

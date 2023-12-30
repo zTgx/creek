@@ -32,8 +32,8 @@ pub type HashedAddressMapping = GenericHashedAddressMapping<BlakeTwo256>;
 
 use super::{
 	address::{Address20, Address32, Address33},
-	ethereum::EthereumSignature,
 	network::Web3Network,
+	signature::ethereum::EthereumSignature,
 	types::AccountId,
 	IdentityInnerString, MaxStringLength, MetadataOf, ParentchainBlockNumber,
 };

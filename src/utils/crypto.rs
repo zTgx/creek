@@ -1,3 +1,9 @@
+use crate::primitives::{
+	crypto::AesOutput,
+	identity::{Identity, IdentityContext},
+	vc::Credential,
+	UserShieldingKeyType, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,
+};
 use aes_gcm::{
 	aead::{generic_array::GenericArray, Aead, OsRng},
 	Aes256Gcm, Key, KeyInit,
@@ -7,20 +13,9 @@ use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use serde_json;
 use sha2::Sha256;
 
-use crate::primitives::{
-	crypto::AesOutput,
-	identity::{Identity, IdentityContext},
-	vc::Credential,
-	UserShieldingKeyType, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,
-};
-
 pub fn generate_user_shielding_key() -> Vec<u8> {
 	let user_shieldng_key = Aes256Gcm::generate_key(&mut OsRng);
 	user_shieldng_key.to_vec()
-}
-
-pub fn generate_incorrect_user_shielding_key() -> Vec<u8> {
-	[0, 1].to_vec()
 }
 
 pub fn to_user_shielding_key_type(user_shielding_key: &[u8]) -> UserShieldingKeyType {

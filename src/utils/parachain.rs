@@ -1,12 +1,9 @@
 use crate::{
-	identity_management::IDENTITY_PALLET_NAME,
 	primitives::{
-		address::Address32, crypto::RsaPublicKeyGenerator, enclave::Enclave, vc::VCContext,
+		address::Address32, crypto::RsaPublicKeyGenerator vc::VCContext,
 		AccountId, MrEnclave, VCIndex,
 	},
 	utils::address::vec_to_u8_array,
-	vc_management::VC_PALLET_NAME,
-	ApiClient,
 };
 use rsa::RsaPublicKey;
 use sp_core::{ed25519::Public as Ed25519Public, hexdisplay::HexDisplay, Pair};

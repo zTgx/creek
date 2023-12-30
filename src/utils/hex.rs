@@ -20,8 +20,6 @@
 use codec::{Decode, Encode};
 use std::{boxed::Box, string::String, vec::Vec};
 pub type Result<T> = core::result::Result<T, Error>;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
 
 /// extrinsics factory error
 #[derive(Debug, thiserror::Error)]
@@ -78,58 +76,6 @@ pub fn decode_hex<T: AsRef<[u8]>>(message: T) -> Result<Vec<u8>> {
 	}
 	let decoded_message = hex::decode(message).map_err(Error::Hex)?;
 	Ok(decoded_message)
-}
-
-/// storage key in hex
-// pub fn storage_key_challenge_code(account: &Address32, identity: &Identity) -> String {
-// 	let mut entry_bytes = sp_core::twox_128("IdentityManagement".as_bytes()).to_vec();
-// 	entry_bytes.extend(&sp_core::twox_128("ChallengeCodes".as_bytes())[..]);
-
-// 	let encoded_account: &[u8] = &account.encode();
-// 	let encoded_identity: &[u8] = &identity.encode();
-
-// 	// Key1: Blake2_128Concat
-// 	entry_bytes.extend(sp_core::blake2_128(encoded_account));
-// 	entry_bytes.extend(encoded_account);
-
-// 	// Key2: Blake2_128Concat
-// 	entry_bytes.extend(sp_core::blake2_128(encoded_identity));
-// 	entry_bytes.extend(encoded_identity);
-
-// 	format!("0x{}", hex::encode(entry_bytes))
-// }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JsonResponse {
-	pub id: String,
-	pub jsonrpc: String,
-	pub result: String,
-}
-
-#[derive(Clone, Encode, Decode, Debug, Serialize, Deserialize)]
-pub struct RpcResponse {
-	pub jsonrpc: String,
-	pub result: String, // hex encoded RpcReturnValue
-	pub id: u32,
-}
-
-pub fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
-	json!({
-		"method": method,
-		"params": params,
-		"jsonrpc": "2.0",
-		"id": id.to_string(),
-	})
-}
-
-pub fn json_resp(resp: String) -> JsonResponse {
-	println!(">>resp: {}", resp);
-	let resp: JsonResponse = serde_json::from_str(&resp).unwrap();
-	resp
-}
-
-pub fn remove_whitespace(s: &str) -> String {
-	s.chars().filter(|c| !c.is_whitespace()).collect()
 }
 
 #[cfg(test)]

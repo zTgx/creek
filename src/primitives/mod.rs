@@ -19,12 +19,10 @@ pub mod aes;
 pub mod assertion;
 pub mod cerror;
 pub mod crypto;
-pub mod enclave;
 pub mod error;
-pub mod ethereum;
 pub mod identity;
-pub mod macros;
 pub mod network;
+pub mod signature;
 pub mod stf_error;
 pub mod types;
 pub mod vc;
@@ -44,6 +42,7 @@ pub use sp_core::{
 
 use self::cerror::CError;
 pub type CResult<T> = std::result::Result<T, CError>;
+pub type BlockHash = sp_core::H256;
 
 pub type VCIndex = H256;
 pub type Balance = u128;
@@ -64,8 +63,6 @@ pub type MetadataOf = BoundedVec<u8, MaxMetadataLength>;
 
 pub const SGX_MEASUREMENT_SIZE: usize = 32;
 pub type MrEnclave = [u8; SGX_MEASUREMENT_SIZE];
-
-pub type BlockHash = sp_core::H256;
 
 // we use 256-bit AES-GCM as user shielding key
 pub const USER_SHIELDING_KEY_LEN: usize = 32;

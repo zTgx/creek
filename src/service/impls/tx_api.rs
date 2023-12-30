@@ -2,21 +2,19 @@ use crate::{
 	core::trusted_call::TrustedCall,
 	primitives::{
 		address::Address32,
-		crypto::RpcReturnValue,
 		identity::{Identity, IdentityString, ValidationData, ValidationString},
 		network::Web3Network,
 		types::KeyPair,
 	},
+	service::{json::RpcReturnValue, wsclient::DiRequest},
 	utils::{
-		enclave::mrenclave_to_bs58,
 		hex::{FromHexPrefixed, ToHexPrefixed},
 		identity::ValidationDataBuilder,
+		public_api::mrenclave_to_bs58,
 	},
 	Creek, WorkerPublicApis, WorkerTxApi,
 };
 use sp_core::{sr25519, Pair};
-
-use super::service::DiRequest;
 
 impl WorkerTxApi for Creek {
 	fn link_identity(&self) {
