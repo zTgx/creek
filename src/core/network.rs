@@ -16,12 +16,10 @@
 
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
-use sp_runtime::{traits::ConstU32, BoundedVec};
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, IntoStaticStr};
 
 pub const MAX_WEB3NETWORK_LEN: u32 = 128;
-pub type BoundedWeb3Network = BoundedVec<Web3Network, ConstU32<MAX_WEB3NETWORK_LEN>>;
 
 /// supported web3 networks
 /// use a flattened style to avoid overly nested structure like:

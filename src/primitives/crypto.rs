@@ -22,7 +22,7 @@ use rsa::{
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 
-use super::{BlockHash, USER_SHIELDING_KEY_NONCE_LEN};
+use super::{aes::RequestAesKeyNonce, BlockHash, USER_SHIELDING_KEY_NONCE_LEN};
 
 #[derive(
 	Serialize, Deserialize, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo,
@@ -59,7 +59,7 @@ impl RsaPublicKeyGenerator for RsaPublicKey {
 pub struct AesOutput {
 	pub ciphertext: Vec<u8>,
 	pub aad: Vec<u8>,
-	pub nonce: [u8; USER_SHIELDING_KEY_NONCE_LEN], // IV
+	pub nonce: RequestAesKeyNonce, // IV
 }
 
 impl AesOutput {

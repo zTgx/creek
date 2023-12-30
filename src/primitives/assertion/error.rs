@@ -1,8 +1,3 @@
-#[derive(Debug)]
-pub enum CError {
-	APIError,
-}
-
 // Copyright 2020-2023 Trust Computing GmbH.
 // This file is part of Litentry.
 //
@@ -19,13 +14,14 @@ pub enum CError {
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::primitives::assertion::Assertion;
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{ConstU32, Printable},
 	BoundedVec, DispatchError, DispatchErrorWithPostInfo,
 };
+
+use super::Assertion;
 
 pub type MaxStringLength = ConstU32<100>;
 pub type ErrorString = BoundedVec<u8, MaxStringLength>;

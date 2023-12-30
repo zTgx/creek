@@ -1,14 +1,13 @@
 use codec::Decode;
 use frame_metadata::RuntimeMetadataPrefixed;
 use rsa::RsaPublicKey;
-use serde::{Deserialize, Serialize};
 use sp_core::H256;
 
 use crate::{
 	client::service::{RpcReturnValue, SidechainRpcClientTrait},
 	primitives::{
-		crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey, EnclaveShieldingPubKey, MrEnclave,
-		ShardIdentifier,
+		crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
+		MrEnclave, ShardIdentifier,
 	},
 	utils::{
 		decode_rpc_methods,
@@ -17,9 +16,9 @@ use crate::{
 	CResult, Creek, WorkerPublicApis,
 };
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct M {
-	pub methods: Vec<String>,
+pub trait WorkerApiWatcher {
+	fn add(&mut self);
+	fn tick(&self) -> bool; // If need upgrade or not
 }
 
 impl WorkerPublicApis for Creek {
@@ -151,5 +150,18 @@ impl WorkerPublicApis for Creek {
 			Ed25519Pubkey::from_hex(&enclave_signer_public_key).unwrap();
 		println!("[enclave_signer_public_key]: {:?}", enclave_signer_public_key);
 		Ok(enclave_signer_public_key)
+	}
+
+	fn author_get_next_nonce(
+		&self,
+		shard_in_base58: String,
+		account_in_hex: String,
+	) -> CResult<Index> {
+		const METHOD_NAME: &str = "author_getNextNonce";
+		let jsonreq = json_req(METHOD_NAME, (shard_in_base58, account_in_hex), 1);
+		let jsonresp = self.client().request(jsonreq).unwrap();
+		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
+		let next_nonce = Index::decode(&mut rpc_return_value.value.as_slice()).unwrap();
+		Ok(next_nonce)
 	}
 }

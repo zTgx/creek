@@ -15,13 +15,16 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 pub mod address;
+pub mod aes;
 pub mod assertion;
 pub mod crypto;
 pub mod enclave;
 pub mod error;
 pub mod ethereum;
 pub mod identity;
+pub mod macros;
 pub mod network;
+pub mod types;
 pub mod vc;
 
 use rsa::RsaPublicKey;
@@ -30,7 +33,7 @@ use sp_runtime::BoundedVec;
 
 pub use sp_core::{
 	blake2_256,
-	crypto::AccountId32 as AccountId,
+	// crypto::AccountId32 as AccountId,
 	ed25519::{Pair as Ed25519Pair, Public as Ed25519Pubkey},
 	Pair,
 };
@@ -50,7 +53,7 @@ pub const CHALLENGE_CODE_SIZE: usize = 16;
 pub type ChallengeCode = [u8; CHALLENGE_CODE_SIZE];
 
 type MaxStringLength = ConstU32<64>;
-pub type IdentityString = BoundedVec<u8, MaxStringLength>;
+pub type IdentityInnerString = BoundedVec<u8, MaxStringLength>;
 pub type ErrorString = BoundedVec<u8, MaxStringLength>;
 
 pub type ParentchainBlockNumber = u32;
@@ -67,3 +70,10 @@ pub type BlockHash = sp_core::H256;
 pub const USER_SHIELDING_KEY_LEN: usize = 32;
 pub const USER_SHIELDING_KEY_NONCE_LEN: usize = 12;
 pub const USER_SHIELDING_KEY_TAG_LEN: usize = 16;
+
+use sp_runtime::{
+	traits::{IdentifyAccount, Verify},
+	MultiSignature,
+};
+pub type Signature = MultiSignature;
+pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::AccountId;

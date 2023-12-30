@@ -4,13 +4,14 @@
 // #[cfg(target_arch = "x86_64")]
 // pub mod ra;
 pub mod client;
+pub mod core;
 pub mod primitives;
 pub mod utils;
 
 use client::service::SidechainRpcClient;
 use frame_metadata::RuntimeMetadataPrefixed;
 use primitives::{
-	AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, MrEnclave, ShardIdentifier,
+	AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 };
 
 #[derive(Debug, Clone, Default)]
@@ -59,7 +60,11 @@ pub trait WorkerPublicApis {
 	fn author_get_mu_ra_url(&self) -> CResult<String>;
 	fn author_get_shard(&self) -> CResult<ShardIdentifier>;
 	fn author_get_shard_vault(&self) -> CResult<AccountId>;
-	// fn author_get_next_nonce(&self);
+	fn author_get_next_nonce(
+		&self,
+		shard_in_base58: String,
+		account_in_hex: String,
+	) -> CResult<Index>;
 	fn author_get_enclave_signer_account(&self) -> CResult<Ed25519Pubkey>;
 	fn author_get_shielding_key(&self) -> CResult<EnclaveShieldingPubKey>;
 
@@ -67,4 +72,8 @@ pub trait WorkerPublicApis {
 	// fn attesteer_forward_dcap_quote(&self);
 
 	// fn chain_subscribe_all_heads(&self);
+}
+
+pub trait WorkerTxApi {
+	fn link_identity(&self);
 }
