@@ -12,11 +12,11 @@ use crate::{
 		identity::ValidationDataBuilder,
 		public_api::mrenclave_to_bs58,
 	},
-	Creek, WorkerPublicApis, WorkerTxApi,
+	Creek, WorkerGetters, WorkerSTF,
 };
 use sp_core::{sr25519, Pair};
 
-impl WorkerTxApi for Creek {
+impl WorkerSTF for Creek {
 	fn link_identity(&self) {
 		let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
 		let alice_identity_a = Address32::from(alice.public());

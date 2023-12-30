@@ -2,8 +2,7 @@ use codec::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sp_core::H256;
-
-use crate::primitives::BlockHash;
+use crate::primitives::{BlockHash, cerror::CError, CResult};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JsonResponse {
@@ -21,10 +20,8 @@ pub fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
 	})
 }
 
-pub fn json_resp(resp: String) -> JsonResponse {
-	println!(">>resp: {}", resp);
-	let resp: JsonResponse = serde_json::from_str(&resp).unwrap();
-	resp
+pub fn json_resp(resp: String) -> CResult<JsonResponse> {
+	serde_json::from_str(&resp).map_err(CError::DecodeJsonError)
 }
 
 #[derive(Encode, Decode, Debug, Eq, PartialEq)]

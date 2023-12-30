@@ -154,8 +154,7 @@ impl SidechainRpcClientTrait for SidechainRpcClient {
 			.direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())
 			.unwrap();
 
-		let json_response: JsonResponse = json_resp(message.to_string());
-		Ok(json_response)
+		json_resp(message.to_string())
 	}
 }
 
@@ -175,14 +174,9 @@ impl DiRequest for SidechainRpcClient {
 		shielding_pubkey: RsaPublicKey,
 		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
 	) -> CResult<JsonResponse> {
-		// let jsonreq = get_json_request(shard, operation_call, shielding_pubkey);
-
 		let param = get_json_request(shard, operation_call, shielding_pubkey);
 		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
-		println!("jsonreq: {}", jsonreq);
-
-		let jsonresp = self.request(serde_json::to_value(jsonreq).unwrap()).unwrap();
-		Ok(jsonresp)
+		self.request(jsonreq)
 	}
 }
 
@@ -194,13 +188,6 @@ pub(crate) fn get_json_request(
 	let operation_call_encrypted =
 		encrypt_with_tee_shielding_pubkey(&shielding_pubkey, &operation_call.encode());
 
-	// compose jsonrpc call
 	let request = RsaRequest::new(shard, operation_call_encrypted);
 	request.to_hex()
-	// RpcRequest::compose_jsonrpc_call(
-	// 	Id::Text("1".to_string()),
-	// 	"author_submitAndWatchRsaRequest".to_string(),
-	// 	vec![request.to_hex()],
-	// )
-	// .unwrap()
 }

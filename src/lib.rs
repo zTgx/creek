@@ -33,7 +33,10 @@ impl Creek {
 	}
 }
 
-pub trait WorkerPublicApis {
+/// Worker Getter Function
+/// Used to obtain a collection of information interfaces on sidechain, 
+/// including shard, nonce, shieldingkey, etc., for WorkerTx transaction interfaces
+pub trait WorkerGetters {
 	fn rpc_methods(&self) -> CResult<Vec<String>>;
 	fn system_version(&self) -> CResult<String>;
 	fn system_name(&self) -> CResult<String>;
@@ -67,7 +70,9 @@ pub trait WorkerPublicApis {
 	// fn chain_subscribe_all_heads(&self);
 }
 
-pub trait WorkerTxApi {
+/// Worker State Transfer Function
+/// A set of transaction interfaces that can change the sidechain state, including link identity, request VC, etc
+pub trait WorkerSTF {
 	fn link_identity(&self);
 	fn link_web2(&self);
 }

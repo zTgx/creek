@@ -1,7 +1,7 @@
 use crate::{
 	primitives::{
 		crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
-		MrEnclave, ShardIdentifier,
+		MrEnclave, ShardIdentifier, cerror::CError,
 	},
 	service::{json::json_req, wsclient::SidechainRpcClientTrait},
 	utils::{
@@ -12,12 +12,11 @@ use crate::{
 			decode_string,
 		},
 	},
-	CResult, Creek, WorkerPublicApis,
+	CResult, Creek, WorkerGetters,
 };
 use frame_metadata::RuntimeMetadataPrefixed;
-use rsa::RsaPublicKey;
 
-impl WorkerPublicApis for Creek {
+impl WorkerGetters for Creek {
 	fn rpc_methods(&self) -> CResult<Vec<String>> {
 		let jsonreq = json_req("rpc_methods", [0; 0], 1);
 		let resp = self.client().request(jsonreq)?;
@@ -114,11 +113,8 @@ impl WorkerPublicApis for Creek {
 		let jsonresp = self.client().request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let rsa_pubkey_json = decode_string(&rpc_return_value)?;
-		println!("[RSA PUBKEY]: {}", rsa_pubkey_json);
-		let key =
-			RsaPublicKey::new_with_rsa3072_pubkey(rsa_pubkey_json.as_bytes().to_vec()).unwrap();
 
-		Ok(key)
+		EnclaveShieldingPubKey::new_with_rsa3072_pubkey(rsa_pubkey_json.as_bytes().to_vec()).map_err(CError::RSAError)
 	}
 
 	fn author_get_shard_vault(&self) -> CResult<AccountId> {

@@ -1,4 +1,4 @@
-use creek::{Creek, WorkerTxApi};
+use creek::{Creek, WorkerSTF};
 
 fn main() {
 	let creek = Creek::new();
