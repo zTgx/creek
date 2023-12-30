@@ -8,7 +8,7 @@ use crate::{
 			Identity, TwitterValidationData, ValidationData, ValidationString, Web2ValidationData,
 			Web3CommonValidationData, Web3ValidationData,
 		},
-		Index,
+		Index, stf_error::StfError, error::ErrorDetail,
 	},
 };
 
@@ -28,17 +28,23 @@ pub trait ValidationDataBuilder {
 impl ValidationDataBuilder for ValidationData {
 	fn build_vdata_substrate(
 		pair: &SubstratePair,
-		who: &Identity,
+		primary: &Identity,
 		identity: &Identity,
 		sidechain_nonce: Index,
 	) -> Result<ValidationData, Vec<u8>> {
-		let message = get_expected_raw_message(who, identity, sidechain_nonce);
-		let sr25519_sig = pair.sign(&message);
+		let message_raw = get_expected_raw_message(primary, identity, sidechain_nonce);
+		
+		let sr25519_sig = pair.sign(&message_raw);
 		let signature = LitentryMultiSignature::Sr25519(sr25519_sig);
-		let message = ValidationString::try_from(message)?;
+		let message = ValidationString::try_from(message_raw.clone())?;
 
-		let web3_common_validation_data = Web3CommonValidationData { message, signature };
-		Ok(ValidationData::Web3(Web3ValidationData::Substrate(web3_common_validation_data)))
+		let web3_common_validation_data = Web3CommonValidationData { message: message.clone(), signature };
+		let web3_v_data = Web3ValidationData::Substrate(web3_common_validation_data);
+
+		verify_web3_identity(&primary, &message_raw, &web3_v_data).expect("VerifyWeb3SignatureFailed");
+
+		let vdata = ValidationData::Web3(web3_v_data);
+		Ok(vdata)
 	}
 
 	fn build_vdata_twitter(tweet_id: &ValidationString) -> Result<ValidationData, Vec<u8>> {
@@ -69,4 +75,25 @@ pub fn build_msg_web2(who: &Identity, identity: &Identity, sidechain_nonce: Inde
 	let message = get_expected_raw_message(who, identity, sidechain_nonce);
 	let msg = hex_encode(message.as_slice());
 	msg
+}
+
+use frame_support::ensure;
+pub type StfResult<T> = Result<T, StfError>;
+
+pub fn verify_web3_identity(
+	identity: &Identity,
+	raw_msg: &[u8],
+	data: &Web3ValidationData,
+) -> StfResult<()> {
+	ensure!(
+		raw_msg == data.message().as_slice(),
+		StfError::LinkIdentityFailed(ErrorDetail::UnexpectedMessage)
+	);
+
+	ensure!(
+		data.signature().verify(raw_msg, identity),
+		StfError::LinkIdentityFailed(ErrorDetail::VerifyWeb3SignatureFailed)
+	);
+
+	Ok(())
 }

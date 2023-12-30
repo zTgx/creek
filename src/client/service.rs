@@ -1,9 +1,9 @@
 use crate::{
 	core::{getter::Getter, trusted_call::TrustedCallSigned},
-	primitives::{types::TrustedOperation, Id, RpcRequest, RsaRequest, ShardIdentifier},
+	primitives::{types::TrustedOperation, RsaRequest, ShardIdentifier},
 	utils::{
 		crypto::encrypt_with_tee_shielding_pubkey,
-		hex::{json_resp, JsonResponse, ToHexPrefixed},
+		hex::{json_resp, JsonResponse, ToHexPrefixed, json_req, FromHexPrefixed},
 	},
 	CResult,
 };
@@ -132,7 +132,6 @@ impl SidechainHandleMessage for GetSidechainRequestHandler {
 			.map(|v: serde_json::Value| Some(v.to_string()))
 			.unwrap()
 			.unwrap();
-		println!("Got get_request_msg {:?}", result_str);
 
 		result.send(Message::from(result_str)).unwrap();
 
@@ -256,8 +255,16 @@ impl DiRequest for SidechainRpcClient {
 		shielding_pubkey: RsaPublicKey,
 		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
 	) -> CResult<JsonResponse> {
-		let jsonreq = get_json_request(shard, operation_call, shielding_pubkey);
+		// let jsonreq = get_json_request(shard, operation_call, shielding_pubkey);
+
+		let param = get_json_request(shard, operation_call, shielding_pubkey);
+		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
+		println!("jsonreq: {}", jsonreq);
+
 		let jsonresp = self.request(serde_json::to_value(jsonreq).unwrap()).unwrap();
+		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
+		let erros = String::decode(&mut rpc_return_value.value.as_slice()).unwrap();
+		println!("erros: {}", erros);
 
 		Ok(jsonresp)
 	}
@@ -273,10 +280,11 @@ pub(crate) fn get_json_request(
 
 	// compose jsonrpc call
 	let request = RsaRequest::new(shard, operation_call_encrypted);
-	RpcRequest::compose_jsonrpc_call(
-		Id::Text("1".to_string()),
-		"author_submitAndWatchRsaRequest".to_string(),
-		vec![request.to_hex()],
-	)
-	.unwrap()
+	request.to_hex()
+	// RpcRequest::compose_jsonrpc_call(
+	// 	Id::Text("1".to_string()),
+	// 	"author_submitAndWatchRsaRequest".to_string(),
+	// 	vec![request.to_hex()],
+	// )
+	// .unwrap()
 }

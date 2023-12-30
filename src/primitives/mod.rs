@@ -26,6 +26,10 @@ pub mod macros;
 pub mod network;
 pub mod types;
 pub mod vc;
+pub mod stf_error;
+
+
+
 
 use rsa::RsaPublicKey;
 use scale_info::TypeInfo;

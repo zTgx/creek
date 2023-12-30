@@ -2,7 +2,7 @@ use crate::{
 	core::trusted_call::TrustedCall,
 	primitives::{
 		address::Address32,
-		identity::{Identity, ValidationData},
+		identity::{Identity, ValidationData, IdentityString, ValidationString},
 		network::Web3Network,
 		types::KeyPair,
 	},
@@ -59,6 +59,63 @@ impl WorkerTxApi for Creek {
 		let operation_call = call_signed.into_trusted_operation(true);
 
 		let tee_shielding_key = self.author_get_shielding_key().unwrap();
+		println!(">>> 准备发起请求");
+
+		let jsonresp = self.client().di_request(shard, tee_shielding_key, &operation_call).unwrap();
+		println!("[LINK IDENTITY]: {:?}", jsonresp);
+	}
+
+	fn link_web2(&self) {
+		let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+		let alice_identity_a = Address32::from(alice.public());
+		let alice_identity = Identity::Substrate(alice_identity_a);
+
+
+		let twitter_identity =
+			Identity::Twitter(IdentityString::new("litentry".as_bytes().to_vec()));
+		// let payload = hex::encode(get_expected_raw_message(
+		// 	&alice.public().into(),
+		// 	&twitter_identity,
+		// 	// the tweet_id is used as sidechain_nonce
+		// 	// it's a bit tricky to get the nonce from the getter: you need to know
+		// 	// the enclave signer account when launching the mock-server thread
+		// 	// the enclaveApi doesn't provide such interface
+		// 	13,
+		// ));
+
+		let message = ValidationString::try_from("13".as_bytes().to_vec()).unwrap();
+		let vdata = ValidationData::build_vdata_twitter(&message).unwrap();
+
+		// let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
+		// let bob_identity = Address32::from(bob.public());
+		// let bob_identity = Identity::Substrate(bob_identity);
+		let networks = vec![Web3Network::Litentry];
+
+		let shard = self.author_get_shard().unwrap();
+		let mrenclave = self.state_get_mrenclave().unwrap();
+		let sidechain_nonce = self
+			.author_get_next_nonce(
+				mrenclave_to_bs58(&shard.to_fixed_bytes()),
+				alice_identity_a.to_hex(),
+			)
+			.unwrap();
+
+		let call = TrustedCall::link_identity(
+			alice_identity.clone(),
+			alice_identity,
+			twitter_identity,
+			vdata,
+			networks,
+			None,
+			Default::default(),
+		);
+		let call_signed =
+			call.sign(&KeyPair::Sr25519(Box::new(alice)), sidechain_nonce, &mrenclave, &shard);
+		let operation_call = call_signed.into_trusted_operation(true);
+
+		let tee_shielding_key = self.author_get_shielding_key().unwrap();
+		println!(">>> 准备发起请求");
+
 		let jsonresp = self.client().di_request(shard, tee_shielding_key, &operation_call).unwrap();
 		println!("[LINK IDENTITY]: {:?}", jsonresp);
 	}

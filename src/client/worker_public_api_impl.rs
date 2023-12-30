@@ -110,6 +110,7 @@ impl WorkerPublicApis for Creek {
 	fn author_get_shard(&self) -> CResult<ShardIdentifier> {
 		const METHOD_NAME: &str = "author_getShard";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
+		println!(">>> jsonreq: {:?}", jsonreq);
 		let resp = self.client().request(jsonreq).unwrap();
 		let rpc_return_value = RpcReturnValue::from_hex(&resp.result).unwrap();
 		let shard = H256::decode(&mut rpc_return_value.value.as_slice()).unwrap();
@@ -123,6 +124,7 @@ impl WorkerPublicApis for Creek {
 		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
 
 		let rsa_pubkey_json = String::decode(&mut rpc_return_value.value.as_slice()).unwrap();
+		println!("[RSA PUBKEY]: {}", rsa_pubkey_json);
 		let key =
 			RsaPublicKey::new_with_rsa3072_pubkey(rsa_pubkey_json.as_bytes().to_vec()).unwrap();
 
@@ -162,6 +164,7 @@ impl WorkerPublicApis for Creek {
 		let jsonresp = self.client().request(jsonreq).unwrap();
 		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
 		let next_nonce = Index::decode(&mut rpc_return_value.value.as_slice()).unwrap();
+		println!("[SIDECHAIN NONCE]: {}", next_nonce);
 		Ok(next_nonce)
 	}
 }

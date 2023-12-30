@@ -76,4 +76,5 @@ pub trait WorkerPublicApis {
 
 pub trait WorkerTxApi {
 	fn link_identity(&self);
+	fn link_web2(&self);
 }

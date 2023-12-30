@@ -62,6 +62,13 @@ pallet-evm = { git = "https://github.com/paritytech/frontier", branch = "polkado
 hex-literal = "0.4"
 libsecp256k1 = "0.7.0"
 log = "0.4"
+frame-support = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
+derive_more = { version = "0.99.5" }
+
+
+
+
+
 
 # [build-dependencies]
 [target.'cfg(unix)'.build-dependencies]

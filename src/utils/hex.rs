@@ -123,6 +123,7 @@ pub fn json_req<S: Serialize>(method: &str, params: S, id: u32) -> Value {
 }
 
 pub fn json_resp(resp: String) -> JsonResponse {
+	println!(">>resp: {}", resp);
 	let resp: JsonResponse = serde_json::from_str(&resp).unwrap();
 	resp
 }
