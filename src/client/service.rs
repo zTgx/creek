@@ -3,7 +3,7 @@ use crate::{
 	primitives::{types::TrustedOperation, RsaRequest, ShardIdentifier},
 	utils::{
 		crypto::encrypt_with_tee_shielding_pubkey,
-		hex::{json_resp, JsonResponse, ToHexPrefixed, json_req},
+		hex::{json_req, json_resp, JsonResponse, ToHexPrefixed},
 	},
 	CResult,
 };

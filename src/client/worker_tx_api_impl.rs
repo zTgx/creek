@@ -2,11 +2,16 @@ use crate::{
 	core::trusted_call::TrustedCall,
 	primitives::{
 		address::Address32,
-		identity::{Identity, ValidationData, IdentityString, ValidationString},
+		crypto::RpcReturnValue,
+		identity::{Identity, IdentityString, ValidationData, ValidationString},
 		network::Web3Network,
-		types::KeyPair, crypto::RpcReturnValue,
+		types::KeyPair,
 	},
-	utils::{enclave::mrenclave_to_bs58, hex::{ToHexPrefixed, FromHexPrefixed}, identity::ValidationDataBuilder},
+	utils::{
+		enclave::mrenclave_to_bs58,
+		hex::{FromHexPrefixed, ToHexPrefixed},
+		identity::ValidationDataBuilder,
+	},
 	Creek, WorkerPublicApis, WorkerTxApi,
 };
 use sp_core::{sr25519, Pair};
@@ -47,7 +52,7 @@ impl WorkerTxApi for Creek {
 
 		let call = TrustedCall::link_identity(
 			alice_identity.clone(),
-			alice_identity.clone(),
+			alice_identity,
 			bob_identity,
 			vdata,
 			networks,
@@ -68,7 +73,6 @@ impl WorkerTxApi for Creek {
 		let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
 		let alice_identity_a = Address32::from(alice.public());
 		let alice_identity = Identity::Substrate(alice_identity_a);
-
 
 		let twitter_identity =
 			Identity::Twitter(IdentityString::new("litentry".as_bytes().to_vec()));

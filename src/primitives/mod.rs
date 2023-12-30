@@ -24,12 +24,9 @@ pub mod ethereum;
 pub mod identity;
 pub mod macros;
 pub mod network;
+pub mod stf_error;
 pub mod types;
 pub mod vc;
-pub mod stf_error;
-
-
-
 
 use rsa::RsaPublicKey;
 use scale_info::TypeInfo;

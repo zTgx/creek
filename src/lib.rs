@@ -1,8 +1,8 @@
 #![recursion_limit = "256"]
 #![feature(string_remove_matches)]
+#![allow(clippy::large_enum_variant)] //StfError: The `Err`-variant returned from this function is very large
+#![allow(clippy::result_large_err)]
 
-// #[cfg(target_arch = "x86_64")]
-// pub mod ra;
 pub mod client;
 pub mod core;
 pub mod primitives;
@@ -30,13 +30,6 @@ impl Creek {
 	/// Get the rpc client.
 	pub fn client(&self) -> &SidechainRpcClient {
 		&self.client
-	}
-}
-
-pub trait WorkerHeartBeat {
-	fn tick(&self) {
-		// if cuurnt list is not match rpc_methods perfactly.
-		// warning: we should update client code align with worker server.
 	}
 }
 

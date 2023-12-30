@@ -4,11 +4,13 @@ use sp_core::{blake2_256, sr25519::Pair as SubstratePair, Pair};
 use crate::{
 	core::trusted_call::LitentryMultiSignature,
 	primitives::{
+		error::ErrorDetail,
 		identity::{
 			Identity, TwitterValidationData, ValidationData, ValidationString, Web2ValidationData,
 			Web3CommonValidationData, Web3ValidationData,
 		},
-		Index, stf_error::StfError, error::ErrorDetail,
+		stf_error::StfError,
+		Index,
 	},
 };
 
@@ -33,15 +35,16 @@ impl ValidationDataBuilder for ValidationData {
 		sidechain_nonce: Index,
 	) -> Result<ValidationData, Vec<u8>> {
 		let message_raw = get_expected_raw_message(primary, identity, sidechain_nonce);
-		
+
 		let sr25519_sig = pair.sign(&message_raw);
 		let signature = LitentryMultiSignature::Sr25519(sr25519_sig);
 		let message = ValidationString::try_from(message_raw.clone())?;
 
-		let web3_common_validation_data = Web3CommonValidationData { message: message.clone(), signature };
+		let web3_common_validation_data = Web3CommonValidationData { message, signature };
 		let web3_v_data = Web3ValidationData::Substrate(web3_common_validation_data);
 
-		verify_web3_identity(&identity, &message_raw, &web3_v_data).expect("VerifyWeb3SignatureFailed");
+		verify_web3_identity(identity, &message_raw, &web3_v_data)
+			.expect("VerifyWeb3SignatureFailed");
 
 		let vdata = ValidationData::Web3(web3_v_data);
 		Ok(vdata)

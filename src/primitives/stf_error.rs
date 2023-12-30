@@ -1,7 +1,7 @@
 use codec::{Decode, Encode};
 use derive_more::Display;
 
-use super::{AccountId, Index, error::ErrorDetail, assertion::Assertion};
+use super::{assertion::Assertion, error::ErrorDetail, AccountId, Index};
 pub type Nonce = Index;
 
 #[derive(Debug, Display, PartialEq, Eq, Encode, Decode, Clone)]
