@@ -2,15 +2,14 @@ use crate::{
 	core::trusted_call::TrustedCall,
 	primitives::{
 		address::Address32,
-		identity::{Identity, IdentityString, ValidationData, ValidationString},
+		identity::{Identity, IdentityString},
 		network::Web3Network,
-		types::KeyPair,
+		types::KeyPair, signature::validation_data::{ValidationData, ValidationString},
 	},
 	service::{json::RpcReturnValue, wsclient::DiRequest},
 	utils::{
 		hex::{FromHexPrefixed, ToHexPrefixed},
-		identity::ValidationDataBuilder,
-		public_api::mrenclave_to_bs58,
+		public_api::mrenclave_to_bs58, identity::ValidationDataBuilder,
 	},
 	Creek, WorkerGetters, WorkerSTF,
 };

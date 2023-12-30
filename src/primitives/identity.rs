@@ -15,7 +15,6 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::{
-	core::trusted_call::LitentryMultiSignature,
 	if_production_or,
 	utils::hex::{decode_hex, hex_encode},
 };
@@ -23,7 +22,7 @@ use codec::{Decode, Encode, MaxEncodedLen};
 use pallet_evm::{AddressMapping, HashedAddressMapping as GenericHashedAddressMapping};
 use scale_info::{meta_type, Type, TypeDefSequence, TypeInfo};
 use serde::{Deserialize, Serialize};
-use sp_core::{blake2_256, ecdsa, ed25519, sr25519, H160};
+use sp_core::{blake2_256, ed25519, sr25519, H160};
 use sp_runtime::{traits::BlakeTwo256, AccountId32, BoundedVec};
 use std::fmt::{Debug, Formatter};
 use strum_macros::EnumIter;
@@ -33,64 +32,9 @@ pub type HashedAddressMapping = GenericHashedAddressMapping<BlakeTwo256>;
 use super::{
 	address::{Address20, Address32, Address33},
 	network::Web3Network,
-	signature::ethereum::EthereumSignature,
 	types::AccountId,
 	IdentityInnerString, MaxStringLength, MetadataOf, ParentchainBlockNumber,
 };
-
-#[derive(Encode, Decode, Copy, Clone, Debug, PartialEq, Eq, Hash, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub enum SubstrateNetwork {
-	Polkadot,
-	Kusama,
-	Litentry,
-	Litmus,
-	LitentryRococo,
-	Khala,
-	TestNet, // when we launch it with standalone (integritee-)node
-}
-
-impl SubstrateNetwork {
-	/// get the ss58 prefix, see https://github.com/paritytech/ss58-registry/blob/main/ss58-registry.json
-	pub fn ss58_prefix(&self) -> u16 {
-		match self {
-			Self::Polkadot => 0,
-			Self::Kusama => 2,
-			Self::Litentry => 31,
-			Self::Litmus => 131,
-			Self::LitentryRococo => 42,
-			Self::Khala => 30,
-			Self::TestNet => 13,
-		}
-	}
-
-	pub fn from_ss58_prefix(prefix: u16) -> Self {
-		match prefix {
-			0 => Self::Polkadot,
-			2 => Self::Kusama,
-			31 => Self::Litentry,
-			131 => Self::Litmus,
-			42 => Self::LitentryRococo,
-			30 => Self::Khala,
-			_ => Self::TestNet,
-		}
-	}
-}
-
-#[derive(Encode, Decode, Copy, Clone, Debug, PartialEq, Eq, Hash, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub enum EvmNetwork {
-	Ethereum,
-	BSC,
-}
-
-#[derive(Encode, Decode, Copy, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub enum Web2Network {
-	Twitter,
-	Discord,
-	Github,
-}
 
 /// Web2 and Web3 Identity based on handle/public key
 /// We only include the network categories (substrate/evm) without concrete types
@@ -322,91 +266,6 @@ impl Debug for IdentityString {
 			f.debug_struct("IdentityString").field("inner", &self.inner).finish()
 		)
 	}
-}
-
-pub type ValidationString = BoundedVec<u8, MaxStringLength>;
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub enum IdentityMultiSignature {
-	/// An Ed25519 signature.
-	Ed25519(ed25519::Signature),
-	/// An Sr25519 signature.
-	Sr25519(sr25519::Signature),
-	/// An ECDSA/SECP256k1 signature.
-	Ecdsa(ecdsa::Signature),
-	/// An ECDSA/keccak256 signature. An Ethereum signature. hash message with keccak256
-	Ethereum(EthereumSignature),
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub struct TwitterValidationData {
-	pub tweet_id: ValidationString,
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub struct DiscordValidationData {
-	pub channel_id: ValidationString,
-	pub message_id: ValidationString,
-	pub guild_id: ValidationString,
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub struct Web3CommonValidationData {
-	pub message: ValidationString, // or String if under std
-	pub signature: LitentryMultiSignature,
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-#[allow(non_camel_case_types)]
-pub enum Web2ValidationData {
-	#[codec(index = 0)]
-	Twitter(TwitterValidationData),
-	#[codec(index = 1)]
-	Discord(DiscordValidationData),
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-#[allow(non_camel_case_types)]
-pub enum Web3ValidationData {
-	#[codec(index = 0)]
-	Substrate(Web3CommonValidationData),
-	#[codec(index = 1)]
-	Evm(Web3CommonValidationData),
-	#[codec(index = 2)]
-	Bitcoin(Web3CommonValidationData),
-}
-
-impl Web3ValidationData {
-	pub fn message(&self) -> &ValidationString {
-		match self {
-			Self::Substrate(data) => &data.message,
-			Self::Evm(data) => &data.message,
-			Self::Bitcoin(data) => &data.message,
-		}
-	}
-
-	pub fn signature(&self) -> &LitentryMultiSignature {
-		match self {
-			Self::Substrate(data) => &data.signature,
-			Self::Evm(data) => &data.signature,
-			Self::Bitcoin(data) => &data.signature,
-		}
-	}
-}
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
-#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-pub enum ValidationData {
-	#[codec(index = 0)]
-	Web2(Web2ValidationData),
-	#[codec(index = 1)]
-	Web3(Web3ValidationData),
 }
 
 // The context associated with the (litentry-account, did) pair
