@@ -3,12 +3,10 @@ use crate::{
 		address::{Address20, Address32, Address33},
 		aes::RequestAesKey,
 		assertion::Assertion,
-		error::{IMPError, VCMPError},
 		ethereum::EthereumSignature,
 		identity::{Identity, ValidationData},
 		network::Web3Network,
-		types::{KeyPair, TrustedOperation},
-		AccountId, Balance, Index, ShardIdentifier,
+		types::{KeyPair, TrustedOperation, TrustedCallVerification}, Index, ShardIdentifier,
 	},
 	utils::hex::hex_encode,
 };
@@ -65,78 +63,17 @@ pub enum TrustedCall {
 	#[cfg(not(feature = "production"))]
 	#[codec(index = 5)]
 	remove_identity(Identity, Identity, Vec<Identity>),
-	// the following trusted calls should not be requested directly from external
-	// they are guarded by the signature check (either root or enclave_signer_account)
-	// starting from index 20 to leave some room for future "normal" trusted calls
-	#[codec(index = 20)]
-	link_identity_callback(
-		Identity,
-		Identity,
-		Identity,
-		Vec<Web3Network>,
-		Option<RequestAesKey>,
-		H256,
-	),
-	#[codec(index = 21)]
-	request_vc_callback(
-		Identity,
-		Identity,
-		Assertion,
-		H256,
-		H256,
-		Vec<u8>,
-		Option<RequestAesKey>,
-		H256,
-	),
-	#[codec(index = 22)]
-	handle_imp_error(Identity, Option<Identity>, IMPError, H256),
-	#[codec(index = 23)]
-	handle_vcmp_error(Identity, Option<Identity>, VCMPError, H256),
-	#[codec(index = 24)]
-	send_erroneous_parentchain_call(Identity),
-
-	// original integritee trusted calls, starting from index 50
-	#[codec(index = 50)]
-	noop(Identity),
-	#[codec(index = 51)]
-	balance_set_balance(Identity, AccountId, Balance, Balance),
-	#[codec(index = 52)]
-	balance_transfer(Identity, AccountId, Balance),
-	#[codec(index = 53)]
-	balance_unshield(Identity, AccountId, Balance, ShardIdentifier), /* (AccountIncognito,
-	                                                                  * BeneficiaryPublicAccount,
-	                                                                  * Amount, Shard) */
-	#[codec(index = 54)]
-	balance_shield(Identity, AccountId, Balance), // (Root, AccountIncognito, Amount)
 }
 
 impl TrustedCall {
 	pub fn sender_identity(&self) -> &Identity {
 		match self {
-			Self::noop(sender_identity) => sender_identity,
-			Self::balance_set_balance(sender_identity, ..) => sender_identity,
-			Self::balance_transfer(sender_identity, ..) => sender_identity,
-			Self::balance_unshield(sender_identity, ..) => sender_identity,
-			Self::balance_shield(sender_identity, ..) => sender_identity,
-			#[cfg(feature = "evm")]
-			Self::evm_withdraw(sender_identity, ..) => sender_identity,
-			#[cfg(feature = "evm")]
-			Self::evm_call(sender_identity, ..) => sender_identity,
-			#[cfg(feature = "evm")]
-			Self::evm_create(sender_identity, ..) => sender_identity,
-			#[cfg(feature = "evm")]
-			Self::evm_create2(sender_identity, ..) => sender_identity,
 			// litentry
 			Self::link_identity(sender_identity, ..) => sender_identity,
 			Self::deactivate_identity(sender_identity, ..) => sender_identity,
 			Self::activate_identity(sender_identity, ..) => sender_identity,
 			Self::request_vc(sender_identity, ..) => sender_identity,
 			Self::set_identity_networks(sender_identity, ..) => sender_identity,
-			Self::link_identity_callback(sender_identity, ..) => sender_identity,
-			Self::request_vc_callback(sender_identity, ..) => sender_identity,
-			Self::handle_imp_error(sender_identity, ..) => sender_identity,
-			Self::handle_vcmp_error(sender_identity, ..) => sender_identity,
-			Self::send_erroneous_parentchain_call(sender_identity) => sender_identity,
 			#[cfg(not(feature = "production"))]
 			Self::remove_identity(sender_identity, ..) => sender_identity,
 		}
@@ -155,6 +92,39 @@ impl TrustedCall {
 		payload.append(&mut shard.encode());
 
 		TrustedCallSigned { call: self.clone(), nonce, signature: pair.sign(payload.as_slice()) }
+	}
+
+	pub fn metric_name(&self) -> &'static str {
+		match self {
+			Self::link_identity(..) => "link_identity",
+			Self::request_vc(..) => "request_vc",
+			Self::deactivate_identity(..) => "deactivate_identity",
+			Self::activate_identity(..) => "activate_identity",
+			_ => "unsupported_trusted_call",
+		}
+	}
+}
+
+impl TrustedCallVerification for TrustedCallSigned {
+	fn sender_identity(&self) -> &Identity {
+		self.call.sender_identity()
+	}
+
+	fn nonce(&self) -> Index {
+		self.nonce
+	}
+
+	fn verify_signature(&self, mrenclave: &[u8; 32], shard: &ShardIdentifier) -> bool {
+		let mut payload = self.call.encode();
+		payload.append(&mut self.nonce.encode());
+		payload.append(&mut mrenclave.encode());
+		payload.append(&mut shard.encode());
+
+		self.signature.verify(payload.as_slice(), self.call.sender_identity())
+	}
+
+	fn metric_name(&self) -> &'static str {
+		self.call.metric_name()
 	}
 }
 
