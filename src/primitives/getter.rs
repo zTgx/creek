@@ -16,24 +16,14 @@
 */
 
 use codec::{Decode, Encode};
-use sp_runtime::{
-	transaction_validity::{TransactionValidityError, UnknownTransaction, ValidTransaction},
-	AccountId32,
-};
-
+use sp_runtime::AccountId32;
 use crate::{
 	if_production_or,
 	primitives::{
 		identity::Identity,
-		types::{KeyPair, PoolTransactionValidation},
+		keypair::KeyPair, signature::LitentryMultiSignature,
 	},
 };
-
-use super::trusted_call::LitentryMultiSignature;
-/// checks authorization of stf getters
-pub trait GetterAuthorization {
-	fn is_authorized(&self) -> bool;
-}
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
@@ -58,31 +48,6 @@ impl From<PublicGetter> for Getter {
 impl From<TrustedGetterSigned> for Getter {
 	fn from(item: TrustedGetterSigned) -> Self {
 		Getter::trusted(item)
-	}
-}
-
-impl GetterAuthorization for Getter {
-	fn is_authorized(&self) -> bool {
-		match self {
-			Self::trusted(ref getter) => getter.verify_signature(),
-			Self::public(_) => true,
-		}
-	}
-}
-
-impl PoolTransactionValidation for Getter {
-	fn validate(&self) -> Result<ValidTransaction, TransactionValidityError> {
-		match self {
-			Self::public(_) =>
-				Err(TransactionValidityError::Unknown(UnknownTransaction::CannotLookup)),
-			Self::trusted(trusted_getter_signed) => Ok(ValidTransaction {
-				priority: 1 << 20,
-				requires: vec![],
-				provides: vec![trusted_getter_signed.signature.encode()],
-				longevity: 64,
-				propagate: true,
-			}),
-		}
 	}
 }
 

@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::core::trusted_call::LitentryMultiSignature;
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use sp_runtime::{traits::ConstU32, BoundedVec};
+
+use super::LitentryMultiSignature;
 
 pub type MaxStringLength = ConstU32<64>;
 pub type ValidationString = BoundedVec<u8, MaxStringLength>;

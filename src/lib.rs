@@ -3,7 +3,6 @@
 #![allow(clippy::large_enum_variant)] //StfError: The `Err`-variant returned from this function is very large
 #![allow(clippy::result_large_err)]
 
-pub mod core;
 pub mod primitives;
 pub mod service;
 pub mod utils;

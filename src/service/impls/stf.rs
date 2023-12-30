@@ -1,10 +1,10 @@
 use crate::{
-	core::trusted_call::TrustedCall,
 	primitives::{
 		address::Address32,
 		identity::{Identity, IdentityString},
 		network::Web3Network,
-		types::KeyPair, signature::validation_data::{ValidationData, ValidationString},
+		keypair::KeyPair, signature::validation_data::{ValidationData, ValidationString},
+		trusted_call::TrustedCall
 	},
 	service::{json::RpcReturnValue, wsclient::DiRequest},
 	utils::{
@@ -73,19 +73,6 @@ impl WorkerSTF for Creek {
 
 		let twitter_identity =
 			Identity::Twitter(IdentityString::new("mock_user".as_bytes().to_vec()));
-		// let payload = hex::encode(get_expected_raw_message(
-		// 	&alice.public().into(),
-		// 	&twitter_identity,
-		// 	// the tweet_id is used as sidechain_nonce
-		// 	// it's a bit tricky to get the nonce from the getter: you need to know
-		// 	// the enclave signer account when launching the mock-server thread
-		// 	// the enclaveApi doesn't provide such interface
-		// 	13,
-		// ));
-
-		// let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
-		// let bob_identity = Address32::from(bob.public());
-		// let bob_identity = Identity::Substrate(bob_identity);
 		let networks = vec![];
 
 		let shard = self.author_get_shard().unwrap();

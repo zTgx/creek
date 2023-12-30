@@ -1,11 +1,9 @@
 use super::hex::hex_encode;
-use crate::{
-	primitives::{
+use crate::primitives::{
 		error::ErrorDetail,
 		stf_error::StfError,
-		Index, identity::Identity, signature::validation_data::{Web3ValidationData, ValidationData, Web3CommonValidationData, TwitterValidationData, Web2ValidationData, ValidationString},
-	}, core::trusted_call::LitentryMultiSignature}
-;
+		Index, identity::Identity, signature::{validation_data::{Web3ValidationData, ValidationData, Web3CommonValidationData, TwitterValidationData, Web2ValidationData, ValidationString}, LitentryMultiSignature},
+	};
 use codec::Encode;
 use frame_support::ensure;
 use sp_core::{blake2_256, sr25519::Pair as SubstratePair, Pair};

@@ -24,8 +24,11 @@ pub mod identity;
 pub mod network;
 pub mod signature;
 pub mod stf_error;
-pub mod types;
+pub mod keypair;
 pub mod vc;
+pub mod top;
+pub mod getter;
+pub mod trusted_call;
 
 use rsa::RsaPublicKey;
 use scale_info::TypeInfo;
