@@ -1,5 +1,8 @@
 use crate::{
-	primitives::{RsaRequest, ShardIdentifier, top::TrustedOperation, getter::Getter, trusted_call::TrustedCallSigned},
+	primitives::{
+		getter::Getter, top::TrustedOperation, trusted_call::TrustedCallSigned, RsaRequest,
+		ShardIdentifier,
+	},
 	service::json::{json_req, json_resp, JsonResponse},
 	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	CResult,

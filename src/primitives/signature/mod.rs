@@ -2,17 +2,20 @@ pub mod bitcoin_signature;
 pub mod ethereum_signature;
 pub mod validation_data;
 
-use codec::MaxEncodedLen;
-use scale_info::TypeInfo;
-use sp_core::{blake2_256, ecdsa, ed25519, keccak_256, sr25519, ByteArray, Decode, Encode};
-use sp_runtime::traits::Verify;
-use crate::{primitives::address::{Address20, Address32, Address33}, utils::hex::hex_encode};
-use self::{ethereum_signature::EthereumSignature, bitcoin_signature::BitcoinSignature};
+use self::{bitcoin_signature::BitcoinSignature, ethereum_signature::EthereumSignature};
+use super::identity::Identity;
+use crate::{
+	primitives::address::{Address20, Address32, Address33},
+	utils::hex::hex_encode,
+};
 use bitcoin::{
 	secp256k1,
 	sign_message::{signed_msg_hash, MessageSignature},
 };
-use super::identity::Identity;
+use codec::MaxEncodedLen;
+use scale_info::TypeInfo;
+use sp_core::{blake2_256, ecdsa, ed25519, keccak_256, sr25519, ByteArray, Decode, Encode};
+use sp_runtime::traits::Verify;
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
@@ -55,7 +58,6 @@ impl From<ecdsa::Signature> for LitentryMultiSignature {
 		Self::Ecdsa(x)
 	}
 }
-
 
 impl LitentryMultiSignature {
 	pub fn verify(&self, msg: &[u8], signer: &Identity) -> bool {
@@ -153,7 +155,6 @@ fn substrate_wrap(msg: &[u8]) -> Vec<u8> {
 fn evm_eip191_wrap(msg: &[u8]) -> Vec<u8> {
 	["\x19Ethereum Signed Message:\n".as_bytes(), msg.len().to_string().as_bytes(), msg].concat()
 }
-
 
 pub fn secp256k1_ecdsa_recover(
 	sig: &[u8; 65],

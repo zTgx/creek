@@ -9,7 +9,8 @@ pub mod utils;
 
 use frame_metadata::RuntimeMetadataPrefixed;
 use primitives::{
-	AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
+	identity::Identity, AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
+	MrEnclave, ShardIdentifier,
 };
 use service::wsclient::SidechainRpcClient;
 
@@ -33,7 +34,7 @@ impl Creek {
 }
 
 /// Worker Getter Function
-/// Used to obtain a collection of information interfaces on sidechain, 
+/// Used to obtain a collection of information interfaces on sidechain,
 /// including shard, nonce, shieldingkey, etc., for WorkerTx transaction interfaces
 pub trait WorkerGetters {
 	fn rpc_methods(&self) -> CResult<Vec<String>>;
@@ -70,8 +71,29 @@ pub trait WorkerGetters {
 }
 
 /// Worker State Transfer Function
-/// A set of transaction interfaces that can change the sidechain state, including link identity, request VC, etc
+/// A set of transaction interfaces that can change the sidechain state, including link identity,
+/// request VC, etc
 pub trait WorkerSTF {
 	fn link_identity(&self);
+
+	/// link identity steps:
+	/// 1. set_primary_identity(accountid);
+	/// 2. set_linked_identity(accountid);
+	/// 3. link_identity()
 	fn link_web2(&self);
+}
+
+pub trait LinkIdentityCallback {
+	fn set_primary_identity() -> Identity;
+	fn set_linked_identity() -> Identity;
+}
+
+impl LinkIdentityCallback for dyn WorkerSTF {
+	fn set_primary_identity() -> Identity {
+		todo!()
+	}
+
+	fn set_linked_identity() -> Identity {
+		todo!()
+	}
 }

@@ -8,6 +8,6 @@ pub enum CError {
 	HexError(Error),
 	DecodeJsonError(serde_json::Error),
 	RSAError(rsa::errors::Error),
-	
+
 	Other(String),
 }

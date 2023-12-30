@@ -1,14 +1,16 @@
-use codec::{Encode, Decode};
-use sp_core::H256;
 use crate::primitives::{
-		aes::RequestAesKey,
-		assertion::Assertion,
-		identity::Identity,
-		network::Web3Network,
-		signature::{validation_data::ValidationData, LitentryMultiSignature},
-		keypair::KeyPair,
-		Index, ShardIdentifier, top::TrustedOperation, getter::Getter,
-	};
+	aes::RequestAesKey,
+	assertion::Assertion,
+	getter::Getter,
+	identity::Identity,
+	keypair::KeyPair,
+	network::Web3Network,
+	signature::{validation_data::ValidationData, LitentryMultiSignature},
+	top::TrustedOperation,
+	Index, ShardIdentifier,
+};
+use codec::{Decode, Encode};
+use sp_core::H256;
 
 /// IMPORT: The order of this enum field.
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]

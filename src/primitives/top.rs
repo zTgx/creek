@@ -1,4 +1,4 @@
-use codec::{Encode, Decode};
+use codec::{Decode, Encode};
 use std::fmt::Debug;
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]

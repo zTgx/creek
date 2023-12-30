@@ -31,8 +31,8 @@ pub type HashedAddressMapping = GenericHashedAddressMapping<BlakeTwo256>;
 
 use super::{
 	address::{Address20, Address32, Address33},
-	network::Web3Network,
 	keypair::AccountId,
+	network::Web3Network,
 	IdentityInnerString, MaxStringLength, MetadataOf, ParentchainBlockNumber,
 };
 

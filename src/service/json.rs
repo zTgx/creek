@@ -1,8 +1,8 @@
+use crate::primitives::{cerror::CError, BlockHash, CResult};
 use codec::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sp_core::H256;
-use crate::primitives::{BlockHash, cerror::CError, CResult};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JsonResponse {

@@ -14,13 +14,10 @@
 	limitations under the License.
 
 */
+use super::signature::LitentryMultiSignature;
 use codec::Compact;
 use sp_core::{crypto::AccountId32, ed25519, sr25519, Pair, H256};
-use sp_runtime::{
-	traits::Verify,
-	MultiSignature,
-};
-use super::signature::LitentryMultiSignature;
+use sp_runtime::{traits::Verify, MultiSignature};
 pub type Signature = MultiSignature;
 pub type AuthorityId = <Signature as Verify>::Signer;
 pub type AccountId = AccountId32;

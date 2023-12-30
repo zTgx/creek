@@ -1,7 +1,7 @@
 use crate::{
 	primitives::{
-		crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
-		MrEnclave, ShardIdentifier, cerror::CError,
+		cerror::CError, crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey,
+		EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 	},
 	service::{json::json_req, wsclient::SidechainRpcClientTrait},
 	utils::{
@@ -114,7 +114,8 @@ impl WorkerGetters for Creek {
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let rsa_pubkey_json = decode_string(&rpc_return_value)?;
 
-		EnclaveShieldingPubKey::new_with_rsa3072_pubkey(rsa_pubkey_json.as_bytes().to_vec()).map_err(CError::RSAError)
+		EnclaveShieldingPubKey::new_with_rsa3072_pubkey(rsa_pubkey_json.as_bytes().to_vec())
+			.map_err(CError::RSAError)
 	}
 
 	fn author_get_shard_vault(&self) -> CResult<AccountId> {

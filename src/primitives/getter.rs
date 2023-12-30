@@ -15,15 +15,12 @@
 
 */
 
-use codec::{Decode, Encode};
-use sp_runtime::AccountId32;
 use crate::{
 	if_production_or,
-	primitives::{
-		identity::Identity,
-		keypair::KeyPair, signature::LitentryMultiSignature,
-	},
+	primitives::{identity::Identity, keypair::KeyPair, signature::LitentryMultiSignature},
 };
+use codec::{Decode, Encode};
+use sp_runtime::AccountId32;
 
 #[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 #[allow(non_camel_case_types)]

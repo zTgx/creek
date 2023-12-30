@@ -20,15 +20,15 @@ pub mod assertion;
 pub mod cerror;
 pub mod crypto;
 pub mod error;
+pub mod getter;
 pub mod identity;
+pub mod keypair;
 pub mod network;
 pub mod signature;
 pub mod stf_error;
-pub mod keypair;
-pub mod vc;
 pub mod top;
-pub mod getter;
 pub mod trusted_call;
+pub mod vc;
 
 use rsa::RsaPublicKey;
 use scale_info::TypeInfo;
