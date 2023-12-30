@@ -1,21 +1,19 @@
-// use vc_sdk::utils::di::{decode_nonce, decode_user_shielding_key};
+use creek::{
+	primitives::crypto::RpcReturnValue,
+	utils::{hex::FromHexPrefixed, worker_public_api_utils::decode_nonce},
+};
 
-// #[test]
-// fn tc_decode_nonce_works() {
-// 	// RpcReturnValue.value
-// 	// 0x011002000000
-// 	let encoded_nonce = "011002000000";
-// 	let nonce = decode_nonce(encoded_nonce).unwrap();
-// 	assert_eq!(nonce, 2);
-// }
+#[test]
+fn tc_decode_nonce_works() {
+	let encoded_nonce = "0x100e0000000000";
+	let rpc_return_value = RpcReturnValue::from_hex(encoded_nonce).unwrap();
+	let nonce = decode_nonce(&rpc_return_value).unwrap();
+	assert_eq!(nonce, 14);
+}
 
-// #[test]
-// fn tc_decode_user_shielding_key_works() {
-// 	let encoded_user_shielding_key =
-// 		"01848022fc82db5b606998ad45099b7978b5b4f9dd4ea6017e57370ac56141caaabd12";
-// 	let user_shielding_key = decode_user_shielding_key(encoded_user_shielding_key).unwrap();
-// 	assert_eq!(
-// 		user_shielding_key,
-// 		"22fc82db5b606998ad45099b7978b5b4f9dd4ea6017e57370ac56141caaabd12".to_string()
-// 	);
-// }
+#[test]
+fn decode_string_works() {
+	let encoded = "0x00010100b24f0fd92e2763f0d03a5bc664a333a98673eee678350bf0d677213f7caaccb7";
+	let rpc_return_value = RpcReturnValue::from_hex(&encoded).unwrap();
+	println!("decoded rpc_return_value: {:#?}", rpc_return_value);
+}

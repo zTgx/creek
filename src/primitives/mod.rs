@@ -17,6 +17,7 @@
 pub mod address;
 pub mod aes;
 pub mod assertion;
+pub mod cerror;
 pub mod crypto;
 pub mod enclave;
 pub mod error;
@@ -41,7 +42,7 @@ pub use sp_core::{
 	Pair,
 };
 
-use self::error::CError;
+use self::cerror::CError;
 pub type CResult<T> = std::result::Result<T, CError>;
 
 pub type VCIndex = H256;

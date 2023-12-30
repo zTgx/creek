@@ -75,7 +75,7 @@ impl WorkerTxApi for Creek {
 		let alice_identity = Identity::Substrate(alice_identity_a);
 
 		let twitter_identity =
-			Identity::Twitter(IdentityString::new("litentry".as_bytes().to_vec()));
+			Identity::Twitter(IdentityString::new("mock_user".as_bytes().to_vec()));
 		// let payload = hex::encode(get_expected_raw_message(
 		// 	&alice.public().into(),
 		// 	&twitter_identity,
@@ -86,13 +86,10 @@ impl WorkerTxApi for Creek {
 		// 	13,
 		// ));
 
-		let message = ValidationString::try_from("13".as_bytes().to_vec()).unwrap();
-		let vdata = ValidationData::build_vdata_twitter(&message).unwrap();
-
 		// let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
 		// let bob_identity = Address32::from(bob.public());
 		// let bob_identity = Identity::Substrate(bob_identity);
-		let networks = vec![Web3Network::Litentry];
+		let networks = vec![];
 
 		let shard = self.author_get_shard().unwrap();
 		let mrenclave = self.state_get_mrenclave().unwrap();
@@ -102,6 +99,10 @@ impl WorkerTxApi for Creek {
 				alice_identity_a.to_hex(),
 			)
 			.unwrap();
+
+		let message =
+			ValidationString::try_from(sidechain_nonce.to_string().as_bytes().to_vec()).unwrap();
+		let vdata = ValidationData::build_vdata_twitter(&message).unwrap();
 
 		let call = TrustedCall::link_identity(
 			alice_identity.clone(),
@@ -117,9 +118,8 @@ impl WorkerTxApi for Creek {
 		let operation_call = call_signed.into_trusted_operation(true);
 
 		let tee_shielding_key = self.author_get_shielding_key().unwrap();
-		println!(">>> 准备发起请求");
-
 		let jsonresp = self.client().di_request(shard, tee_shielding_key, &operation_call).unwrap();
-		println!("[LINK IDENTITY]: {:?}", jsonresp);
+		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
+		println!("[LINK IDENTITY]: {:#?}", rpc_return_value);
 	}
 }

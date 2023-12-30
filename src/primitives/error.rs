@@ -1,8 +1,3 @@
-#[derive(Debug)]
-pub enum CError {
-	APIError,
-}
-
 // Copyright 2020-2023 Trust Computing GmbH.
 // This file is part of Litentry.
 //

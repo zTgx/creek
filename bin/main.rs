@@ -1,8 +1,7 @@
-use creek::{Creek, WorkerPublicApis, WorkerTxApi};
+use creek::{Creek, WorkerTxApi};
 
 fn main() {
 	let creek = Creek::new();
-	let _ = creek.author_get_enclave_signer_account();
-
-	creek.link_identity();
+	// creek.link_identity();
+	creek.link_web2();
 }
