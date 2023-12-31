@@ -1,7 +1,5 @@
 use crate::{
-	primitives::{trusted_call::TrustedCallSigned, RsaRequest,
-		ShardIdentifier,
-	},
+	primitives::{trusted_call::TrustedCallSigned, RsaRequest, ShardIdentifier},
 	service::json::{json_req, json_resp, JsonResponse},
 	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	CResult,
@@ -186,8 +184,10 @@ pub(crate) fn get_json_request(
 	trusted_call_signed: TrustedCallSigned,
 	shielding_pubkey: RsaPublicKey,
 ) -> String {
-	let operation_call_encrypted =
-		encrypt_with_tee_shielding_pubkey(&shielding_pubkey, &trusted_call_signed.into_trusted_operation(true).encode());
+	let operation_call_encrypted = encrypt_with_tee_shielding_pubkey(
+		&shielding_pubkey,
+		&trusted_call_signed.into_trusted_operation(true).encode(),
+	);
 
 	let request = RsaRequest::new(shard, operation_call_encrypted);
 	request.to_hex()

@@ -9,11 +9,12 @@ pub mod utils;
 
 use frame_metadata::RuntimeMetadataPrefixed;
 use primitives::{
-	identity::Identity, AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
-		keypair::KeyPair,
-		MrEnclave, ShardIdentifier, network::Web3Network, 
+	identity::Identity, keypair::KeyPair, network::Web3Network,
+	signature::validation_data::ValidationData, AccountId, CResult, Ed25519Pubkey,
+	EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 };
 use service::wsclient::SidechainRpcClient;
+use utils::{hex::ToHexPrefixed, public_api::mrenclave_to_bs58};
 
 #[derive(Clone)]
 pub struct Creek {
@@ -32,6 +33,40 @@ impl Creek {
 	pub fn client(&self) -> &SidechainRpcClient {
 		&self.client
 	}
+
+	pub fn get_sidechain_nonce(&self) -> CResult<Index> {
+		let shard = self.author_get_shard()?;
+		let signer_acccount = self.signer.account_id();
+
+		self.author_get_next_nonce(
+			mrenclave_to_bs58(&shard.to_fixed_bytes()),
+			signer_acccount.to_hex(),
+		)
+	}
+}
+
+/// Before link identity:
+/// For Web3 Identity:
+/// 1. Using the linked keypair to sign a validation data to aprove that this linked account is
+/// owned by you. 2. Then call link_identity from `WorkerSTF` trait to enact link operation.
+pub trait ValidationDataBuilder {
+	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData>;
+	fn web3_vdata(&self, keypair: &KeyPair) -> CResult<ValidationData>;
+}
+
+/// Worker State Transfer Function
+/// A set of transaction interfaces that can change the sidechain state, including link identity,
+/// request VC, etc
+pub trait WorkerSTF {
+	/// link identity steps:
+	/// * link_identity: The `Identity` you want to be linked.
+	/// * networks: The `Identity` supported network. (For Web2 Identity, networks MUST BE ved![])
+	fn link_identity(
+		&self,
+		link_identity: Identity,
+		networks: Vec<Web3Network>,
+		vdata: ValidationData,
+	) -> CResult<()>;
 }
 
 /// Worker Getter Function
@@ -69,14 +104,4 @@ pub trait WorkerGetters {
 	// fn attesteer_forward_dcap_quote(&self);
 
 	// fn chain_subscribe_all_heads(&self);
-}
-
-/// Worker State Transfer Function
-/// A set of transaction interfaces that can change the sidechain state, including link identity,
-/// request VC, etc
-pub trait WorkerSTF {
-	/// link identity steps:
-	/// * link_identity: The `Identity` you want to be linked.
-	/// * networks: The `Identity` supported network. (For Web2 Identity, networks MUST BE ved![])
-	fn link_identity(&self, link_identity: Identity, networks: Vec<Web3Network>) -> CResult<()>;
 }
