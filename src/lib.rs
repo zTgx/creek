@@ -18,7 +18,7 @@ use utils::{hex::ToHexPrefixed, public_api::mrenclave_to_bs58};
 
 #[derive(Clone)]
 pub struct Creek {
-	client: SidechainRpcClient,
+	pub client: SidechainRpcClient,
 	pub signer: KeyPair,
 }
 
@@ -28,10 +28,6 @@ impl Creek {
 		let client = SidechainRpcClient::new(url);
 
 		Self { client, signer }
-	}
-
-	pub fn client(&self) -> &SidechainRpcClient {
-		&self.client
 	}
 
 	pub fn get_sidechain_nonce(&self) -> CResult<Index> {

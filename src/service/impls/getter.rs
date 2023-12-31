@@ -19,7 +19,7 @@ use frame_metadata::RuntimeMetadataPrefixed;
 impl WorkerGetters for Creek {
 	fn rpc_methods(&self) -> CResult<Vec<String>> {
 		let jsonreq = json_req("rpc_methods", [0; 0], 1);
-		let resp = self.client().request(jsonreq)?;
+		let resp = self.client.request(jsonreq)?;
 		let methods = decode_rpc_methods(&resp);
 		println!("[RPC-METHODS]: {:#?}", methods);
 		Ok(methods)
@@ -28,25 +28,25 @@ impl WorkerGetters for Creek {
 	/// { id: "1", jsonrpc: "2.0", result: "hello, world" }
 	fn system_version(&self) -> CResult<String> {
 		let jsonreq = json_req("system_version", [0_u8; 0], 1);
-		let resp = self.client().request(jsonreq)?;
+		let resp = self.client.request(jsonreq)?;
 		Ok(resp.result)
 	}
 
 	fn system_name(&self) -> CResult<String> {
 		let jsonreq = json_req("system_name", [0_u8; 0], 1);
-		let resp = self.client().request(jsonreq)?;
+		let resp = self.client.request(jsonreq)?;
 		Ok(resp.result)
 	}
 
 	fn system_health(&self) -> CResult<String> {
 		let jsonreq = json_req("system_health", [0_u8; 0], 1);
-		let resp = self.client().request(jsonreq)?;
+		let resp = self.client.request(jsonreq)?;
 		Ok(resp.result)
 	}
 
 	fn state_get_mrenclave(&self) -> CResult<MrEnclave> {
 		let jsonreq = json_req("state_getMrenclave", [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let mrenclave = decode_mr_enclave(&rpc_return_value)?;
 		println!("[MRENCLAVE in hex]: {:?}", hex::encode(mrenclave));
@@ -55,13 +55,13 @@ impl WorkerGetters for Creek {
 
 	fn state_get_runtime_version(&self) -> CResult<String> {
 		let jsonreq = json_req("state_getRuntimeVersion", [0_u8; 0], 1);
-		let resp = self.client().request(jsonreq)?;
+		let resp = self.client.request(jsonreq)?;
 		Ok(resp.result)
 	}
 
 	fn state_get_metadata(&self) -> CResult<RuntimeMetadataPrefixed> {
 		let jsonreq = json_req("state_getMetadata", [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let metadata = decode_runtime_metadata(&rpc_return_value)?;
 		Ok(metadata)
@@ -73,14 +73,14 @@ impl WorkerGetters for Creek {
 		storage_key_in_hex: String,
 	) -> CResult<Vec<u8>> {
 		let jsonreq = json_req("state_getStorage", [mrenclave_in_base58, storage_key_in_hex], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		Ok(rpc_return_value.value)
 	}
 
 	fn author_get_untrusted_url(&self) -> CResult<String> {
 		let jsonreq = json_req("author_getUntrustedUrl", [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let untrusted_url = decode_string(&rpc_return_value)?;
 		println!("[Untrusted-URL]: {:?}", untrusted_url);
@@ -91,7 +91,7 @@ impl WorkerGetters for Creek {
 	/// {"id":"1","jsonrpc":"2.0","result":"0x3c386c6f63616c686f73743a333434330000"}
 	fn author_get_mu_ra_url(&self) -> CResult<String> {
 		let jsonreq = json_req("author_getMuRaUrl", [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let mu_ra_url = decode_string(&rpc_return_value)?;
 		println!("[MU-RA-URL]: {:?}", mu_ra_url);
@@ -101,7 +101,7 @@ impl WorkerGetters for Creek {
 	fn author_get_shard(&self) -> CResult<ShardIdentifier> {
 		const METHOD_NAME: &str = "author_getShard";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq).unwrap();
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let shard = decode_shard_identifier(&rpc_return_value)?;
 		println!("[SHARD]: {:?}", shard);
@@ -110,7 +110,7 @@ impl WorkerGetters for Creek {
 
 	fn author_get_shielding_key(&self) -> CResult<EnclaveShieldingPubKey> {
 		let jsonreq = json_req("author_getShieldingKey", [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq)?;
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let rsa_pubkey_json = decode_string(&rpc_return_value)?;
 
@@ -121,7 +121,7 @@ impl WorkerGetters for Creek {
 	fn author_get_shard_vault(&self) -> CResult<AccountId> {
 		const METHOD_NAME: &str = "author_getShardVault";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq).unwrap();
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let shard_vault = decode_accountid(&rpc_return_value)?;
 		println!("[SHARD-Vault]: {:?}", shard_vault);
@@ -131,7 +131,7 @@ impl WorkerGetters for Creek {
 	fn author_get_enclave_signer_account(&self) -> CResult<Ed25519Pubkey> {
 		const METHOD_NAME: &str = "author_getEnclaveSignerAccount";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client().request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq).unwrap();
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let enclave_signer_public_key = decode_string(&rpc_return_value)?;
 		let enclave_signer_public_key =
@@ -147,7 +147,7 @@ impl WorkerGetters for Creek {
 	) -> CResult<Index> {
 		const METHOD_NAME: &str = "author_getNextNonce";
 		let jsonreq = json_req(METHOD_NAME, (shard_in_base58, account_in_hex), 1);
-		let jsonresp = self.client().request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq).unwrap();
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let next_nonce = decode_nonce(&rpc_return_value)?;
 		println!("[SIDECHAIN NONCE]: {}", next_nonce);
