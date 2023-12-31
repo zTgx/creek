@@ -1,6 +1,5 @@
 use crate::{
-	primitives::{
-		getter::Getter, top::TrustedOperation, trusted_call::TrustedCallSigned, RsaRequest,
+	primitives::{trusted_call::TrustedCallSigned, RsaRequest,
 		ShardIdentifier,
 	},
 	service::json::{json_req, json_resp, JsonResponse},
@@ -165,7 +164,7 @@ pub trait DiRequest {
 		&self,
 		shard: ShardIdentifier,
 		tee_shielding_key: RsaPublicKey,
-		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+		trusted_call_signed: TrustedCallSigned,
 	) -> CResult<JsonResponse>;
 }
 
@@ -174,9 +173,9 @@ impl DiRequest for SidechainRpcClient {
 		&self,
 		shard: ShardIdentifier,
 		shielding_pubkey: RsaPublicKey,
-		operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+		trusted_call_signed: TrustedCallSigned,
 	) -> CResult<JsonResponse> {
-		let param = get_json_request(shard, operation_call, shielding_pubkey);
+		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
 		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
 		self.request(jsonreq)
 	}
@@ -184,11 +183,11 @@ impl DiRequest for SidechainRpcClient {
 
 pub(crate) fn get_json_request(
 	shard: ShardIdentifier,
-	operation_call: &TrustedOperation<TrustedCallSigned, Getter>,
+	trusted_call_signed: TrustedCallSigned,
 	shielding_pubkey: RsaPublicKey,
 ) -> String {
 	let operation_call_encrypted =
-		encrypt_with_tee_shielding_pubkey(&shielding_pubkey, &operation_call.encode());
+		encrypt_with_tee_shielding_pubkey(&shielding_pubkey, &trusted_call_signed.into_trusted_operation(true).encode());
 
 	let request = RsaRequest::new(shard, operation_call_encrypted);
 	request.to_hex()

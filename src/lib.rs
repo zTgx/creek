@@ -10,24 +10,25 @@ pub mod utils;
 use frame_metadata::RuntimeMetadataPrefixed;
 use primitives::{
 	identity::Identity, AccountId, CResult, Ed25519Pubkey, EnclaveShieldingPubKey, Index,
-	MrEnclave, ShardIdentifier,
+		keypair::KeyPair,
+		MrEnclave, ShardIdentifier, network::Web3Network, 
 };
 use service::wsclient::SidechainRpcClient;
 
-#[derive(Debug, Clone, Default)]
+#[derive(Clone)]
 pub struct Creek {
 	client: SidechainRpcClient,
+	pub signer: KeyPair,
 }
 
 impl Creek {
-	pub fn new() -> Self {
+	pub fn new_with_signer(signer: KeyPair) -> Self {
 		let url: &str = "wss://localhost:2600";
 		let client = SidechainRpcClient::new(url);
 
-		Self { client }
+		Self { client, signer }
 	}
 
-	/// Get the rpc client.
 	pub fn client(&self) -> &SidechainRpcClient {
 		&self.client
 	}
@@ -74,26 +75,8 @@ pub trait WorkerGetters {
 /// A set of transaction interfaces that can change the sidechain state, including link identity,
 /// request VC, etc
 pub trait WorkerSTF {
-	fn link_identity(&self);
-
 	/// link identity steps:
-	/// 1. set_primary_identity(accountid);
-	/// 2. set_linked_identity(accountid);
-	/// 3. link_identity()
-	fn link_web2(&self);
-}
-
-pub trait LinkIdentityCallback {
-	fn set_primary_identity() -> Identity;
-	fn set_linked_identity() -> Identity;
-}
-
-impl LinkIdentityCallback for dyn WorkerSTF {
-	fn set_primary_identity() -> Identity {
-		todo!()
-	}
-
-	fn set_linked_identity() -> Identity {
-		todo!()
-	}
+	/// * link_identity: The `Identity` you want to be linked.
+	/// * networks: The `Identity` supported network. (For Web2 Identity, networks MUST BE ved![])
+	fn link_identity(&self, link_identity: Identity, networks: Vec<Web3Network>) -> CResult<()>;
 }
