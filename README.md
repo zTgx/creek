@@ -1,3 +1,3 @@
 # Creek
 
-[How to use it](./bin/main.rs)
+[How to use it](./bin/worker.rs)

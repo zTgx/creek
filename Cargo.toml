@@ -70,8 +70,12 @@ derive_more = { version = "0.99.5" }
 cc = "1.0"
 
 [[bin]]
-name = "demo"
-path = "bin/main.rs"
+name = "worker"
+path = "bin/worker.rs"
+
+[[bin]]
+name = "parachain"
+path = "bin/parachain.rs"
 
 [features]
 local = []

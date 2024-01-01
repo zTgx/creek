@@ -12,6 +12,7 @@ use crate::{
 };
 
 pub mod getter;
+pub mod parachain;
 pub mod stf;
 pub mod stf_inner;
 

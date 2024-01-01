@@ -19,6 +19,7 @@ pub mod aes;
 pub mod assertion;
 pub mod cerror;
 pub mod crypto;
+pub mod enclave;
 pub mod error;
 pub mod getter;
 pub mod identity;
@@ -65,6 +66,8 @@ pub type MrEnclave = [u8; SGX_MEASUREMENT_SIZE];
 // we use 256-bit AES-GCM as user shielding key
 pub const USER_SHIELDING_KEY_LEN: usize = 32;
 pub const USER_SHIELDING_KEY_NONCE_LEN: usize = 12;
+
+pub use sp_core::ed25519::Public as Ed25519Public;
 
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},

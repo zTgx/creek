@@ -7,25 +7,29 @@ pub mod primitives;
 pub mod service;
 pub mod utils;
 
+use crate::primitives::Ed25519Public;
 use primitives::{
-	assertion::Assertion, identity::Identity, keypair::KeyPair, network::Web3Network,
-	signature::validation_data::ValidationData, CResult,
+	address::Address32, assertion::Assertion, enclave::Enclave, identity::Identity,
+	keypair::KeyPair, network::Web3Network, signature::validation_data::ValidationData,
+	vc::VCContext, AccountId, CResult, MrEnclave,
 };
-use service::{getter_trait::WorkerGetters, wsclient::SidechainRpcClient};
+use rsa::RsaPublicKey;
+use service::{
+	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient, wsclient::SidechainRpcClient,
+};
 
-#[derive(Clone)]
 pub struct Creek {
-	pub parachain_client: SidechainRpcClient,
+	pub parachain_client: ParachainRpcClient,
 	pub worker_client: SidechainRpcClient,
 	pub signer: KeyPair,
 }
 
 impl Creek {
-	pub fn new(parachain_endpoint: &str, worker_endpoint: &str, signer: KeyPair) -> Self {
-		let parachain_client = SidechainRpcClient::new(parachain_endpoint);
+	pub fn new(parachain_endpoint: &str, worker_endpoint: &str, signer: KeyPair) -> CResult<Self> {
+		let parachain_client = ParachainRpcClient::new(parachain_endpoint)?;
 		let worker_client = SidechainRpcClient::new(worker_endpoint);
 
-		Self { parachain_client, worker_client, signer }
+		Ok(Self { parachain_client, worker_client, signer })
 	}
 }
 
@@ -54,4 +58,18 @@ pub trait WorkerSTF {
 pub trait ValidationDataBuilder {
 	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData>;
 	fn web3_vdata(&self, keypair: &KeyPair) -> CResult<ValidationData>;
+}
+
+/// Parachain Operation traits
+pub trait ParachainOp {
+	// IdentityManagement pallet
+	fn delegatee(&self, account: Address32) -> CResult<Option<()>>;
+
+	// Teerex pallet
+	fn enclave_count(&self) -> CResult<Option<u64>>;
+	fn enclave(&self, enclave_count: u64) -> CResult<Option<Enclave<AccountId, String>>>;
+	fn get_shard(&self) -> CResult<MrEnclave>;
+	fn get_tee_shielding_pubkey(&self) -> CResult<RsaPublicKey>;
+	fn get_vc_pubkey(&self) -> CResult<Ed25519Public>;
+	fn vc_registry(&self) -> CResult<Vec<VCContext>>;
 }
