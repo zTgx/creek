@@ -628,7 +628,7 @@ dependencies = [
 
 [[package]]
 name = "creek"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "aes-gcm",
  "arrayvec 0.7.4",
