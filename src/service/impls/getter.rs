@@ -3,7 +3,7 @@ use crate::{
 		cerror::CError, crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey,
 		EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 	},
-	service::{json::json_req, wsclient::SidechainRpcClientTrait},
+	service::{getter_trait::WorkerGetters, json::json_req, wsclient::SidechainRpcClientTrait},
 	utils::{
 		hex::FromHexPrefixed,
 		public_api::{
@@ -12,7 +12,7 @@ use crate::{
 			decode_string,
 		},
 	},
-	CResult, Creek, WorkerGetters,
+	CResult, Creek,
 };
 use frame_metadata::RuntimeMetadataPrefixed;
 

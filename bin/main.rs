@@ -1,25 +1,32 @@
 use creek::{
-	primitives::{
-		identity::{Identity, IdentityString},
-		keypair::KeyPair,
-		network::Web3Network,
-	},
+	primitives::{identity::Identity, keypair::KeyPair, network::Web3Network},
 	Creek, ValidationDataBuilder, WorkerSTF,
 };
 use sp_core::{sr25519, Pair};
 
 fn main() {
+	// First: Import your main account as signer (or primary identity).
 	let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
+
+	// Second: Set this alice as signer.
 	let creek = Creek::new_with_signer(KeyPair::from(alice));
 
-	// Web2 Identity
-	let twitter_identity = Identity::Twitter(IdentityString::new("mock_user".as_bytes().to_vec()));
-	let vdata = creek.twitter_vdata("twitterid").unwrap();
-	let _ = creek.link_identity(twitter_identity, vec![], vdata);
-
-	// Web3 Identity
+	// Third: Import your another account(bob) you want to LINK.
 	let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
+
+	// Fourth: Using bob to sign a message to prove that you own this to-being-linked account.
 	let vdata = creek.web3_vdata(&KeyPair::from(bob.clone())).unwrap();
+
+	// Fifth: Build identity from this bob account.
+	// If bob is from ethereum ecos then Using Identity::Evm(..) or
+	// If bob is from Substrate ecos then Using Identity::Substrate.
+	// We don't care about WEB2 identity in this demo.
+	// But they're follow the same rules.
 	let bob_identity = Identity::Substrate(bob.public().into());
-	let _ = creek.link_identity(bob_identity, vec![Web3Network::Litentry], vdata);
+
+	// Before Finally: Specify the network your to-being-linke account(bob) comes from.
+	let networks = vec![Web3Network::Litentry];
+
+	// Finally: Call `link-identity` to link your bob account.
+	let _ = creek.link_identity(bob_identity, networks, vdata);
 }
