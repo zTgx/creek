@@ -1,3 +1,3 @@
 # Creek
 
-That's it!
+[How to use it](./bin/main.rs)
