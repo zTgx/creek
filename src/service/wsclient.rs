@@ -1,4 +1,5 @@
 use crate::{
+	primitives::cerror::CError,
 	service::json::{json_resp, JsonResponse},
 	CResult,
 };
@@ -10,7 +11,8 @@ use std::{
 	sync::mpsc::{channel, Sender as ThreadOut},
 };
 use ws::{
-	connect, util::TcpStream, CloseCode, Handler, Handshake, Message, Result as WsResult, Sender,
+	connect, util::TcpStream, CloseCode, Error, ErrorKind, Handler, Handshake, Message,
+	Result as WsResult, Sender,
 };
 
 #[allow(clippy::result_large_err)]
@@ -36,19 +38,18 @@ impl SidechainHandleMessage for GetSidechainRequestHandler {
 		out: Sender,
 		result: ThreadOut<Self::ThreadMessage>,
 	) -> WsResult<()> {
+		info!("Got get_request_msg {}", msg);
+
 		out.close(CloseCode::Normal)
 			.unwrap_or_else(|_| warn!("Could not close Websocket normally"));
 
-		info!("Got get_request_msg {}", msg);
-		// let result_str = serde_json::from_str(msg.as_text()?)
-		// 	.map(|v: serde_json::Value| Some(v["result"].to_string()))
-		// 	.map_err(RpcClientError::Serde);
-		let result_str = serde_json::from_str(msg.as_text()?)
+		let message = serde_json::from_str(msg.as_text()?)
 			.map(|v: serde_json::Value| Some(v.to_string()))
-			.unwrap()
-			.unwrap();
+			.map_err(|e| Error::new(ErrorKind::Custom(e.into()), "RPC Get invalid message."))?;
 
-		result.send(Message::from(result_str)).unwrap();
+		if let Some(message) = message {
+			let _ = result.send(Message::from(message));
+		}
 
 		Ok(())
 	}
@@ -135,8 +136,11 @@ impl SidechainRpcClient {
 			result: result_in.clone(),
 			message_handler: message_handler.clone(),
 		})
-		.unwrap();
-		Ok(result_out.recv().unwrap())
+		.map_err(|_| CError::APIError)?;
+
+		let message = result_out.recv().map_err(CError::RecvError)?;
+
+		Ok(message)
 	}
 }
 
