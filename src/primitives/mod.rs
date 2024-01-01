@@ -65,7 +65,6 @@ pub type MrEnclave = [u8; SGX_MEASUREMENT_SIZE];
 // we use 256-bit AES-GCM as user shielding key
 pub const USER_SHIELDING_KEY_LEN: usize = 32;
 pub const USER_SHIELDING_KEY_NONCE_LEN: usize = 12;
-pub const USER_SHIELDING_KEY_TAG_LEN: usize = 16;
 
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},

@@ -101,7 +101,7 @@ impl WorkerGetters for Creek {
 	fn author_get_shard(&self) -> CResult<ShardIdentifier> {
 		const METHOD_NAME: &str = "author_getShard";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client.request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let shard = decode_shard_identifier(&rpc_return_value)?;
 		println!("[SHARD]: {:?}", shard);
@@ -121,7 +121,7 @@ impl WorkerGetters for Creek {
 	fn author_get_shard_vault(&self) -> CResult<AccountId> {
 		const METHOD_NAME: &str = "author_getShardVault";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client.request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let shard_vault = decode_accountid(&rpc_return_value)?;
 		println!("[SHARD-Vault]: {:?}", shard_vault);
@@ -131,11 +131,13 @@ impl WorkerGetters for Creek {
 	fn author_get_enclave_signer_account(&self) -> CResult<Ed25519Pubkey> {
 		const METHOD_NAME: &str = "author_getEnclaveSignerAccount";
 		let jsonreq = json_req(METHOD_NAME, [0_u8; 0], 1);
-		let jsonresp = self.client.request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let enclave_signer_public_key = decode_string(&rpc_return_value)?;
 		let enclave_signer_public_key =
-			Ed25519Pubkey::from_hex(&enclave_signer_public_key).unwrap();
+			Ed25519Pubkey::from_hex(&enclave_signer_public_key).map_err(|e| {
+				CError::HexError(e)
+			})?;
 		println!("[enclave_signer_public_key]: {:?}", enclave_signer_public_key);
 		Ok(enclave_signer_public_key)
 	}
@@ -147,7 +149,7 @@ impl WorkerGetters for Creek {
 	) -> CResult<Index> {
 		const METHOD_NAME: &str = "author_getNextNonce";
 		let jsonreq = json_req(METHOD_NAME, (shard_in_base58, account_in_hex), 1);
-		let jsonresp = self.client.request(jsonreq).unwrap();
+		let jsonresp = self.client.request(jsonreq)?;
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let next_nonce = decode_nonce(&rpc_return_value)?;
 		println!("[SIDECHAIN NONCE]: {}", next_nonce);

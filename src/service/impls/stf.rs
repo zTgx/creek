@@ -31,8 +31,11 @@ impl WorkerSTF for Creek {
 			self.link_identity_inner(link_identity, networks, &shard, vdata)?;
 
 		let jsonresp =
-			self.client.di_request(shard, tee_shielding_key, trusted_call_signed).unwrap();
-		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).unwrap();
+			self.client.di_request(shard, tee_shielding_key, trusted_call_signed)?;
+		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).map_err(|e| {
+			CError::HexError(e)
+		})?;
+		
 		println!("[LINK IDENTITY]: {:#?}", rpc_return_value);
 
 		Ok(())

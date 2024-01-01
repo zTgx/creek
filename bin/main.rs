@@ -1,5 +1,5 @@
 use creek::{
-	primitives::{identity::Identity, keypair::KeyPair, network::Web3Network},
+	primitives::{identity::Identity, network::Web3Network},
 	Creek, ValidationDataBuilder, WorkerSTF,
 };
 use sp_core::{sr25519, Pair};
@@ -9,13 +9,13 @@ fn main() {
 	let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
 
 	// Second: Set this alice as signer.
-	let creek = Creek::new_with_signer(KeyPair::from(alice));
+	let creek = Creek::new_with_signer(alice.into());
 
 	// Third: Import your another account(bob) you want to LINK.
 	let bob = sr25519::Pair::from_string("//Bob", None).unwrap();
 
 	// Fourth: Using bob to sign a message to prove that you own this to-being-linked account.
-	let vdata = creek.web3_vdata(&KeyPair::from(bob.clone())).unwrap();
+	let vdata = creek.web3_vdata(&bob.clone().into()).unwrap();
 
 	// Fifth: Build identity from this bob account.
 	// If bob is from ethereum ecos then Using Identity::Evm(..) or
