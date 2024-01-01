@@ -3,7 +3,6 @@
 #![allow(clippy::large_enum_variant)] //StfError: The `Err`-variant returned from this function is very large
 #![allow(clippy::result_large_err)]
 
-pub mod helper;
 pub mod primitives;
 pub mod service;
 pub mod utils;
@@ -21,10 +20,8 @@ pub struct Creek {
 }
 
 impl Creek {
-	pub fn new_with_signer(signer: KeyPair) -> Self {
-		let url: &str = "wss://localhost:2600";
-		let client = SidechainRpcClient::new(url);
-
+	pub fn new(endpoint: &str, signer: KeyPair) -> Self {
+		let client = SidechainRpcClient::new(endpoint);
 		Self { client, signer }
 	}
 }

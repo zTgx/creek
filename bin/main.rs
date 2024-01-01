@@ -9,7 +9,8 @@ fn main() {
 	let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
 
 	// 2: Set this alice as signer.
-	let creek = Creek::new_with_signer(alice.into());
+	let endpoint: &str = "wss://localhost:2600";
+	let creek = Creek::new(endpoint, alice.into());
 
 	// 3: Import your another account(bob) you want to LINK.
 	let bob = sr25519::Pair::from_string("//Bob", None).unwrap();

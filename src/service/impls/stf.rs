@@ -1,5 +1,4 @@
 use crate::{
-	helper::CreekHelper,
 	primitives::{
 		assertion::Assertion,
 		cerror::CError,
@@ -21,6 +20,8 @@ use crate::{
 	Creek, ValidationDataBuilder, WorkerGetters, WorkerSTF,
 };
 use utils::identity::{get_expected_raw_message, verify_web3_identity};
+
+use super::CreekHelper;
 
 impl WorkerSTF for Creek {
 	fn link_identity(
