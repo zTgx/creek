@@ -1,13 +1,9 @@
 use crate::{
-	primitives::{trusted_call::TrustedCallSigned, RsaRequest, ShardIdentifier},
 	service::json::{json_resp, JsonResponse},
-	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	CResult,
 };
-use codec::Encode;
 use log::*;
 use openssl::ssl::{SslConnector, SslMethod, SslStream, SslVerifyMode};
-use rsa::RsaPublicKey;
 use serde_json::Value;
 use std::{
 	fmt::Debug,
@@ -123,7 +119,7 @@ impl SidechainRpcClient {
 		SidechainRpcClient { url: url.to_string() }
 	}
 
-	fn direct_rpc_request<MessageHandler>(
+	fn send<MessageHandler>(
 		&self,
 		jsonreq: String,
 		message_handler: MessageHandler,
@@ -144,29 +140,13 @@ impl SidechainRpcClient {
 	}
 }
 
-pub trait SidechainRpcClientTrait {
+pub trait SidechainRpcRequest {
 	fn request(&self, jsonreq: serde_json::Value) -> CResult<JsonResponse>;
 }
-impl SidechainRpcClientTrait for SidechainRpcClient {
-	fn request(&self, jsonreq: Value) -> CResult<JsonResponse> {
-		let message = self
-			.direct_rpc_request(jsonreq.to_string(), GetSidechainRequestHandler::default())
-			.unwrap();
 
+impl SidechainRpcRequest for SidechainRpcClient {
+	fn request(&self, jsonreq: Value) -> CResult<JsonResponse> {
+		let message = self.send(jsonreq.to_string(), GetSidechainRequestHandler::default())?;
 		json_resp(message.to_string())
 	}
-}
-
-pub(crate) fn get_json_request(
-	shard: ShardIdentifier,
-	trusted_call_signed: TrustedCallSigned,
-	shielding_pubkey: RsaPublicKey,
-) -> String {
-	let operation_call_encrypted = encrypt_with_tee_shielding_pubkey(
-		&shielding_pubkey,
-		&trusted_call_signed.into_trusted_operation(true).encode(),
-	);
-
-	let request = RsaRequest::new(shard, operation_call_encrypted);
-	request.to_hex()
 }

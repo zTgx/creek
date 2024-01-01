@@ -15,14 +15,17 @@ use service::{getter_trait::WorkerGetters, wsclient::SidechainRpcClient};
 
 #[derive(Clone)]
 pub struct Creek {
-	pub client: SidechainRpcClient,
+	pub parachain_client: SidechainRpcClient,
+	pub worker_client: SidechainRpcClient,
 	pub signer: KeyPair,
 }
 
 impl Creek {
-	pub fn new(endpoint: &str, signer: KeyPair) -> Self {
-		let client = SidechainRpcClient::new(endpoint);
-		Self { client, signer }
+	pub fn new(parachain_endpoint: &str, worker_endpoint: &str, signer: KeyPair) -> Self {
+		let parachain_client = SidechainRpcClient::new(parachain_endpoint);
+		let worker_client = SidechainRpcClient::new(worker_endpoint);
+
+		Self { parachain_client, worker_client, signer }
 	}
 }
 

@@ -12,9 +12,9 @@ use crate::{
 		CResult,
 	},
 	service::{
-		impls::stf_inner::LinkIdentityInner,
+		impls::{get_rsa_request, stf_inner::LinkIdentityInner},
 		json::{json_req, RpcReturnValue},
-		wsclient::{get_json_request, SidechainRpcClientTrait},
+		wsclient::SidechainRpcRequest,
 	},
 	utils::{self, hex::FromHexPrefixed},
 	Creek, ValidationDataBuilder, WorkerGetters, WorkerSTF,
@@ -36,9 +36,9 @@ impl WorkerSTF for Creek {
 		let trusted_call_signed =
 			self.link_identity_inner(link_identity, networks, &shard, vdata)?;
 
-		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
+		let param = get_rsa_request(shard, trusted_call_signed, shielding_pubkey);
 		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
-		let jsonresp = self.client.request(jsonreq)?;
+		let jsonresp = self.worker_client.request(jsonreq)?;
 
 		let rpc_return_value =
 			RpcReturnValue::from_hex(&jsonresp.result).map_err(CError::HexError)?;
@@ -54,9 +54,9 @@ impl WorkerSTF for Creek {
 
 		let trusted_call_signed = self.request_vc_inner(&shard, assertion)?;
 
-		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
+		let param = get_rsa_request(shard, trusted_call_signed, shielding_pubkey);
 		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
-		let jsonresp = self.client.request(jsonreq)?;
+		let jsonresp = self.worker_client.request(jsonreq)?;
 
 		let rpc_return_value =
 			RpcReturnValue::from_hex(&jsonresp.result).map_err(CError::HexError)?;

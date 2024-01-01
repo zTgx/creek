@@ -1,7 +1,13 @@
+use codec::Encode;
+use rsa::RsaPublicKey;
+
 use crate::{
-	primitives::{CResult, Index},
+	primitives::{trusted_call::TrustedCallSigned, CResult, Index, RsaRequest, ShardIdentifier},
 	service::getter_trait::WorkerGetters,
-	utils::{hex::ToHexPrefixed, public_api::mrenclave_to_bs58},
+	utils::{
+		crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed,
+		public_api::mrenclave_to_bs58,
+	},
 	Creek,
 };
 
@@ -23,4 +29,18 @@ impl CreekHelper for Creek {
 			signer_acccount.to_hex(),
 		)
 	}
+}
+
+pub(crate) fn get_rsa_request(
+	shard: ShardIdentifier,
+	trusted_call_signed: TrustedCallSigned,
+	shielding_pubkey: RsaPublicKey,
+) -> String {
+	let operation_call_encrypted = encrypt_with_tee_shielding_pubkey(
+		&shielding_pubkey,
+		&trusted_call_signed.into_trusted_operation(true).encode(),
+	);
+
+	let request = RsaRequest::new(shard, operation_call_encrypted);
+	request.to_hex()
 }
