@@ -1,5 +1,6 @@
 use crate::{
 	primitives::{
+		assertion::Assertion,
 		identity::Identity,
 		network::Web3Network,
 		signature::validation_data::ValidationData,
@@ -17,6 +18,12 @@ pub(crate) trait LinkIdentityInner {
 		networks: Vec<Web3Network>,
 		shard: &ShardIdentifier,
 		vdata: ValidationData,
+	) -> CResult<TrustedCallSigned>;
+
+	fn request_vc_inner(
+		&self,
+		shard: &ShardIdentifier,
+		assertion: Assertion,
 	) -> CResult<TrustedCallSigned>;
 }
 
@@ -37,6 +44,31 @@ impl LinkIdentityInner for Creek {
 			link_identity,
 			vdata,
 			networks,
+			None,
+			Default::default(),
+		);
+
+		let mrenclave = self.state_get_mrenclave()?;
+		let sidechain_nonce = self.author_get_next_nonce(
+			mrenclave_to_bs58(&shard.to_fixed_bytes()),
+			signer_acccount.to_hex(),
+		)?;
+		let signed_call = trusted_call.sign(&self.signer, sidechain_nonce, &mrenclave, shard);
+		Ok(signed_call)
+	}
+
+	fn request_vc_inner(
+		&self,
+		shard: &ShardIdentifier,
+		assertion: Assertion,
+	) -> CResult<TrustedCallSigned> {
+		let signer_acccount = self.signer.account_id();
+		let primary_identity = Identity::from(signer_acccount.clone());
+
+		let trusted_call = TrustedCall::request_vc(
+			primary_identity.clone(),
+			primary_identity,
+			assertion,
 			None,
 			Default::default(),
 		);

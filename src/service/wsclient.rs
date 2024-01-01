@@ -1,6 +1,6 @@
 use crate::{
 	primitives::{trusted_call::TrustedCallSigned, RsaRequest, ShardIdentifier},
-	service::json::{json_req, json_resp, JsonResponse},
+	service::json::{json_resp, JsonResponse},
 	utils::{crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed},
 	CResult,
 };
@@ -154,28 +154,6 @@ impl SidechainRpcClientTrait for SidechainRpcClient {
 			.unwrap();
 
 		json_resp(message.to_string())
-	}
-}
-
-pub trait DiRequest {
-	fn di_request(
-		&self,
-		shard: ShardIdentifier,
-		tee_shielding_key: RsaPublicKey,
-		trusted_call_signed: TrustedCallSigned,
-	) -> CResult<JsonResponse>;
-}
-
-impl DiRequest for SidechainRpcClient {
-	fn di_request(
-		&self,
-		shard: ShardIdentifier,
-		shielding_pubkey: RsaPublicKey,
-		trusted_call_signed: TrustedCallSigned,
-	) -> CResult<JsonResponse> {
-		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
-		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
-		self.request(jsonreq)
 	}
 }
 

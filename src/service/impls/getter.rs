@@ -135,9 +135,7 @@ impl WorkerGetters for Creek {
 		let rpc_return_value = decode_rpc_return_value(&jsonresp)?;
 		let enclave_signer_public_key = decode_string(&rpc_return_value)?;
 		let enclave_signer_public_key =
-			Ed25519Pubkey::from_hex(&enclave_signer_public_key).map_err(|e| {
-				CError::HexError(e)
-			})?;
+			Ed25519Pubkey::from_hex(&enclave_signer_public_key).map_err(CError::HexError)?;
 		println!("[enclave_signer_public_key]: {:?}", enclave_signer_public_key);
 		Ok(enclave_signer_public_key)
 	}

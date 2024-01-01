@@ -1,6 +1,7 @@
 use crate::{
 	helper::CreekHelper,
 	primitives::{
+		assertion::Assertion,
 		cerror::CError,
 		identity::Identity,
 		keypair::KeyPair,
@@ -11,7 +12,11 @@ use crate::{
 		},
 		CResult,
 	},
-	service::{impls::stf_inner::LinkIdentityInner, json::RpcReturnValue, wsclient::DiRequest},
+	service::{
+		impls::stf_inner::LinkIdentityInner,
+		json::{json_req, RpcReturnValue},
+		wsclient::{get_json_request, SidechainRpcClientTrait},
+	},
 	utils::{self, hex::FromHexPrefixed},
 	Creek, ValidationDataBuilder, WorkerGetters, WorkerSTF,
 };
@@ -25,18 +30,37 @@ impl WorkerSTF for Creek {
 		vdata: ValidationData,
 	) -> CResult<()> {
 		let shard = self.author_get_shard()?;
-		let tee_shielding_key = self.author_get_shielding_key()?;
+		let shielding_pubkey = self.author_get_shielding_key()?;
 
 		let trusted_call_signed =
 			self.link_identity_inner(link_identity, networks, &shard, vdata)?;
 
-		let jsonresp =
-			self.client.di_request(shard, tee_shielding_key, trusted_call_signed)?;
-		let rpc_return_value = RpcReturnValue::from_hex(&jsonresp.result).map_err(|e| {
-			CError::HexError(e)
-		})?;
-		
+		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
+		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
+		let jsonresp = self.client.request(jsonreq)?;
+
+		let rpc_return_value =
+			RpcReturnValue::from_hex(&jsonresp.result).map_err(CError::HexError)?;
+
 		println!("[LINK IDENTITY]: {:#?}", rpc_return_value);
+
+		Ok(())
+	}
+
+	fn request_vc(&self, assertion: Assertion) -> CResult<()> {
+		let shard = self.author_get_shard()?;
+		let shielding_pubkey = self.author_get_shielding_key()?;
+
+		let trusted_call_signed = self.request_vc_inner(&shard, assertion)?;
+
+		let param = get_json_request(shard, trusted_call_signed, shielding_pubkey);
+		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
+		let jsonresp = self.client.request(jsonreq)?;
+
+		let rpc_return_value =
+			RpcReturnValue::from_hex(&jsonresp.result).map_err(CError::HexError)?;
+
+		println!("[REQUEST VC]: {:#?}", rpc_return_value);
 
 		Ok(())
 	}

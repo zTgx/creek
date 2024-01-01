@@ -9,7 +9,7 @@ pub mod service;
 pub mod utils;
 
 use primitives::{
-	identity::Identity, keypair::KeyPair, network::Web3Network,
+	assertion::Assertion, identity::Identity, keypair::KeyPair, network::Web3Network,
 	signature::validation_data::ValidationData, CResult,
 };
 use service::{getter_trait::WorkerGetters, wsclient::SidechainRpcClient};
@@ -42,6 +42,9 @@ pub trait WorkerSTF {
 		networks: Vec<Web3Network>,
 		vdata: ValidationData,
 	) -> CResult<()>;
+
+	/// request vc(verified credential)
+	fn request_vc(&self, assertion: Assertion) -> CResult<()>;
 }
 
 /// Before link identity:
