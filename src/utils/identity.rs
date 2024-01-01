@@ -38,7 +38,7 @@ pub fn verify_web3_identity(
 	data: &Web3ValidationData,
 ) -> StfResult<()> {
 	ensure!(
-		raw_msg == data.message().as_slice(),
+		raw_msg == data.message(),
 		StfError::LinkIdentityFailed(ErrorDetail::UnexpectedMessage)
 	);
 

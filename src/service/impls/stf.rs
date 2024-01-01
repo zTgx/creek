@@ -6,8 +6,8 @@ use crate::{
 		keypair::KeyPair,
 		network::Web3Network,
 		signature::validation_data::{
-			TwitterValidationData, ValidationData, ValidationString, Web2ValidationData,
-			Web3CommonValidationData, Web3ValidationData,
+			TwitterValidationData, ValidationData, Web2ValidationData, Web3CommonValidationData,
+			Web3ValidationData,
 		},
 		CResult,
 	},
@@ -41,12 +41,8 @@ impl WorkerSTF for Creek {
 
 impl ValidationDataBuilder for Creek {
 	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData> {
-		let message = ValidationString::try_from(twitterid.to_string().as_bytes().to_vec())
-			.map_err(|_e| CError::Other("Parse sidechain nonce error".to_string()))
-			.unwrap();
-
 		Ok(ValidationData::Web2(Web2ValidationData::Twitter(TwitterValidationData {
-			tweet_id: message,
+			tweet_id: twitterid.to_string(),
 		})))
 	}
 
@@ -66,10 +62,8 @@ impl ValidationDataBuilder for Creek {
 		let signature = keypair.sign(&message_raw);
 
 		// 3. Build ValidationData
-		let web3_common_validation_data = Web3CommonValidationData {
-			message: ValidationString::try_from(message_raw.clone()).unwrap(),
-			signature,
-		};
+		let web3_common_validation_data =
+			Web3CommonValidationData { message: message_raw.clone(), signature };
 
 		match identity {
 			Identity::Substrate(_) =>

@@ -55,12 +55,7 @@ pub type ShardIdentifier = H256;
 pub type SidechainBlockNumber = u64;
 pub type EnclaveShieldingPubKey = RsaPublicKey;
 
-type MaxStringLength = ConstU32<64>;
-pub type IdentityInnerString = BoundedVec<u8, MaxStringLength>;
-pub type ErrorString = BoundedVec<u8, MaxStringLength>;
-
 pub type ParentchainBlockNumber = u32;
-
 type MaxMetadataLength = ConstU32<128>;
 pub type MetadataOf = BoundedVec<u8, MaxMetadataLength>;
 

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{assertion::Assertion, AccountId, ErrorString};
+use super::{assertion::Assertion, AccountId};
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
@@ -202,12 +202,12 @@ impl VCContext {
 	}
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo)]
 pub enum ErrorDetail {
 	// error when importing the parentchain blocks and executing indirect calls
 	ImportError,
 	// generic error when executing STF, the `ErrorString` should indicate the actual reasons
-	StfError(ErrorString),
+	StfError(String),
 	// error when sending stf request to the receiver
 	SendStfRequestFailed,
 	ChallengeCodeNotFound,
@@ -215,8 +215,8 @@ pub enum ErrorDetail {
 	// generic parse error, can be caused by UTF8/JSON serde..
 	ParseError,
 	// errors when verifying identities
-	DecodeHexPayloadFailed(ErrorString),
-	HttpRequestFailed(ErrorString),
+	DecodeHexPayloadFailed(String),
+	HttpRequestFailed(String),
 	InvalidIdentity,
 	WrongWeb2Handle,
 	UnexpectedMessage,

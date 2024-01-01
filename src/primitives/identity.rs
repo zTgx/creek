@@ -14,17 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::{
-	if_production_or,
-	utils::hex::{decode_hex, hex_encode},
-};
+use crate::utils::hex::{decode_hex, hex_encode};
 use codec::{Decode, Encode, MaxEncodedLen};
 use pallet_evm::{AddressMapping, HashedAddressMapping as GenericHashedAddressMapping};
-use scale_info::{meta_type, Type, TypeDefSequence, TypeInfo};
-use serde::{Deserialize, Serialize};
+use scale_info::TypeInfo;
 use sp_core::{blake2_256, ed25519, sr25519, H160};
-use sp_runtime::{traits::BlakeTwo256, AccountId32, BoundedVec};
-use std::fmt::{Debug, Formatter};
+use sp_runtime::{traits::BlakeTwo256, AccountId32};
+use std::fmt::Debug;
 use strum_macros::EnumIter;
 
 pub type HashedAddressMapping = GenericHashedAddressMapping<BlakeTwo256>;
@@ -33,21 +29,21 @@ use super::{
 	address::{Address20, Address32, Address33},
 	keypair::AccountId,
 	network::Web3Network,
-	IdentityInnerString, MaxStringLength, MetadataOf, ParentchainBlockNumber,
+	MetadataOf, ParentchainBlockNumber,
 };
 
 /// Web2 and Web3 Identity based on handle/public key
 /// We only include the network categories (substrate/evm) without concrete types
 /// see https://github.com/litentry/litentry-parachain/issues/1841
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen, EnumIter)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, EnumIter)]
 pub enum Identity {
 	// web2
 	#[codec(index = 0)]
-	Twitter(IdentityString),
+	Twitter(String),
 	#[codec(index = 1)]
-	Discord(IdentityString),
+	Discord(String),
 	#[codec(index = 2)]
-	Github(IdentityString),
+	Github(String),
 
 	// web3
 	#[codec(index = 3)]
@@ -133,11 +129,11 @@ impl Identity {
 						.map_err(|_| "Address33 conversion error")?;
 					return Ok(Identity::Bitcoin(handle))
 				} else if v[0] == "github" {
-					return Ok(Identity::Github(IdentityString::new(v[1].as_bytes().to_vec())))
+					return Ok(Identity::Github(v[1].to_string()))
 				} else if v[0] == "discord" {
-					return Ok(Identity::Discord(IdentityString::new(v[1].as_bytes().to_vec())))
+					return Ok(Identity::Discord(v[1].to_string()))
 				} else if v[0] == "twitter" {
-					return Ok(Identity::Twitter(IdentityString::new(v[1].as_bytes().to_vec())))
+					return Ok(Identity::Twitter(v[1].to_string()))
 				} else {
 					return Err("Unknown did type".into())
 				}
@@ -161,21 +157,9 @@ impl Identity {
 					std::format!("substrate:{}", &hex_encode(address.as_ref())),
 				Identity::Bitcoin(address) =>
 					std::format!("bitcoin:{}", &hex_encode(address.as_ref())),
-				Identity::Twitter(handle) => std::format!(
-					"twitter:{}",
-					std::str::from_utf8(handle.inner_ref())
-						.map_err(|_| "twitter handle conversion error")?
-				),
-				Identity::Discord(handle) => std::format!(
-					"discord:{}",
-					std::str::from_utf8(handle.inner_ref())
-						.map_err(|_| "discord handle conversion error")?
-				),
-				Identity::Github(handle) => std::format!(
-					"github:{}",
-					std::str::from_utf8(handle.inner_ref())
-						.map_err(|_| "github handle conversion error")?
-				),
+				Identity::Twitter(handle) => std::format!("twitter:{}", handle),
+				Identity::Discord(handle) => std::format!("discord:{}", handle),
+				Identity::Github(handle) => std::format!("github:{}", handle),
 			}
 		))
 	}
@@ -232,39 +216,6 @@ impl From<[u8; 20]> for Identity {
 impl From<[u8; 33]> for Identity {
 	fn from(value: [u8; 33]) -> Self {
 		Identity::Bitcoin(value.into())
-	}
-}
-
-#[derive(Eq, PartialEq, Encode, Decode, Clone, MaxEncodedLen, Default, Serialize, Deserialize)]
-pub struct IdentityString {
-	#[serde(flatten)]
-	pub inner: IdentityInnerString,
-}
-
-impl TypeInfo for IdentityString {
-	type Identity = BoundedVec<u8, MaxStringLength>;
-
-	fn type_info() -> Type {
-		TypeDefSequence::new(meta_type::<u8>()).into()
-	}
-}
-
-impl IdentityString {
-	pub fn new(inner: Vec<u8>) -> Self {
-		IdentityString { inner: BoundedVec::truncate_from(inner) }
-	}
-
-	pub fn inner_ref(&self) -> &[u8] {
-		self.inner.as_ref()
-	}
-}
-
-impl Debug for IdentityString {
-	fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-		if_production_or!(
-			f.debug_struct("IdentityString").finish(),
-			f.debug_struct("IdentityString").field("inner", &self.inner).finish()
-		)
 	}
 }
 
