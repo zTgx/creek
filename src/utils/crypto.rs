@@ -1,5 +1,5 @@
 use crate::primitives::{
-	crypto::AesOutput,
+	aes::AesOutput,
 	identity::{Identity, IdentityContext},
 	vc::Credential,
 	UserShieldingKeyType, USER_SHIELDING_KEY_LEN, USER_SHIELDING_KEY_NONCE_LEN,

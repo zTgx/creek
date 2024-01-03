@@ -33,6 +33,6 @@ fn main() {
 	let _ = creek.link_identity(bob_identity, networks, vdata);
 
 	// 8: Select which `Assertion` you want to request.
-	let assertion = Assertion::A1;
+	let assertion = Assertion::LITStaking;
 	let _ = creek.request_vc(assertion);
 }

@@ -70,9 +70,6 @@ impl ParachainOp for Creek {
 	/// 1. Online -> to use this method `get_shard` or
 	/// 2. Offline -> to `litentry-parachain/tee-worker` run `make enclave`
 	/// Both should be display exactly same value.
-	///
-	/// TODO:
-	/// But there's a question, what's the difference betwwen `mrenclave` and `shard`?
 	fn get_shard(&self) -> CResult<MrEnclave> {
 		let enclave_count: Option<u64> = self.enclave_count()?;
 		let enclave_count = enclave_count
@@ -108,7 +105,6 @@ impl ParachainOp for Creek {
 					.api
 					.get_storage_by_key(StorageKey(storage_key), None)
 					.map_err(|_| CError::APIError)?;
-				println!("Context: {:?}", v);
 
 				if let Some(context) = v {
 					contexts.push(context);

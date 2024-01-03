@@ -16,6 +16,7 @@
 
 pub mod address;
 pub mod aes;
+pub mod aes_request;
 pub mod assertion;
 pub mod cerror;
 pub mod crypto;

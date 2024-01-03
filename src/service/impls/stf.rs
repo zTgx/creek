@@ -1,3 +1,4 @@
+use super::CreekHelper;
 use crate::{
 	primitives::{
 		assertion::Assertion,
@@ -21,8 +22,19 @@ use crate::{
 };
 use utils::identity::{get_expected_raw_message, verify_web3_identity};
 
-use super::CreekHelper;
-
+/// According to this ref: https://github.com/litentry/litentry-parachain/blob/038b0f47e9df6657b7a656126371e46056b5b354/tee-worker/sidechain/rpc-handler/src/direct_top_pool_api.rs
+/// Here are the methods:
+/// 1. io_handler.add_sync_method("author_submitAndWatchRsaRequest"
+/// 2. io_handler.add_sync_method("author_submitAndWatchBroadcastedRsaRequest"
+/// 3. io_handler.add_sync_method("author_submitRsaRequest"
+/// 4. io_handler.add_method("author_submitVCRequest"
+/// 5. io_handler.add_sync_method("author_submitAndWatchAesRequest"
+/// 6. io_handler.add_sync_method("author_submitAndWatchBroadcastedAesRequest",
+/// 7. io_handler.add_sync_method("author_pendingExtrinsics"
+/// 8. io_handler.add_sync_method("author_pendingTrustedCallsFor"
+///
+/// Currently, I'm using `author_submitAndWatchRsaRequest`, but what is the difference between those
+/// methods? Figure it out.
 impl WorkerSTF for Creek {
 	fn link_identity(
 		&self,

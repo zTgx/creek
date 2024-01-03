@@ -6,7 +6,8 @@ fn main() {
 	let alice = sr25519::Pair::from_string("//Alice", None).unwrap();
 
 	// 2: Set this alice as signer.
-	let parachain_endpoint = "wss://tee-internal.litentry.io:443";
+	// let parachain_endpoint_internal = "wss://tee-internal.litentry.io:443";
+	let parachain_endpoint = "ws://localhost:10544";
 	let worker_endpoint: &str = "wss://localhost:2600";
 	let creek = Creek::new(parachain_endpoint, worker_endpoint, alice.into()).unwrap();
 

@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use codec::{Decode, Encode};
 use rsa::{
 	errors::{Error as RsaError, Result as RsaResult},
 	BigUint, RsaPublicKey,
 };
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
-
-use super::{aes::RequestAesKeyNonce, USER_SHIELDING_KEY_NONCE_LEN};
 
 #[derive(
 	Serialize, Deserialize, Default, Clone, PartialEq, Eq, sp_core::RuntimeDebug, TypeInfo,
@@ -48,26 +45,5 @@ impl RsaPublicKeyGenerator for RsaPublicKey {
 		let a = BigUint::from_radix_le(&key.e, 256).ok_or(RsaError::InvalidCoefficient)?;
 
 		RsaPublicKey::new(b, a)
-	}
-}
-
-// all-in-one struct containing the encrypted ciphertext with user's
-// shielding key and other metadata that is required for decryption
-//
-// by default a postfix tag is used => last 16 bytes of ciphertext is MAC tag
-#[derive(Debug, Default, Clone, Eq, PartialEq, Encode, Decode, TypeInfo)]
-pub struct AesOutput {
-	pub ciphertext: Vec<u8>,
-	pub aad: Vec<u8>,
-	pub nonce: RequestAesKeyNonce, // IV
-}
-
-impl AesOutput {
-	pub fn is_empty(&self) -> bool {
-		self.len() == 0
-	}
-
-	pub fn len(&self) -> usize {
-		self.ciphertext.len() + self.aad.len() + USER_SHIELDING_KEY_NONCE_LEN
 	}
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{assertion::Assertion, AccountId};
+use super::{aes::AesOutput, assertion::Assertion, AccountId};
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
@@ -224,4 +224,11 @@ pub enum ErrorDetail {
 	VerifySubstrateSignatureFailed,
 	VerifyEvmSignatureFailed,
 	RecoverEvmAddressFailed,
+}
+
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
+pub struct RequestVCResult {
+	pub vc_index: H256,
+	pub vc_hash: H256,
+	pub vc_payload: AesOutput,
 }
