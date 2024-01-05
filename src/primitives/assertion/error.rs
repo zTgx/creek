@@ -112,7 +112,7 @@ pub enum IMPError {
 }
 
 // Verified Credential(VC) Management Pallet Error
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum VCMPError {
 	#[codec(index = 0)]
 	RequestVCFailed(Assertion, ErrorDetail),

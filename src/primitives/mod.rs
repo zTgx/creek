@@ -26,6 +26,7 @@ pub mod getter;
 pub mod identity;
 pub mod keypair;
 pub mod network;
+pub mod rsa_request;
 pub mod signature;
 pub mod stf_error;
 pub mod top;
@@ -33,14 +34,12 @@ pub mod trusted_call;
 pub mod vc;
 
 use rsa::RsaPublicKey;
-use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
-use sp_core::{ConstU32, RuntimeDebug, H256};
+use sp_core::{ConstU32, H256};
 use sp_runtime::BoundedVec;
 
 pub use sp_core::{
 	blake2_256,
-	// crypto::AccountId32 as AccountId,
 	ed25519::{Pair as Ed25519Pair, Public as Ed25519Pubkey},
 	Pair,
 };
@@ -77,26 +76,6 @@ use sp_runtime::{
 pub type Signature = MultiSignature;
 pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 use codec::{Decode, Encode};
-
-// Litentry: use the name `RsaRequest` to differentiate from `AesRequest` (see aes_request.rs in
-// tee-worker) `Rsa` implies that the payload is RSA-encrypted (using enclave's shielding key)
-#[macro_export]
-macro_rules! decl_rsa_request {
-	($($t:meta),*) => {
-		#[derive(Encode, Decode, Default, Clone, PartialEq, Eq, $($t),*)]
-		pub struct RsaRequest {
-			pub shard: ShardIdentifier,
-			pub payload: Vec<u8>,
-		}
-		impl RsaRequest {
-			pub fn new(shard: ShardIdentifier, payload: Vec<u8>) -> Self {
-				Self { shard, payload }
-			}
-		}
-	};
-}
-
-decl_rsa_request!(TypeInfo, RuntimeDebug);
 
 #[derive(Clone, Encode, Decode, Debug, Serialize, Deserialize, Eq, PartialEq, Hash)]
 #[serde(untagged)]

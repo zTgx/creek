@@ -15,7 +15,7 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::{aes::AesOutput, assertion::Assertion, AccountId};
-use codec::{Decode, Encode, MaxEncodedLen};
+use codec::{Decode, Encode};
 use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 use sp_core::H256;
@@ -169,18 +169,17 @@ pub struct Credential {
 	pub credential_schema: Option<CredentialSchema>,
 }
 
-#[derive(
-	Serialize, Deserialize, Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen,
-)]
+// #[derive(
+// 	Serialize, Deserialize, Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen,
+// )]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum Status {
 	Active,
 	Disabled,
 	// Revoked, // commented out for now, we can delete the VC entry when revoked
 }
 
-#[derive(Clone, Eq, PartialEq, Debug, Encode, Decode, TypeInfo, MaxEncodedLen)]
-#[scale_info(skip_type_params(T))]
-#[codec(mel_bound())]
+#[derive(Clone, Eq, PartialEq, Debug, Encode, Decode)]
 pub struct VCContext {
 	// To be discussed: shall we make it public?
 	// pros: easier for the user to disable/revoke VCs, we'll need the AccountId to verify

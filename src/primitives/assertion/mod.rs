@@ -44,30 +44,26 @@ pub use generic_discord_role::*;
 mod evm_amount_holding;
 pub use evm_amount_holding::*;
 
-use codec::{Decode, Encode, MaxEncodedLen};
-use scale_info::TypeInfo;
-use sp_runtime::{traits::ConstU32, BoundedVec};
-use std::{str, vec, vec::Vec};
+use codec::{Decode, Encode};
+use std::{vec, vec::Vec};
 
 use super::{
 	network::{BoundedWeb3Network, Web3Network},
 	AccountId,
 };
 
-pub type ParameterString = BoundedVec<u8, ConstU32<64>>;
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableAmountHolding {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub amount: ParameterString,
-	pub date: ParameterString,
-	pub token: Option<ParameterString>,
+	pub amount: String,
+	pub date: String,
+	pub token: Option<String>,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableAmountToken {
-	pub name: ParameterString,
+	pub name: String,
 
 	// Considering the uniformity of the structure, all relevant chain structures should be changed
 	// to BoundedWeb3Network. However, this would be a significant modification for the previous
@@ -76,83 +72,83 @@ pub struct AchainableAmountToken {
 	// to be modified to be consistent.
 	pub chain: BoundedWeb3Network,
 
-	pub amount: ParameterString,
-	pub token: Option<ParameterString>,
+	pub amount: String,
+	pub token: Option<String>,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableAmount {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub amount: ParameterString,
+	pub amount: String,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableAmounts {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub amount1: ParameterString,
-	pub amount2: ParameterString,
+	pub amount1: String,
+	pub amount2: String,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableBasic {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableBetweenPercents {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub greater_than_or_equal_to: ParameterString,
-	pub less_than_or_equal_to: ParameterString,
+	pub greater_than_or_equal_to: String,
+	pub less_than_or_equal_to: String,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableClassOfYear {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableDateInterval {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub start_date: ParameterString,
-	pub end_date: ParameterString,
+	pub start_date: String,
+	pub end_date: String,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableDatePercent {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub token: ParameterString,
-	pub date: ParameterString,
-	pub percent: ParameterString,
+	pub token: String,
+	pub date: String,
+	pub percent: String,
 }
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableDate {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub date: ParameterString,
+	pub date: String,
 }
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableToken {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub token: ParameterString,
+	pub token: String,
 }
 
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub struct AchainableMirror {
-	pub name: ParameterString,
+	pub name: String,
 	pub chain: Web3Network,
-	pub post_quantity: Option<ParameterString>,
+	pub post_quantity: Option<String>,
 }
 
 #[rustfmt::skip]
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum AchainableParams {
 	#[codec(index = 0)]
 	AmountHolding(AchainableAmountHolding),
@@ -181,7 +177,7 @@ pub enum AchainableParams {
 }
 
 impl AchainableParams {
-	pub fn name(&self) -> ParameterString {
+	pub fn name(&self) -> String {
 		match self {
 			AchainableParams::AmountHolding(p) => p.name.clone(),
 			AchainableParams::AmountToken(p) => p.name.clone(),
@@ -217,26 +213,26 @@ impl AchainableParams {
 }
 
 #[rustfmt::skip]
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum Assertion {
 	#[codec(index = 0)]
 	A1,
 	#[codec(index = 1)]
-	A2(ParameterString),                                    // (guild_id)
+	A2(String),                                    // (guild_id)
 	#[codec(index = 2)]
-	A3(ParameterString, ParameterString, ParameterString),  // (guild_id, channel_id, role_id)
+	A3(String, String, String),  // (guild_id, channel_id, role_id)
 	#[codec(index = 3)]
-	A4(ParameterString),                                    // (minimum_amount)
+	A4(String),                                    // (minimum_amount)
 	#[codec(index = 4)]
 	A6,
 	#[codec(index = 5)]
-	A7(ParameterString),                                    // (minimum_amount)
+	A7(String),                                    // (minimum_amount)
 	#[codec(index = 6)]
 	A8(BoundedWeb3Network),                                 // litentry, litmus, polkadot, kusama, khala, ethereum
 	#[codec(index = 7)]
-	A10(ParameterString),                                   // (minimum_amount)
+	A10(String),                                   // (minimum_amount)
 	#[codec(index = 8)]
-	A11(ParameterString),                                   // (minimum_amount)
+	A11(String),                                   // (minimum_amount)
 
 	// ----- begin polkadot decoded 2023 -----
 	#[codec(index = 9)]
@@ -285,93 +281,4 @@ pub enum Assertion {
 
 	#[codec(index = 23)]
 	CryptoSummary,
-}
-
-impl Assertion {
-	// Given an assertion enum type, retrieve the supported web3 networks.
-	// So we limit the network types on the assertion definition level.
-	//
-	// The final networks used for assertion building are the common set of:
-	// - "assertion supported networks" which are defined here, and
-	// - "identity networks" which are defined by the user and stored in `IdentityContext`
-	//
-	// returns a vector of `Web3Network` guarantees it's a subnet of
-	// the broader `Web3Network` (see network.rs)
-	pub fn get_supported_web3networks(&self) -> Vec<Web3Network> {
-		match self {
-			// LIT holder, not including `LitentryRococo` as it's not supported by any data provider
-			Self::A4(..) => vec![Web3Network::Litentry, Web3Network::Litmus, Web3Network::Ethereum],
-			// DOT holder
-			Self::A7(..) => vec![Web3Network::Polkadot],
-			// WBTC/ETH holder
-			Self::A10(..) |
-			Self::A11(..) |
-			Self::VIP3MembershipCard(..) |
-			Self::WeirdoGhostGangHolder => vec![Web3Network::Ethereum],
-			// total tx over `networks`
-			Self::A8(network) => network.to_vec(),
-			// polkadot paticipation
-			Self::A14 => vec![Web3Network::Polkadot],
-			// Achainable Assertions
-			Self::Achainable(arg) => arg.chains(),
-			// Oneblock Assertion
-			Self::Oneblock(..) => vec![Web3Network::Polkadot, Web3Network::Kusama],
-			// SPACEID Assertions
-			Self::BnbDomainHolding | Self::BnbDigitDomainClub(..) => vec![Web3Network::Bsc],
-			// LITStaking
-			Self::LITStaking => vec![Web3Network::Litentry],
-			// EVM Amount Holding
-			Self::EVMAmountHolding(_) | Self::CryptoSummary =>
-				vec![Web3Network::Ethereum, Web3Network::Bsc],
-			// BRC20 Holder
-			Self::BRC20AmountHolder => vec![
-				Web3Network::BitcoinP2tr,
-				Web3Network::BitcoinP2pkh,
-				Web3Network::BitcoinP2sh,
-				Web3Network::BitcoinP2wpkh,
-				Web3Network::BitcoinP2wsh,
-			],
-			// we don't care about any specific web3 network
-			Self::A1 |
-			Self::A2(..) |
-			Self::A3(..) |
-			Self::A6 |
-			Self::A13(..) |
-			Self::A20 |
-			Self::GenericDiscordRole(..) => vec![],
-		}
-	}
-}
-
-pub const ASSERTION_DATE_LEN: usize = 15;
-pub const ASSERTION_FROM_DATE: [&str; ASSERTION_DATE_LEN] = [
-	"2017-01-01",
-	"2017-07-01",
-	"2018-01-01",
-	"2018-07-01",
-	"2019-01-01",
-	"2019-07-01",
-	"2020-01-01",
-	"2020-07-01",
-	"2021-01-01",
-	"2021-07-01",
-	"2022-01-01",
-	"2022-07-01",
-	"2023-01-01",
-	"2023-07-01",
-	// In order to address the issue of the community encountering a false query for WBTC in
-	// November, the product team feels that adding this date temporarily solves this problem.
-	"2023-12-01",
-];
-
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, MaxEncodedLen, TypeInfo)]
-pub enum AmountHoldingTimeType {
-	#[codec(index = 0)]
-	LIT,
-	#[codec(index = 1)]
-	DOT,
-	#[codec(index = 2)]
-	WBTC,
-	#[codec(index = 3)]
-	ETH,
 }

@@ -2,7 +2,9 @@ use codec::Encode;
 use rsa::RsaPublicKey;
 
 use crate::{
-	primitives::{trusted_call::TrustedCallSigned, CResult, Index, RsaRequest, ShardIdentifier},
+	primitives::{
+		rsa_request::RsaRequest, trusted_call::TrustedCallSigned, CResult, Index, ShardIdentifier,
+	},
 	service::getter_trait::WorkerGetters,
 	utils::{
 		crypto::encrypt_with_tee_shielding_pubkey, hex::ToHexPrefixed,

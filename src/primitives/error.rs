@@ -15,8 +15,7 @@
 // along with Litentry.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::primitives::assertion::Assertion;
-use codec::{Decode, Encode, MaxEncodedLen};
-use scale_info::TypeInfo;
+use codec::{Decode, Encode};
 use sp_runtime::{
 	traits::{ConstU32, Printable},
 	BoundedVec, DispatchError, DispatchErrorWithPostInfo,
@@ -26,7 +25,7 @@ pub type MaxStringLength = ConstU32<100>;
 pub type ErrorString = BoundedVec<u8, MaxStringLength>;
 
 // enum to reflect the error detail from TEE-worker processing
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum ErrorDetail {
 	// error when importing the parentchain blocks and executing indirect calls
 	#[codec(index = 0)]
@@ -91,7 +90,7 @@ where
 }
 
 // Identity Management Pallet Error
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum IMPError {
 	// errors when executing individual error
 	#[codec(index = 0)]
@@ -111,7 +110,7 @@ pub enum IMPError {
 }
 
 // Verified Credential(VC) Management Pallet Error
-#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq, TypeInfo, MaxEncodedLen)]
+#[derive(Encode, Decode, Clone, Debug, PartialEq, Eq)]
 pub enum VCMPError {
 	#[codec(index = 0)]
 	RequestVCFailed(Assertion, ErrorDetail),

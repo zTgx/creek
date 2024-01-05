@@ -7,11 +7,13 @@ pub mod primitives;
 pub mod service;
 pub mod utils;
 
+use std::collections::HashMap;
+
 use crate::primitives::Ed25519Public;
 use primitives::{
 	address::Address32, assertion::Assertion, enclave::Enclave, identity::Identity,
-	keypair::KeyPair, network::Web3Network, signature::validation_data::ValidationData,
-	vc::VCContext, AccountId, CResult, MrEnclave,
+	keypair::KeyPair, network::Web3Network, signature::validation_data::ValidationData, AccountId,
+	CResult, MrEnclave,
 };
 use rsa::RsaPublicKey;
 use service::{
@@ -71,5 +73,10 @@ pub trait ParachainOp {
 	fn get_shard(&self) -> CResult<MrEnclave>;
 	fn get_tee_shielding_pubkey(&self) -> CResult<RsaPublicKey>;
 	fn get_vc_pubkey(&self) -> CResult<Ed25519Public>;
-	fn vc_registry(&self) -> CResult<Vec<VCContext>>;
+
+	/// Due to different code versions, there are problems when parsing VCContext directly, so it is
+	/// stored in the form of HashMap. The encoding format of the key remains unchanged,
+	/// while the value performs hex encoding on the obtained Vec<u8> data, which is compatible with
+	/// data parsing in different versions.
+	fn vc_registry(&self) -> CResult<HashMap<String, String>>;
 }

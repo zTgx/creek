@@ -1,7 +1,9 @@
+use std::collections::HashMap;
+
 use crate::{
 	primitives::{
 		address::Address32, cerror::CError, crypto::RsaPublicKeyGenerator, enclave::Enclave,
-		vc::VCContext, AccountId, CResult, MrEnclave,
+		AccountId, CResult, MrEnclave,
 	},
 	utils::address::vec_to_u8_array,
 	Creek, ParachainOp,
@@ -86,7 +88,7 @@ impl ParachainOp for Creek {
 		Ok(shard)
 	}
 
-	fn vc_registry(&self) -> CResult<Vec<VCContext>> {
+	fn vc_registry(&self) -> CResult<HashMap<String, String>> {
 		let vcregistry_encoded_keys =
 			"b8806b89e4f9af656f87b35e6112ee1bda2e7b4c5a367debe17c26748ec6b3e6";
 		let storage_key = hex::decode(vcregistry_encoded_keys).map_err(CError::FromHexError)?;
@@ -96,22 +98,23 @@ impl ParachainOp for Creek {
 			.get_keys(StorageKey(storage_key), None)
 			.map_err(|_| CError::APIError)?;
 
-		let mut contexts = vec![];
+		let mut vc_registry: HashMap<String, String> = HashMap::new();
 		if let Some(keys) = keys {
 			for key in keys {
 				let storage_key = hex::decode(&key[2..]).map_err(CError::FromHexError)?;
-				let v: Option<VCContext> = self
+				let vc_context = self
 					.parachain_client
 					.api
-					.get_storage_by_key(StorageKey(storage_key), None)
-					.map_err(|_| CError::APIError)?;
+					.get_opaque_storage_by_key(StorageKey(storage_key), None)
+					.map_err(|e| CError::Other(format!("{:?}", e)))?;
 
-				if let Some(context) = v {
-					contexts.push(context);
+				if let Some(context) = vc_context {
+					let context_in_hex = hex::encode(context);
+					vc_registry.insert(key, context_in_hex);
 				}
 			}
 		}
 
-		Ok(contexts)
+		Ok(vc_registry)
 	}
 }
