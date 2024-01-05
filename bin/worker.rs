@@ -1,6 +1,6 @@
 use creek::{
 	primitives::{assertion::Assertion, identity::Identity, network::Web3Network},
-	Creek, CreekExplorer, ValidationDataBuilder, WorkerSTF,
+	Creek, CreekExplorer, ValidationDataBuilder, WorkerOp,
 };
 use sp_core::{sr25519, Pair};
 

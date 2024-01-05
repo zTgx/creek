@@ -1,15 +1,14 @@
-use self::{parachainclient::ParachainRpcClient, wsclient::SidechainRpcClient};
+use self::{parachainclient::ParachainRpcClient, workerclient::SidechainRpcClient};
 use crate::{
 	primitives::{keypair::KeyPair, CResult},
 	Creek, CreekExplorer,
 };
 
-pub mod config;
 pub mod getter_trait;
 pub mod impls;
 pub mod json;
 pub mod parachainclient;
-pub mod wsclient;
+pub mod workerclient;
 
 impl CreekExplorer for Creek {
 	fn explorer(

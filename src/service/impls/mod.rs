@@ -15,8 +15,9 @@ use crate::{
 
 pub mod getter;
 pub mod parachain;
-pub mod stf;
-pub mod stf_inner;
+pub mod vdata;
+pub mod worker;
+pub mod worker_inner;
 
 pub trait CreekHelper {
 	fn get_sidechain_nonce(&self) -> CResult<Index>;

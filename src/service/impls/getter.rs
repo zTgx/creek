@@ -3,7 +3,7 @@ use crate::{
 		cerror::CError, crypto::RsaPublicKeyGenerator, AccountId, Ed25519Pubkey,
 		EnclaveShieldingPubKey, Index, MrEnclave, ShardIdentifier,
 	},
-	service::{getter_trait::WorkerGetters, json::json_req, wsclient::SidechainRpcRequest},
+	service::{getter_trait::WorkerGetters, json::json_req, workerclient::SidechainRpcRequest},
 	utils::{
 		hex::FromHexPrefixed,
 		public_api::{

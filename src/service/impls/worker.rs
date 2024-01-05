@@ -1,26 +1,16 @@
-use super::CreekHelper;
 use crate::{
 	primitives::{
-		assertion::Assertion,
-		cerror::CError,
-		identity::Identity,
-		keypair::KeyPair,
-		network::Web3Network,
-		signature::validation_data::{
-			TwitterValidationData, ValidationData, Web2ValidationData, Web3CommonValidationData,
-			Web3ValidationData,
-		},
-		CResult,
+		assertion::Assertion, cerror::CError, identity::Identity, network::Web3Network,
+		signature::validation_data::ValidationData, CResult,
 	},
 	service::{
-		impls::{get_rsa_request, stf_inner::LinkIdentityInner},
+		impls::{get_rsa_request, worker_inner::LinkIdentityInner},
 		json::{json_req, RpcReturnValue},
-		wsclient::SidechainRpcRequest,
+		workerclient::SidechainRpcRequest,
 	},
-	utils::{self, hex::FromHexPrefixed},
-	Creek, ValidationDataBuilder, WorkerGetters, WorkerSTF,
+	utils::hex::FromHexPrefixed,
+	Creek, WorkerGetters, WorkerOp,
 };
-use utils::identity::{get_expected_raw_message, verify_web3_identity};
 
 /// According to this ref: https://github.com/litentry/litentry-parachain/blob/038b0f47e9df6657b7a656126371e46056b5b354/tee-worker/sidechain/rpc-handler/src/direct_top_pool_api.rs
 /// Here are the methods:
@@ -35,7 +25,7 @@ use utils::identity::{get_expected_raw_message, verify_web3_identity};
 ///
 /// Currently, I'm using `author_submitAndWatchRsaRequest`, but what is the difference between those
 /// methods? Figure it out.
-impl WorkerSTF for Creek {
+impl WorkerOp for Creek {
 	fn link_identity(
 		&self,
 		link_identity: Identity,
@@ -76,50 +66,5 @@ impl WorkerSTF for Creek {
 		println!("[REQUEST VC]: {:#?}", rpc_return_value);
 
 		Ok(())
-	}
-}
-
-impl ValidationDataBuilder for Creek {
-	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData> {
-		Ok(ValidationData::Web2(Web2ValidationData::Twitter(TwitterValidationData {
-			tweet_id: twitterid.to_string(),
-		})))
-	}
-
-	fn web3_vdata(&self, keypair: &KeyPair) -> CResult<ValidationData> {
-		let sidechain_nonce = self.get_sidechain_nonce()?;
-
-		// 1. Get raw message
-		let primary = Identity::from(self.signer.account_id());
-		let identity = Identity::from(keypair.account_id());
-		if identity.is_web2() {
-			return Err(CError::Other("Web3 Identity supported ONLY!".to_string()))
-		}
-
-		let message_raw = get_expected_raw_message(&primary, &identity, sidechain_nonce);
-
-		// 2. Sign raw message
-		let signature = keypair.sign(&message_raw);
-
-		// 3. Build ValidationData
-		let web3_common_validation_data =
-			Web3CommonValidationData { message: message_raw.clone(), signature };
-
-		match identity {
-			Identity::Substrate(_) =>
-				Some(Web3ValidationData::Substrate(web3_common_validation_data)),
-			Identity::Evm(_) => Some(Web3ValidationData::Evm(web3_common_validation_data)),
-			Identity::Bitcoin(_) => Some(Web3ValidationData::Evm(web3_common_validation_data)),
-			_ => None,
-		}
-		.map(|vdata| {
-			// 4. Verify
-			verify_web3_identity(&identity, &message_raw, &vdata)
-				.expect("VerifyWeb3SignatureFailed");
-
-			vdata
-		})
-		.map(ValidationData::Web3)
-		.ok_or(CError::APIError)
 	}
 }

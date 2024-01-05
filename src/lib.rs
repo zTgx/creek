@@ -15,7 +15,8 @@ use primitives::{
 };
 use rsa::RsaPublicKey;
 use service::{
-	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient, wsclient::SidechainRpcClient,
+	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient,
+	workerclient::SidechainRpcClient,
 };
 use std::collections::HashMap;
 
@@ -31,11 +32,19 @@ pub trait CreekExplorer {
 		-> CResult<Creek>;
 }
 
-/// Worker State Transfer Function
-/// A set of transaction interfaces that can change the sidechain state, including link identity,
-/// request VC, etc
-pub trait WorkerSTF {
+/// For Web3 Identity:
+/// * Using the to-being-linked account keypair to sign a validation data to aprove that this linked
+///   account is owned by you.
+/// * Then call link_identity from `WorkerOp` trait to enact link operation.
+pub trait ValidationDataBuilder {
+	fn web3_vdata(&self, keypair: &KeyPair) -> CResult<ValidationData>;
+	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData>;
+}
+
+/// Worker operations traits
+pub trait WorkerOp {
 	/// link identity steps:
+	/// * before link identity make sure you sign the vdata
 	/// * link_identity: The `Identity` you want to be linked.
 	/// * networks: The `Identity` supported network. (For Web2 Identity, networks MUST BE ved![])
 	fn link_identity(
@@ -46,24 +55,13 @@ pub trait WorkerSTF {
 	) -> CResult<()>;
 
 	/// request vc(verified credential)
+	/// * Select the VC you want to generate from `Assertion` type
 	fn request_vc(&self, assertion: Assertion) -> CResult<()>;
-}
-
-/// Before link identity:
-/// For Web3 Identity:
-/// 1. Using the linked keypair to sign a validation data to aprove that this linked account is
-/// owned by you. 2. Then call link_identity from `WorkerSTF` trait to enact link operation.
-pub trait ValidationDataBuilder {
-	fn twitter_vdata(&self, twitterid: &str) -> CResult<ValidationData>;
-	fn web3_vdata(&self, keypair: &KeyPair) -> CResult<ValidationData>;
 }
 
 /// Parachain Operation traits
 pub trait ParachainOp {
-	// IdentityManagement pallet
 	fn delegatee(&self, account: Address32) -> CResult<Option<()>>;
-
-	// Teerex pallet
 	fn enclave_count(&self) -> CResult<Option<u64>>;
 	fn enclave(&self, enclave_count: u64) -> CResult<Option<Enclave<AccountId, String>>>;
 	fn get_shard(&self) -> CResult<MrEnclave>;
