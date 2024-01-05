@@ -1,1 +1,1 @@
-This demo project will demonstrate step by step how to use Creek to perform DID related operations on the Litentry network. (No need to connect to your wallet)
+This demo project will demonstrate step by step how to use Creek to perform DID related operations on the Litentry network.
