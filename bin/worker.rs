@@ -1,6 +1,6 @@
 use creek::{
 	primitives::{assertion::Assertion, identity::Identity, network::Web3Network},
-	Creek, ValidationDataBuilder, WorkerSTF,
+	Creek, CreekExplorer, ValidationDataBuilder, WorkerSTF,
 };
 use sp_core::{sr25519, Pair};
 
@@ -11,7 +11,7 @@ fn main() {
 	// 2: Set this alice as signer.
 	let parachain_endpoint = "wss://tee-internal.litentry.io:443";
 	let worker_endpoint: &str = "wss://localhost:2600";
-	let creek = Creek::new(parachain_endpoint, worker_endpoint, alice.into()).unwrap();
+	let creek = Creek::explorer(parachain_endpoint, worker_endpoint, alice.into()).unwrap();
 
 	// 3: Import your another account(bob) you want to LINK.
 	let bob = sr25519::Pair::from_string("//Bob", None).unwrap();

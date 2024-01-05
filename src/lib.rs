@@ -7,8 +7,6 @@ pub mod primitives;
 pub mod service;
 pub mod utils;
 
-use std::collections::HashMap;
-
 use crate::primitives::Ed25519Public;
 use primitives::{
 	address::Address32, assertion::Assertion, enclave::Enclave, identity::Identity,
@@ -19,6 +17,7 @@ use rsa::RsaPublicKey;
 use service::{
 	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient, wsclient::SidechainRpcClient,
 };
+use std::collections::HashMap;
 
 pub struct Creek {
 	pub parachain_client: ParachainRpcClient,
@@ -26,13 +25,10 @@ pub struct Creek {
 	pub signer: KeyPair,
 }
 
-impl Creek {
-	pub fn new(parachain_endpoint: &str, worker_endpoint: &str, signer: KeyPair) -> CResult<Self> {
-		let parachain_client = ParachainRpcClient::new(parachain_endpoint)?;
-		let worker_client = SidechainRpcClient::new(worker_endpoint);
-
-		Ok(Self { parachain_client, worker_client, signer })
-	}
+/// Where the magic begins
+pub trait CreekExplorer {
+	fn explorer(parachain_endpoint: &str, worker_endpoint: &str, signer: KeyPair)
+		-> CResult<Creek>;
 }
 
 /// Worker State Transfer Function

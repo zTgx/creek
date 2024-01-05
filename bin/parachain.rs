@@ -1,4 +1,4 @@
-use creek::{Creek, ParachainOp};
+use creek::{Creek, CreekExplorer, ParachainOp};
 use sp_core::{sr25519, Pair};
 
 pub const LOCAL: (&str, &str) = ("wss://localhost:9944", "wss://localhost:2600");
@@ -35,7 +35,7 @@ fn main() {
 	let env = Env::Staging;
 
 	// 2: Set this alice as signer.
-	let creek = Creek::new(env.get_url().0, env.get_url().1, alice.into()).unwrap();
+	let creek = Creek::explorer(env.get_url().0, env.get_url().1, alice.into()).unwrap();
 
 	let contexts = creek.vc_registry().unwrap();
 	println!("VC contexts: {:#?}", contexts);
