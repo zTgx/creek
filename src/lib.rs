@@ -15,14 +15,13 @@ use primitives::{
 };
 use rsa::RsaPublicKey;
 use service::{
-	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient,
-	workerclient::SidechainRpcClient,
+	getter_trait::WorkerGetters, parachainclient::ParachainRpcClient, workerclient::DirectClient,
 };
 use std::collections::HashMap;
 
 pub struct Creek {
 	pub parachain_client: ParachainRpcClient,
-	pub worker_client: SidechainRpcClient,
+	pub worker_client: DirectClient,
 	pub signer: KeyPair,
 }
 

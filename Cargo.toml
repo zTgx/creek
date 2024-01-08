@@ -77,6 +77,10 @@ path = "bin/worker.rs"
 name = "parachain"
 path = "bin/parachain.rs"
 
+[[bin]]
+name = "requestvc"
+path = "bin/request-vc.rs"
+
 [features]
 local = []
 staging = []

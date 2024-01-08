@@ -58,8 +58,8 @@ impl WorkerOp for Creek {
 
 		let param = get_rsa_request(shard, trusted_call_signed, shielding_pubkey);
 		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
-		let jsonresp = self.worker_client.request(jsonreq)?;
 
+		let jsonresp = self.worker_client.request(jsonreq)?;
 		let rpc_return_value =
 			RpcReturnValue::from_hex(&jsonresp.result).map_err(CError::HexError)?;
 
