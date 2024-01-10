@@ -81,6 +81,10 @@ path = "bin/parachain.rs"
 name = "requestvc"
 path = "bin/request-vc.rs"
 
+[[bin]]
+name = "linktwitter"
+path = "bin/link-twitter.rs"
+
 [features]
 local = []
 staging = []

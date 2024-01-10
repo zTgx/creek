@@ -4,7 +4,7 @@ use crate::{
 		signature::validation_data::ValidationData, CResult,
 	},
 	service::{
-		impls::{get_rsa_request, worker_inner::LinkIdentityInner},
+		impls::{get_aes_request, get_rsa_request, worker_inner::LinkIdentityInner},
 		json::{json_req, RpcReturnValue},
 		workerclient::SidechainRpcRequest,
 	},
@@ -56,8 +56,13 @@ impl WorkerOp for Creek {
 
 		let trusted_call_signed = self.request_vc_inner(&shard, assertion)?;
 
-		let param = get_rsa_request(shard, trusted_call_signed, shielding_pubkey);
-		let jsonreq = json_req("author_submitAndWatchRsaRequest", [param], 1);
+		// let param = get_rsa_request(shard, trusted_call_signed, shielding_pubkey);
+		let param = get_aes_request(shard, trusted_call_signed, shielding_pubkey);
+
+		// [NOTE]Set params empty, `litentry-worker` will crash down!
+		// let params: Vec<String> = vec![];
+		// let jsonreq = json_req("author_submitAndWatchAesRequest", params, 1);
+		let jsonreq = json_req("author_submitAndWatchAesRequest", [param], 1);
 
 		let jsonresp = self.worker_client.request(jsonreq)?;
 		let rpc_return_value =

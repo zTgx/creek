@@ -65,11 +65,16 @@ impl LinkIdentityInner for Creek {
 		let signer_acccount = self.signer.account_id();
 		let primary_identity = Identity::from(signer_acccount.clone());
 
+		let key = Some([
+			1_u8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			1, 1, 11, 1,
+		]);
+
 		let trusted_call = TrustedCall::request_vc(
 			primary_identity.clone(),
 			primary_identity,
 			assertion,
-			None,
+			key,
 			Default::default(),
 		);
 

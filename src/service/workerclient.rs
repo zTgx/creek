@@ -324,7 +324,6 @@ impl SidechainRpcRequest for DirectClient {
 					if let Ok(return_value) = RpcReturnValue::from_hex(&response.result) {
 						match return_value.status {
 							DirectRequestStatus::Error => {
-								println!("request status is error");
 								if let Ok(value) =
 									String::decode(&mut return_value.value.as_slice())
 								{
@@ -359,7 +358,6 @@ impl SidechainRpcRequest for DirectClient {
 								}
 							},
 							DirectRequestStatus::Ok => {
-								println!("request status is ignored");
 								self.close().unwrap();
 								return Ok(response)
 							},
