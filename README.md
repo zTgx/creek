@@ -1,5 +1,5 @@
 # Creek
 
-* HOW TOs  
-[How to backup VCRegistry from parachain](./bin/parachain.rs)  
-[How to link identity & request credential](./bin/worker.rs)  
+* [Workflow](./bin/worker.rs)
+
+* [Let's make it better](./docs/Make-It-Better.md)
